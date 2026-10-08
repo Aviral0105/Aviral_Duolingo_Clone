@@ -93,11 +93,23 @@ This document serves as the single source of truth for all pages, routes, compon
 
 ---
 
-### Page 5: Letters / Alphabet (`/characters`)
-* Header: *"Let's learn Hindi! Get to know the characters and sounds"*.
-* Button: `LEARN THE LETTERS`.
-* Phonetic grid: Consonants (क, ख, ग, घ), Vowels (अ, आ, इ, ई), and Combinations.
-* Includes static right-hand sidebar widgets.
+### Page 5: Letters / Alphabet (`/characters` & `/letters`)
+
+#### 1. Center Column: Characters Feed
+| Element / Button | Exact Color & Styling | Details & Behavior |
+|---|---|---|
+| **Hero Learning Banner** | Background: `#1cb0f6` (Duolingo Sky Cyan), rounded-3xl, text white, p-6 sm:p-7 | Left: Title *"Let's learn Hindi!"* (`#ffffff` bold 24px), subtitle *"Get to know the characters and sounds in Hindi"*.<br>Right: Bouncing `क✨` character badge. |
+| **"LEARN THE LETTERS" Button** | White card button, text `#1cb0f6`, uppercase bold 12px, border-b-4 `border-sky-100` | Click opens interactive character listening practice quiz modal. |
+| **Category Tabs** | Rounded-xl buttons | 1. **All Letters** (42 characters)<br>2. **Vowels / स्वर** (12 characters)<br>3. **Consonants / व्यंजन** (30 characters)<br>Active tab styled with `#1cb0f6` solid background and white text. |
+| **Character Tile (Grid of 42)** | White card, border `2px solid #e5e5e5`, rounded-2xl p-3.<br>Hover: border `#1cb0f6`, active scale 95% | Top right: 🔊 Speaker icon (Volume2).<br>Center: Large bold Devanagari character (e.g. `क`, `अ`, `स`).<br>Subtitle: English transliteration (`ka`, `a`, `sa`).<br>Bottom: 3-bar green mastery meter (`#58cc02`).<br>**Action**: Click pronounces letter using Web Audio Speech Synthesis (`hi-IN`). |
+| **Practice Quiz Modal** | Backdrop blur, centered white card rounded-3xl | Audio prompt button + multiple-choice Hindi character grid with instant validation feedback. |
+
+#### 2. Right Sticky Column (Static Chrome)
+| Element / Card | Exact Color & Styling | Details & Behavior |
+|---|---|---|
+| **Super Duolingo Card** | Gradient `#312e81` to `#581c87`, rounded-3xl p-6 text-white | *"Super Duolingo: Learn Hindi script faster with unlimited listening practice"*. White button `TRY FOR FREE` -> `/shop`. |
+| **Daily Quests Widget** | White card, border `2px solid #e5e5e5`, rounded-3xl p-5 | `Earn 10 XP` gold progress bar `[10/10]` + treasure chest 📦. Link: `VIEW ALL` -> `/quests`. |
+| **Footer Legal Links** | Gray text `#afafaf`, uppercase bold 11px | `ABOUT` • `BLOG` • `STORE` • `EFFICACY` • `CAREERS` • `TERMS` • `PRIVACY` |
 
 ---
 
@@ -184,7 +196,30 @@ This document serves as the single source of truth for all pages, routes, compon
 
 ---
 
-### Page 10: Settings & FAQ (`/settings/account`)
-* Preferences toggles: Sound effects, Animations, Motivational messages, Listening exercises.
-* Appearance: Dark mode dropdown.
-* Help Center FAQ & Log out action.
+### Page 10: Settings & MORE Menu (`... MORE` & `/settings/account`)
+
+#### 1. Left Sidebar "MORE" Floating Popover Menu
+| Popover Item | Icon & Styling | Details & Action |
+|---|---|---|
+| **Trigger Button** | Purple circle with 3 dots `•••` (`#a855f7`), label `MORE` | Click / hover opens anchored popover menu adjacent to sidebar. |
+| **Settings** | ⚙️ Settings (`#6b7280`) | Navigates to `/settings/account`. |
+| **Schools** | 🏫 Graduation Cap (`#0ea5e9`) | Opens Duolingo for Schools modal / portal. |
+| **Podcast** | 🎙️ Headphones (`#f59e0b`) | Opens Duolingo Stories & audio episodes. |
+| **Dictionary** | 📖 Book Open (`#10b981`) | Opens Devanagari Hindi vocabulary lookup. |
+| **Help Center** | ❓ Help Circle (`#6366f1`) | Opens FAQs, support, and feedback modal. |
+| **Log Out** | 🚪 Log Out (`#ef4444`, red text) | Triggers account sign-out confirmation. |
+
+#### 2. Settings Center Column (`/settings/account`)
+| Element / Setting | Exact Color & Styling | Details & Behavior |
+|---|---|---|
+| **Page Title** | Text: `Account Settings` (`#3c3c3c`, bold 24px) | Subtitle: *"Manage your account preferences, sound options, and learning experience."* |
+| **Account Section Card** | White card, border `2px solid #e5e5e5`, rounded-3xl p-6 | Editable fields: `Username` (AVIRAL JAIN), `Handle` (@AVIRALJAIN51695, read-only), `Email` (aviral@example.com). |
+| **Sound & Learning Toggles** | Interactive iOS/Duolingo style toggle switches | 1. **Sound Effects** (Green `#58cc02` toggle)<br>2. **Animations** (Green `#58cc02` toggle)<br>3. **Motivational Messages** (Green `#58cc02` toggle)<br>4. **Listening Exercises** (Green `#58cc02` toggle) |
+| **"SAVE CHANGES" Button** | Green 3D button (`#58cc02`, border-b-4 `#46a302`, white text) | Click commits settings and triggers green floating success toast. |
+| **Cancel Button** | White card button (`#e5e5e5` border, gray text) | Navigates back to `/learn`. |
+
+#### 3. Right Settings Rail
+| Element / Card | Exact Color & Styling | Details & Behavior |
+|---|---|---|
+| **Navigation List** | White card, rounded-3xl p-5 | Menu links: `Account` (Active `#ddf4ff`), `Sound & Audio`, `Notifications`, `Super Duolingo`. |
+| **Log Out Button** | Red border `#fecaca`, text `#ef4444`, hover bg `#fef2f2` | Distinct logout action container. |

@@ -1,8 +1,17 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Target, Sparkles, MoreHorizontal } from "lucide-react";
+import {
+  Home,
+  Settings,
+  HelpCircle,
+  GraduationCap,
+  Headphones,
+  BookOpen,
+  LogOut,
+} from "lucide-react";
 
 interface SidebarProps {
   onOpenEnergy?: () => void;
@@ -11,6 +20,19 @@ interface SidebarProps {
 
 export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   const pathname = usePathname();
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close more menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
+        setIsMoreOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const links = [
     {
@@ -49,12 +71,6 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
       iconType: "profile",
       activeColor: "text-[#1cb0f6]",
     },
-    {
-      label: "MORE",
-      href: "/settings/account",
-      iconType: "more",
-      activeColor: "text-purple-500",
-    },
   ];
 
   const renderIcon = (type: string, isActive: boolean) => {
@@ -90,8 +106,10 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
     }
   };
 
+  const isSettingsActive = pathname.startsWith("/settings");
+
   return (
-    <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0">
+    <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40">
       {/* Brand Logo */}
       <Link href="/learn" className="flex items-center gap-2 px-3 mb-8">
         <span className="text-3xl font-black text-[#58cc02] tracking-tighter hover:opacity-90 transition">
@@ -100,9 +118,11 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
       </Link>
 
       {/* Nav Links */}
-      <nav className="flex-1 space-y-1.5">
+      <nav className="flex-1 space-y-1.5 relative">
         {links.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive =
+            pathname === link.href ||
+            (link.href === "/characters" && pathname === "/letters");
           return (
             <Link
               key={link.href}
@@ -118,6 +138,94 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
             </Link>
           );
         })}
+
+        {/* MORE Button with Popover Menu */}
+        <div className="relative" ref={moreRef}>
+          <button
+            onClick={() => setIsMoreOpen(!isMoreOpen)}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
+              isSettingsActive || isMoreOpen
+                ? "border-purple-300 bg-purple-50 text-purple-700"
+                : "border-transparent text-gray-500 hover:bg-gray-100"
+            }`}
+          >
+            {renderIcon("more", isSettingsActive)}
+            <span>MORE</span>
+          </button>
+
+          {/* Floating MORE Popover Card */}
+          {isMoreOpen && (
+            <div className="absolute left-full bottom-0 ml-3 w-56 bg-white border-2 border-gray-200 rounded-3xl p-2.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="space-y-1 text-gray-700 font-black text-xs uppercase tracking-wider">
+                <Link
+                  href="/settings/account"
+                  onClick={() => setIsMoreOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition"
+                >
+                  <Settings className="w-5 h-5 text-gray-500" />
+                  <span>Settings</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    alert("Duolingo for Schools: Free teacher tools for classrooms!");
+                    setIsMoreOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                >
+                  <GraduationCap className="w-5 h-5 text-sky-500" />
+                  <span>Schools</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    alert("Duolingo Podcasts: Fascinating stories in easy-to-understand audio!");
+                    setIsMoreOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                >
+                  <Headphones className="w-5 h-5 text-amber-500" />
+                  <span>Podcast</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    alert("Duolingo Dictionary: Search Hindi translations and grammatical tips!");
+                    setIsMoreOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                >
+                  <BookOpen className="w-5 h-5 text-emerald-500" />
+                  <span>Dictionary</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    alert("Help Center: FAQs, account recovery, and bug reporting.");
+                    setIsMoreOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                >
+                  <HelpCircle className="w-5 h-5 text-indigo-500" />
+                  <span>Help</span>
+                </button>
+
+                <div className="border-t border-gray-100 my-1" />
+
+                <button
+                  onClick={() => {
+                    alert("You have logged out.");
+                    setIsMoreOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 transition text-left"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Log out</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </nav>
 
       {/* Quick Action Buttons */}
