@@ -55,11 +55,21 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
     if not user.is_super:
         user.hearts = max(0, min(5, payload.hearts_left))
 
-    # Determine next lesson to unlock
+    # Determine next lesson to unlock across units/sections
     next_lesson = db.query(Lesson).filter(
         Lesson.unit_id == lesson.unit_id,
         Lesson.order_index > lesson.order_index
     ).order_by(Lesson.order_index).first()
+
+    if not next_lesson and lesson.unit:
+        next_unit = db.query(Unit).filter(
+            Unit.course_id == lesson.unit.course_id,
+            Unit.order_index > lesson.unit.order_index
+        ).order_by(Unit.order_index).first()
+        if next_unit:
+            next_lesson = db.query(Lesson).filter(
+                Lesson.unit_id == next_unit.id
+            ).order_by(Lesson.order_index).first()
 
     next_lesson_id = next_lesson.id if next_lesson else None
 

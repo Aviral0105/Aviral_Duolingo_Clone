@@ -77,6 +77,31 @@ export async function fetchPath(): Promise<PathResponse> {
   } catch (e) {
     console.warn("Backend not reachable, using local path fallback");
   }
+
+  // If local storage has completed lessons, dynamically calculate progression
+  if (typeof window !== "undefined") {
+    try {
+      const completed: number[] = JSON.parse(localStorage.getItem("duo_completed_lessons") || "[]");
+      if (completed.length > 0) {
+        const pathCopy: PathResponse = JSON.parse(JSON.stringify(FALLBACK_PATH));
+        let firstIncompleteFound = false;
+        for (const unit of pathCopy.units) {
+          for (const l of unit.lessons) {
+            if (completed.includes(l.id)) {
+              l.status = "completed";
+              l.crowns = 1;
+            } else if (!firstIncompleteFound) {
+              l.status = "available";
+              firstIncompleteFound = true;
+            } else {
+              l.status = "locked";
+            }
+          }
+        }
+        return pathCopy;
+      }
+    } catch {}
+  }
   return FALLBACK_PATH;
 }
 
@@ -179,9 +204,27 @@ export async function completeLesson(id: number, heartsLeft: number, mistakesCou
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ hearts_left: heartsLeft, mistakes_count: mistakesCount }),
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
   } catch (e) {
     console.warn("Backend not reachable, saving local progress");
+  }
+
+  // Fallback local storage persistence if offline
+  if (typeof window !== "undefined") {
+    try {
+      const completed: number[] = JSON.parse(localStorage.getItem("duo_completed_lessons") || "[]");
+      if (!completed.includes(id)) {
+        completed.push(id);
+        localStorage.setItem("duo_completed_lessons", JSON.stringify(completed));
+      }
+      window.dispatchEvent(new Event("duo_progress_updated"));
+    } catch {}
   }
   return { success: true, xp_earned: 10, new_total_xp: 275, streak: 3 };
 }
@@ -189,7 +232,13 @@ export async function completeLesson(id: number, heartsLeft: number, mistakesCou
 export async function refillHearts() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/user/refill-hearts`, { method: "POST" });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
   } catch (e) {
     console.warn("Backend not reachable");
   }
