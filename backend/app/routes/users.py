@@ -2,8 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from ..database import get_db
-from ..models import User
-from ..schemas import UserOut, HeartsActionResponse, SimulateDayResponse
+from ..models import User, UserSetting
+from ..schemas import (
+    UserOut,
+    HeartsActionResponse,
+    SimulateDayResponse,
+    UserSettingsOut,
+    UserSettingsUpdate
+)
 
 router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -13,6 +19,40 @@ def get_current_user(db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@router.get("/settings", response_model=UserSettingsOut)
+def get_user_settings(db: Session = Depends(get_db)):
+    settings = db.query(UserSetting).filter(UserSetting.user_id == 1).first()
+    if not settings:
+        settings = UserSetting(user_id=1)
+        db.add(settings)
+        db.commit()
+        db.refresh(settings)
+    return settings
+
+@router.put("/settings", response_model=UserSettingsOut)
+def update_user_settings(payload: UserSettingsUpdate, db: Session = Depends(get_db)):
+    settings = db.query(UserSetting).filter(UserSetting.user_id == 1).first()
+    if not settings:
+        settings = UserSetting(user_id=1)
+        db.add(settings)
+
+    if payload.sound_effects is not None:
+        settings.sound_effects = payload.sound_effects
+    if payload.animations is not None:
+        settings.animations = payload.animations
+    if payload.motivational_messages is not None:
+        settings.motivational_messages = payload.motivational_messages
+    if payload.listening_exercises is not None:
+        settings.listening_exercises = payload.listening_exercises
+    if payload.speaking_exercises is not None:
+        settings.speaking_exercises = payload.speaking_exercises
+    if payload.dark_mode is not None:
+        settings.dark_mode = payload.dark_mode
+
+    db.commit()
+    db.refresh(settings)
+    return settings
 
 @router.post("/refill-hearts", response_model=HeartsActionResponse)
 def refill_hearts(db: Session = Depends(get_db)):

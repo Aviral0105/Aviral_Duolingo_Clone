@@ -87,11 +87,17 @@ export default function LessonComplete({ xpEarned, streak, accuracy }: LessonCom
         </div>
       </div>
 
-      {/* Continue Button */}
-      <div className="w-full border-t-2 border-[#e5e5e5] pt-4">
+      {/* Bottom Footer Actions (Review Lesson + Continue matching Duolingo Frame 56s) */}
+      <div className="w-full border-t-2 border-[#e5e5e5] pt-4 flex items-center justify-between gap-4">
         <Link
           href="/learn"
-          className="block w-full py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green text-center"
+          className="px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-wider border-2 border-gray-200 text-gray-500 hover:bg-gray-100 transition active:scale-95 text-center"
+        >
+          Review Lesson
+        </Link>
+        <Link
+          href="/learn"
+          className="flex-1 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green text-center"
         >
           Continue
         </Link>

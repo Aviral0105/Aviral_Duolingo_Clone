@@ -4,6 +4,7 @@ import { useState } from "react";
 import { sounds } from "@/lib/sounds";
 import { Heart, Zap, Sparkles, Check, Lock, Gift, ChevronRight, X } from "lucide-react";
 import RightPanel from "@/components/navigation/RightPanel";
+import { purchaseShopItem } from "@/lib/api";
 
 export default function ShopPage() {
   const [isSuper, setIsSuper] = useState(false);
@@ -18,20 +19,30 @@ export default function ShopPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleRefillHearts = () => {
+  const handleRefillHearts = async () => {
     if (heartsCount >= 5) {
       showToast("Hearts are already full!");
       return;
     }
-    sounds.playCorrect();
-    setHeartsCount(5);
-    showToast("❤️ Hearts refilled to 5 (-350 Gems)!");
+    try {
+      const res = await purchaseShopItem("refill_hearts");
+      sounds.playCorrect();
+      setHeartsCount(5);
+      showToast(`❤️ Hearts refilled to 5! (Remaining: ${res.new_gems} Gems)`);
+    } catch (e: any) {
+      showToast(e.message || "Failed to refill hearts");
+    }
   };
 
-  const handleBuyBoost = () => {
-    sounds.playVictory();
-    setXpBoostActive(true);
-    showToast("⚡ 2x XP Boost activated for 15 minutes (-100 Gems)!");
+  const handleBuyBoost = async () => {
+    try {
+      const res = await purchaseShopItem("double_xp");
+      sounds.playVictory();
+      setXpBoostActive(true);
+      showToast(`⚡ 2x XP Boost activated for 15 minutes! (Remaining: ${res.new_gems} Gems)`);
+    } catch (e: any) {
+      showToast(e.message || "Failed to activate boost");
+    }
   };
 
   return (

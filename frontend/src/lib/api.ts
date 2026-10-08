@@ -271,6 +271,59 @@ export async function refillHearts() {
   return { hearts: 5, xp: 265, message: "Hearts refilled!" };
 }
 
+export async function purchaseShopItem(itemId: string) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/shop/purchase`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_id: itemId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
+    const err = await res.json();
+    throw new Error(err.detail || "Purchase failed");
+  } catch (e: any) {
+    console.warn("Shop purchase failed:", e.message);
+    throw e;
+  }
+}
+
+export async function fetchUserSettings() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/settings`, { cache: "no-store" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Failed to load user settings from backend");
+  }
+  return {
+    sound_effects: true,
+    animations: true,
+    motivational_messages: true,
+    listening_exercises: true,
+    speaking_exercises: true,
+    dark_mode: "system",
+  };
+}
+
+export async function updateUserSettings(settings: Record<string, any>) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/settings`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(settings),
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Failed to update user settings on backend");
+  }
+}
+
+
 export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/leaderboard`, { cache: "no-store" });

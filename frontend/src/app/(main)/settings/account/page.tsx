@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Settings, Volume2, Bell, Shield, Sparkles, LogOut, Check, Moon, Download, Trash2, Key } from "lucide-react";
+import { fetchUserSettings, updateUserSettings } from "@/lib/api";
 
 export default function AccountSettingsPage() {
   const router = useRouter();
@@ -22,17 +23,37 @@ export default function AccountSettingsPage() {
   const [activeModal, setActiveModal] = useState<"password" | "delete" | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedUser = localStorage.getItem("duo_username");
-      if (savedUser) setUsername(savedUser);
+    async function loadSettings() {
+      const data = await fetchUserSettings();
+      if (data) {
+        if (data.sound_effects !== undefined) setSoundEffects(data.sound_effects);
+        if (data.animations !== undefined) setAnimations(data.animations);
+        if (data.motivational_messages !== undefined) setMotivationalMessages(data.motivational_messages);
+        if (data.listening_exercises !== undefined) setListeningExercises(data.listening_exercises);
+        if (data.speaking_exercises !== undefined) setSpeakingExercises(data.speaking_exercises);
+        if (data.dark_mode) setDarkMode(data.dark_mode);
+      }
+      if (typeof window !== "undefined") {
+        const savedUser = localStorage.getItem("duo_username");
+        if (savedUser) setUsername(savedUser);
+      }
     }
+    loadSettings();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (typeof window !== "undefined") {
       localStorage.setItem("duo_username", username);
       localStorage.setItem("duo_email", email);
     }
+    await updateUserSettings({
+      sound_effects: soundEffects,
+      animations: animations,
+      motivational_messages: motivationalMessages,
+      listening_exercises: listeningExercises,
+      speaking_exercises: speakingExercises,
+      dark_mode: darkMode,
+    });
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 3000);
   };
