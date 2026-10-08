@@ -1058,19 +1058,12 @@ function SettingsContent() {
         {/* CARD 3: SUPPORT */}
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 shadow-xs space-y-2">
           <h3 className="font-black text-base text-gray-800">Support</h3>
-          <button
-            onClick={() => {
-              setActiveTab("support");
-              sounds.playTap();
-            }}
-            className={`w-full text-left px-3 py-2.5 rounded-2xl font-bold text-sm transition ${
-              activeTab === "support"
-                ? "bg-sky-50 text-[#1cb0f6] font-black border border-sky-200"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
+          <Link
+            href="/help"
+            className="block w-full text-left px-3 py-2.5 rounded-2xl font-bold text-sm transition text-gray-700 hover:bg-gray-100"
           >
             Help Center
-          </button>
+          </Link>
         </div>
 
         {/* CARD 4: LOG OUT BUTTON (Matching Screenshot 1:1) */}

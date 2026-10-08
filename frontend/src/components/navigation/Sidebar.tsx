@@ -209,7 +209,7 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
 
                 {/* 3. Help */}
                 <Link
-                  href="/settings?tab=support"
+                  href="/help"
                   onClick={() => setIsMoreOpen(false)}
                   className="block w-full px-3.5 py-2.5 rounded-xl hover:bg-gray-100 transition font-black text-xs uppercase tracking-wider text-[#777777] hover:text-[#4b4b4b] text-left"
                 >
