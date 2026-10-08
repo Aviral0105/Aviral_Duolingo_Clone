@@ -208,15 +208,13 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
                 </Link>
 
                 {/* 3. Help */}
-                <button
-                  onClick={() => {
-                    setModalType("help");
-                    setIsMoreOpen(false);
-                  }}
+                <Link
+                  href="/settings?tab=support"
+                  onClick={() => setIsMoreOpen(false)}
                   className="block w-full px-3.5 py-2.5 rounded-xl hover:bg-gray-100 transition font-black text-xs uppercase tracking-wider text-[#777777] hover:text-[#4b4b4b] text-left"
                 >
                   HELP
-                </button>
+                </Link>
 
                 {/* 4. Log Out */}
                 <Link
