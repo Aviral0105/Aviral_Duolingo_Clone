@@ -164,17 +164,17 @@ export default function LearnPage() {
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <button
+                <Link
+                  href="/guidebook"
                   onClick={(e) => {
                     e.stopPropagation();
                     sounds.playTap();
-                    setIsGuidebookOpen(true);
                   }}
                   className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95 shadow-xs"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span>GUIDEBOOK</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>

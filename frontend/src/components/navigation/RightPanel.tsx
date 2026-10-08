@@ -91,6 +91,28 @@ export default function RightPanel() {
         </div>
       </div>
 
+      {/* 3. Google AI Certificate / Coursera Ad Card (Matching screenshot) */}
+      <div className="bg-[#242b35] text-white rounded-3xl p-5 shadow-xs relative overflow-hidden group select-none">
+        <h4 className="text-xl font-black leading-tight text-white mb-2">
+          New Google AI Certificate
+        </h4>
+        <div className="flex items-end justify-between gap-3 mt-3">
+          <p className="text-xs text-gray-300 font-bold leading-snug max-w-[190px]">
+            Turn daily tasks like research and writing into AI workflows that can save hours of work.
+          </p>
+          <div className="w-10 h-10 rounded-full bg-white text-gray-900 flex items-center justify-center font-black text-xl group-hover:translate-x-0.5 transition shadow-sm shrink-0">
+            ›
+          </div>
+        </div>
+        <div className="flex items-center justify-between text-[11px] text-gray-400 font-bold mt-4 pt-3 border-t border-gray-700/60">
+          <span className="flex items-center gap-1 cursor-pointer hover:text-gray-300">
+            ℹ Coursera
+          </span>
+          <Link href="/shop" className="text-[#1cb0f6] font-black uppercase tracking-wider hover:underline">
+            REMOVE ADS
+          </Link>
+        </div>
+      </div>
 
       {/* Footer Links */}
       <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-black text-gray-400 uppercase tracking-wider px-2">

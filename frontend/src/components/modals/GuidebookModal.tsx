@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { sounds } from "@/lib/sounds";
 
 interface GuidebookModalProps {
@@ -82,6 +83,17 @@ export default function GuidebookModal({ isOpen, onClose }: GuidebookModalProps)
             <div className="p-2 border-r border-t border-sky-200 font-black">है (hai)</div>
             <div className="p-2 border-t border-sky-200 font-bold">is</div>
           </div>
+        </div>
+
+        {/* View Full Guidebook Link */}
+        <div className="mt-4 pt-3 border-t border-gray-100">
+          <Link
+            href="/guidebook"
+            onClick={onClose}
+            className="w-full py-3 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white font-black text-xs uppercase tracking-wider block text-center hover:brightness-105 active:border-b-0 active:translate-y-1 transition"
+          >
+            VIEW FULL GUIDEBOOK
+          </Link>
         </div>
       </div>
     </div>

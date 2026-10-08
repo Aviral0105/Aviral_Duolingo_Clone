@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .seed import seed_database
-from .routes import users, path, lessons, leaderboard, shop, help, achievements
+from .routes import users, path, lessons, leaderboard, shop, help, achievements, guidebook
 
 # Initialize tables & seed database on startup
 Base.metadata.create_all(bind=engine)
@@ -31,6 +31,7 @@ app.include_router(leaderboard.router)
 app.include_router(shop.router)
 app.include_router(help.router)
 app.include_router(achievements.router)
+app.include_router(guidebook.router)
 
 @app.get("/")
 def root():

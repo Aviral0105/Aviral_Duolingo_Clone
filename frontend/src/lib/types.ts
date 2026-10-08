@@ -73,3 +73,52 @@ export interface LeaderboardResponse {
   time_remaining: string;
   entries: LeaderboardEntry[];
 }
+
+export interface KeyPhraseWord {
+  hi: string;
+  en: string;
+}
+
+export interface KeyPhrase {
+  id: number;
+  hi: string;
+  en: string;
+  audio_text?: string;
+  words?: KeyPhraseWord[];
+}
+
+export interface GrammarTipRule {
+  category?: string;
+  change?: string;
+  examples?: string;
+  type?: string;
+  rule?: string;
+  example?: string;
+}
+
+export interface GrammarTip {
+  title: string;
+  summary?: string;
+  explanation?: string;
+  rules?: GrammarTipRule[];
+  table?: any[];
+  examples?: any[];
+  notes?: string[];
+}
+
+export interface VocabularyWord {
+  category: string;
+  devanagari: string;
+  transliteration: string;
+  meaning: string;
+}
+
+export interface GuidebookData {
+  unit_id: number;
+  section_title: string;
+  unit_title: string;
+  description: string;
+  key_phrases: KeyPhrase[];
+  grammar_tips: GrammarTip[];
+  vocabulary: VocabularyWord[];
+}
