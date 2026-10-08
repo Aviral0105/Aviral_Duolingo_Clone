@@ -43,18 +43,20 @@ export default function WordBank({
         {audioText && (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => sounds.speak(audioText)}
-              className="w-12 h-12 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md hover:brightness-105 transition"
+              type="button"
+              onClick={() => sounds.speak(audioText, 0.9)}
+              className="w-12 h-12 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md hover:brightness-105 transition btn-3d-blue"
               title="Normal Speed"
             >
               <Volume2 className="w-6 h-6" />
             </button>
             <button
-              onClick={() => sounds.speak(audioText, 0.6)}
-              className="w-9 h-9 rounded-xl bg-sky-100 text-[#1cb0f6] flex items-center justify-center shrink-0 active:scale-95 border border-sky-300 hover:bg-sky-200 transition"
-              title="Slow Speed"
+              type="button"
+              onClick={() => sounds.speak(audioText, 0.5)}
+              className="w-11 h-11 rounded-2xl bg-[#e5f6fd] text-[#1cb0f6] border-2 border-[#84d8ff] flex items-center justify-center shrink-0 active:scale-95 hover:bg-[#d0effc] transition"
+              title="Slow Speed (Snail)"
             >
-              <Snail className="w-5 h-5" />
+              <Snail className="w-6 h-6 stroke-[2.2]" />
             </button>
           </div>
         )}
