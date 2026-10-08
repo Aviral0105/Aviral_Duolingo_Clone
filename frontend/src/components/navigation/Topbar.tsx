@@ -6,6 +6,7 @@ import { User } from "@/lib/types";
 import { ChevronRight, Plus, Lock, Zap, Sparkles, Dumbbell } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { refillHearts } from "@/lib/api";
+import StreakModal from "@/components/modals/StreakModal";
 
 interface TopbarProps {
   user: User;
@@ -20,6 +21,8 @@ export default function Topbar({
 }: TopbarProps) {
   const [activePopover, setActivePopover] = useState<"course" | "streak" | "gems" | "hearts" | null>(null);
   const [heartsCount, setHeartsCount] = useState(user.hearts);
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
+  const [streakModalTab, setStreakModalTab] = useState<"personal" | "friends">("personal");
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -194,13 +197,17 @@ export default function Topbar({
                     <p className="text-xs font-bold text-white/80">0 active Friend Streaks</p>
                   </div>
                 </div>
-                <Link
-                  href="/profile"
-                  onClick={() => setActivePopover(null)}
+                <button
+                  onClick={() => {
+                    sounds.playTap();
+                    setActivePopover(null);
+                    setStreakModalTab("friends");
+                    setIsStreakModalOpen(true);
+                  }}
                   className="px-3.5 py-1.5 rounded-xl bg-white text-[#ff9600] text-xs font-black uppercase tracking-wider hover:bg-orange-50 active:scale-95 transition shrink-0"
                 >
                   VIEW LIST
-                </Link>
+                </button>
               </div>
 
               {/* Streak Society Card */}
@@ -216,9 +223,14 @@ export default function Topbar({
                 </div>
               </div>
 
-              {/* View More Button */}
+              {/* View More Button (navigates to personal view of streak modal) */}
               <button
-                onClick={() => setActivePopover(null)}
+                onClick={() => {
+                  sounds.playTap();
+                  setActivePopover(null);
+                  setStreakModalTab("personal");
+                  setIsStreakModalOpen(true);
+                }}
                 className="w-full py-3 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 transition"
               >
                 VIEW MORE
@@ -381,6 +393,14 @@ export default function Topbar({
           )}
         </div>
       </div>
+
+      {/* Global Streak Modal (Supports Personal and Friends views) */}
+      <StreakModal
+        isOpen={isStreakModalOpen}
+        onClose={() => setIsStreakModalOpen(false)}
+        streak={user.streak}
+        initialTab={streakModalTab}
+      />
     </header>
   );
 }
