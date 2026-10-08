@@ -3,16 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Settings,
-  HelpCircle,
-  GraduationCap,
-  Sparkles,
-  ExternalLink,
-  LogOut,
-  X,
-} from "lucide-react";
+import { Home, X } from "lucide-react";
 
 interface SidebarProps {
   onOpenEnergy?: () => void;
@@ -155,7 +146,9 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
             <button
               onClick={() => setIsMoreOpen(!isMoreOpen)}
               className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
-                isSettingsActive || isMoreOpen
+                isMoreOpen
+                  ? "border-[#e5e5e5] bg-gray-100 text-[#4b4b4b]"
+                  : isSettingsActive
                   ? "border-purple-300 bg-purple-50 text-purple-700"
                   : "border-transparent text-gray-500 hover:bg-gray-100"
               }`}
@@ -164,72 +157,84 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
               <span>MORE</span>
             </button>
 
-            {/* Floating MORE Popover Card */}
+            {/* Floating MORE Popover Card (Matches authentic Duolingo web exactly) */}
             {isMoreOpen && (
-              <div className="absolute left-full bottom-0 ml-3 w-64 bg-white border-2 border-gray-200 rounded-3xl p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="space-y-1 text-gray-700 font-black text-xs uppercase tracking-wider">
-                  <Link
-                    href="/settings/account"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition"
-                  >
-                    <Settings className="w-5 h-5 text-gray-500" />
-                    <span>Settings</span>
-                  </Link>
+              <div className="absolute left-[calc(100%+12px)] bottom-0 w-[270px] bg-white border-2 border-[#e5e5e5] rounded-2xl p-2 shadow-[0_10px_25px_rgba(0,0,0,0.12)] z-50 animate-in fade-in zoom-in-95 duration-100 select-none">
+                {/* 1. Duolingo English Test */}
+                <a
+                  href="https://englishtest.duolingo.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMoreOpen(false)}
+                  className="flex items-center gap-3.5 px-3 py-3 rounded-xl hover:bg-gray-100 transition group text-left"
+                >
+                  {/* Authentic DET Green Rosette Badge */}
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 32 32" fill="none">
+                    <g fill="#58cc02">
+                      <circle cx="16" cy="16" r="11" />
+                      <circle cx="16" cy="5" r="4" />
+                      <circle cx="21.5" cy="6.5" r="4" />
+                      <circle cx="25.5" cy="10.5" r="4" />
+                      <circle cx="27" cy="16" r="4" />
+                      <circle cx="25.5" cy="21.5" r="4" />
+                      <circle cx="21.5" cy="25.5" r="4" />
+                      <circle cx="16" cy="27" r="4" />
+                      <circle cx="10.5" cy="25.5" r="4" />
+                      <circle cx="6.5" cy="21.5" r="4" />
+                      <circle cx="5" cy="16" r="4" />
+                      <circle cx="6.5" cy="10.5" r="4" />
+                      <circle cx="10.5" cy="6.5" r="4" />
+                    </g>
+                    {/* White Duo silhouette in center */}
+                    <path
+                      d="M16 9.5c-3.5 0-6 2.5-6 6 0 2 1 3.8 2.4 4.8.5.4 1.2.7 2 .9h3.2c.8-.2 1.5-.5 2-.9 1.4-1 2.4-2.8 2.4-4.8 0-3.5-2.5-6-6-6z"
+                      fill="white"
+                    />
+                    <circle cx="13.8" cy="14.8" r="1.3" fill="#58cc02" />
+                    <circle cx="18.2" cy="14.8" r="1.3" fill="#58cc02" />
+                    <path d="M16 16.2l-.9 1.8h1.8l-.9-1.8z" fill="#ff9600" />
+                  </svg>
+                  <span className="font-black text-xs uppercase tracking-wider text-[#4b4b4b] group-hover:text-black">
+                    DUOLINGO ENGLISH TEST
+                  </span>
+                </a>
 
-                  <button
-                    onClick={() => {
-                      setModalType("schools");
-                      setIsMoreOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                  >
-                    <GraduationCap className="w-5 h-5 text-sky-500" />
-                    <span>Schools</span>
-                  </button>
+                {/* Subtle Divider */}
+                <hr className="border-t-2 border-[#e5e5e5] my-1" />
 
-                  <button
-                    onClick={() => {
-                      setModalType("det");
-                      setIsMoreOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                  >
-                    <ExternalLink className="w-5 h-5 text-amber-500" />
-                    <span>Duolingo English Test</span>
-                  </button>
+                {/* 2. Settings */}
+                <Link
+                  href="/settings/account"
+                  onClick={() => setIsMoreOpen(false)}
+                  className="block w-full px-3.5 py-2.5 rounded-xl hover:bg-gray-100 transition font-black text-xs uppercase tracking-wider text-[#777777] hover:text-[#4b4b4b] text-left"
+                >
+                  SETTINGS
+                </Link>
 
-                  <button
-                    onClick={() => {
-                      setModalType("help");
-                      setIsMoreOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                  >
-                    <HelpCircle className="w-5 h-5 text-indigo-500" />
-                    <span>Help</span>
-                  </button>
+                {/* 3. Help */}
+                <button
+                  onClick={() => {
+                    setModalType("help");
+                    setIsMoreOpen(false);
+                  }}
+                  className="block w-full px-3.5 py-2.5 rounded-xl hover:bg-gray-100 transition font-black text-xs uppercase tracking-wider text-[#777777] hover:text-[#4b4b4b] text-left"
+                >
+                  HELP
+                </button>
 
-                  <Link
-                    href="/welcome"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 text-[#58cc02] transition"
-                  >
-                    <Sparkles className="w-5 h-5 text-[#58cc02]" />
-                    <span>Welcome / Home</span>
-                  </Link>
-
-                  <div className="border-t border-gray-100 my-1" />
-
-                  <Link
-                    href="/welcome"
-                    onClick={() => setIsMoreOpen(false)}
-                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 transition text-left"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Log out</span>
-                  </Link>
-                </div>
+                {/* 4. Log Out */}
+                <Link
+                  href="/welcome"
+                  onClick={() => {
+                    setIsMoreOpen(false);
+                    try {
+                      localStorage.clear();
+                    } catch {}
+                  }}
+                  className="block w-full px-3.5 py-2.5 rounded-xl hover:bg-gray-100 transition font-black text-xs uppercase tracking-wider text-[#777777] hover:text-red-500 text-left"
+                >
+                  LOG OUT
+                </Link>
               </div>
             )}
           </div>
