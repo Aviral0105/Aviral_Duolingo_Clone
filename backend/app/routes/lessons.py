@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from ..database import get_db
-from ..models import User, Lesson, Exercise, UserProgress
+from ..models import User, Lesson, Exercise, UserProgress, Unit
 from ..schemas import LessonDetailOut, LessonCompleteRequest, LessonCompleteResponse
 
 router = APIRouter(prefix="/api/lessons", tags=["Lessons"])
