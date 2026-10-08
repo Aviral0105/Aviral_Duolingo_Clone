@@ -16,13 +16,12 @@ def seed_database(force: bool = False):
         db.query(User).delete()
         db.commit()
     elif db.query(Course).first():
-        # If already seeded with Hindi, skip
-        existing_course = db.query(Course).first()
-        if existing_course and existing_course.code == "hi":
+        # Check if full database is already seeded (e.g. >= 10 lessons)
+        total_exercises = db.query(Exercise).count()
+        if total_exercises >= 30:
             db.close()
             return
         else:
-            # Upgrade legacy Spanish/French seed to Hindi
             db.query(UserProgress).delete()
             db.query(Exercise).delete()
             db.query(Lesson).delete()
@@ -31,11 +30,11 @@ def seed_database(force: bool = False):
             db.query(User).delete()
             db.commit()
 
-    # 1. Create Sample Learner (Aviral Jain with active streak and progress)
+    # 1. Create Sample Learner: Aviral Jain
     user = User(
         id=1,
         username="Aviral Jain",
-        handle="@AVIRALJAIN213584",
+        handle="@AVIRALJAIN51695",
         avatar="🧑",
         xp=265,
         streak=3,
@@ -75,7 +74,7 @@ def seed_database(force: bool = False):
         order_index=2,
         section_title="SECTION 1, UNIT 2",
         title="Greet people & describe things",
-        description="Learn everyday greetings, polite expressions, colors, and numbers"
+        description="Learn everyday greetings, polite expressions, colors, and questions"
     )
     db.add(unit2)
 
@@ -120,9 +119,10 @@ def seed_database(force: bool = False):
         db.add(l)
     db.commit()
 
-    # 5. Exercises for Lesson 1 (Matches user's Hindi 1 video recording with all 5 types)
-    exercises_lesson_1 = [
-        # 1. MULTIPLE CHOICE
+    all_exercises = [
+        # ==========================================
+        # LESSON 1 (Basics 1)
+        # ==========================================
         Exercise(
             lesson_id=1,
             order_index=1,
@@ -140,7 +140,6 @@ def seed_database(force: bool = False):
             },
             correct_answer="आदमी"
         ),
-        # 2. WORD BANK (Translate to English)
         Exercise(
             lesson_id=1,
             order_index=2,
@@ -154,7 +153,6 @@ def seed_database(force: bool = False):
             },
             correct_answer="That woman"
         ),
-        # 3. WORD BANK (Tap what you hear with Snail audio)
         Exercise(
             lesson_id=1,
             order_index=3,
@@ -168,7 +166,6 @@ def seed_database(force: bool = False):
             },
             correct_answer="एक सेब"
         ),
-        # 4. MATCH PAIRS
         Exercise(
             lesson_id=1,
             order_index=4,
@@ -187,7 +184,6 @@ def seed_database(force: bool = False):
             },
             correct_answer="ALL_MATCHED"
         ),
-        # 5. FILL IN THE BLANK
         Exercise(
             lesson_id=1,
             order_index=5,
@@ -202,7 +198,6 @@ def seed_database(force: bool = False):
             },
             correct_answer="सेब"
         ),
-        # 6. TYPE THE ANSWER
         Exercise(
             lesson_id=1,
             order_index=6,
@@ -215,14 +210,11 @@ def seed_database(force: bool = False):
                 "hint": "This is water"
             },
             correct_answer="This is water"
-        )
-    ]
+        ),
 
-    for ex in exercises_lesson_1:
-        db.add(ex)
-
-    # Exercises for Lesson 2 (Basics 2)
-    exercises_lesson_2 = [
+        # ==========================================
+        # LESSON 2 (Basics 2)
+        # ==========================================
         Exercise(
             lesson_id=2,
             order_index=1,
@@ -296,14 +288,11 @@ def seed_database(force: bool = False):
                 "hint": "The boy drinks milk"
             },
             correct_answer="The boy drinks milk"
-        )
-    ]
+        ),
 
-    for ex in exercises_lesson_2:
-        db.add(ex)
-
-    # Exercises for Lesson 3 (Phrases 1)
-    exercises_lesson_3 = [
+        # ==========================================
+        # LESSON 3 (Phrases 1)
+        # ==========================================
         Exercise(
             lesson_id=3,
             order_index=1,
@@ -333,17 +322,500 @@ def seed_database(force: bool = False):
                 ]
             },
             correct_answer="ALL_MATCHED"
-        )
+        ),
+        Exercise(
+            lesson_id=3,
+            order_index=3,
+            type="FILL_BLANK",
+            category_tag="FILL BLANK",
+            prompt="Complete the phrase",
+            audio_text="हाँ, धन्यवाद",
+            content={
+                "prefix": "हाँ,",
+                "suffix": "।",
+                "options": ["धन्यवाद", "लड़का", "किताब"]
+            },
+            correct_answer="धन्यवाद"
+        ),
+
+        # ==========================================
+        # LESSON 4 (Unit 1 Milestone - Review & Chest)
+        # ==========================================
+        Exercise(
+            lesson_id=4,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "Apple"?',
+            audio_text="सेब",
+            content={
+                "target_word": "सेब",
+                "options": [
+                    {"id": "opt1", "text": "सेब", "icon": "🍎"},
+                    {"id": "opt2", "text": "पानी", "icon": "💧"},
+                    {"id": "opt3", "text": "किताब", "icon": "📖"}
+                ]
+            },
+            correct_answer="सेब"
+        ),
+        Exercise(
+            lesson_id=4,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="TRANSLATE",
+            prompt="Translate this sentence",
+            audio_text="यह एक औरत है",
+            content={
+                "sentence_to_translate": "यह एक औरत है",
+                "word_pool": ["This", "is", "a", "woman", "man", "water"]
+            },
+            correct_answer="This is a woman"
+        ),
+        Exercise(
+            lesson_id=4,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "सेब", "en": "Apple"},
+                    {"hi": "औरत", "en": "Woman"},
+                    {"hi": "पानी", "en": "Water"},
+                    {"hi": "किताब", "en": "Book"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=4,
+            order_index=4,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="यह किताब है",
+            content={
+                "sentence_to_translate": "यह किताब है",
+                "hint": "This is a book"
+            },
+            correct_answer="This is a book"
+        ),
+
+        # ==========================================
+        # LESSON 5 (Unit 2: Greetings)
+        # ==========================================
+        Exercise(
+            lesson_id=5,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "Hello"?',
+            audio_text="नमस्ते",
+            content={
+                "target_word": "नमस्ते",
+                "options": [
+                    {"id": "opt1", "text": "नमस्ते", "icon": "🙏"},
+                    {"id": "opt2", "text": "अलविदा", "icon": "👋"},
+                    {"id": "opt3", "text": "धन्यवाद", "icon": "✨"}
+                ]
+            },
+            correct_answer="नमस्ते"
+        ),
+        Exercise(
+            lesson_id=5,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="LISTEN",
+            prompt="Tap what you hear",
+            audio_text="आप कैसे हैं",
+            content={
+                "sentence_to_translate": "आप कैसे हैं",
+                "word_pool": ["आप", "कैसे", "हैं", "नमस्ते", "हाँ", "मैं"]
+            },
+            correct_answer="आप कैसे हैं"
+        ),
+        Exercise(
+            lesson_id=5,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "नमस्ते", "en": "Hello"},
+                    {"hi": "अलविदा", "en": "Goodbye"},
+                    {"hi": "शुभ प्रभात", "en": "Good morning"},
+                    {"hi": "शुभ रात्रि", "en": "Good night"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=5,
+            order_index=4,
+            type="FILL_BLANK",
+            category_tag="FILL BLANK",
+            prompt="Complete the greeting",
+            audio_text="आप कैसे हैं",
+            content={
+                "prefix": "आप",
+                "suffix": "हैं?",
+                "options": ["कैसे", "पानी", "किताब"]
+            },
+            correct_answer="कैसे"
+        ),
+        Exercise(
+            lesson_id=5,
+            order_index=5,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="मैं ठीक हूँ",
+            content={
+                "sentence_to_translate": "मैं ठीक हूँ",
+                "hint": "I am fine"
+            },
+            correct_answer="I am fine"
+        ),
+
+        # ==========================================
+        # LESSON 6 (Unit 2: Questions)
+        # ==========================================
+        Exercise(
+            lesson_id=6,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "What"?',
+            audio_text="क्या",
+            content={
+                "target_word": "क्या",
+                "options": [
+                    {"id": "opt1", "text": "क्या", "icon": "❓"},
+                    {"id": "opt2", "text": "कहाँ", "icon": "📍"},
+                    {"id": "opt3", "text": "कौन", "icon": "👤"}
+                ]
+            },
+            correct_answer="क्या"
+        ),
+        Exercise(
+            lesson_id=6,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="TRANSLATE",
+            prompt="Translate this sentence",
+            audio_text="आपका नाम क्या है",
+            content={
+                "sentence_to_translate": "What is your name?",
+                "word_pool": ["आपका", "नाम", "क्या", "है", "मेरा", "लड़का"]
+            },
+            correct_answer="आपका नाम क्या है"
+        ),
+        Exercise(
+            lesson_id=6,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "क्या", "en": "What"},
+                    {"hi": "कहाँ", "en": "Where"},
+                    {"hi": "कौन", "en": "Who"},
+                    {"hi": "क्यों", "en": "Why"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=6,
+            order_index=4,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="वह कौन है",
+            content={
+                "sentence_to_translate": "वह कौन है",
+                "hint": "Who is that"
+            },
+            correct_answer="Who is that"
+        ),
+
+        # ==========================================
+        # LESSON 7 (Unit 2 Milestone - Chest / Review)
+        # ==========================================
+        Exercise(
+            lesson_id=7,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="TRANSLATE",
+            prompt='Select the correct meaning',
+            audio_text="धन्यवाद",
+            content={
+                "speech_bubble": "धन्यवाद",
+                "options": [
+                    {"id": "opt1", "text": "Thank you"},
+                    {"id": "opt2", "text": "Hello"},
+                    {"id": "opt3", "text": "Goodbye"}
+                ]
+            },
+            correct_answer="Thank you"
+        ),
+        Exercise(
+            lesson_id=7,
+            order_index=2,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "धन्यवाद", "en": "Thank you"},
+                    {"hi": "माफ़ कीजिए", "en": "Excuse me"},
+                    {"hi": "हाँ", "en": "Yes"},
+                    {"hi": "नहीं", "en": "No"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=7,
+            order_index=3,
+            type="WORD_BANK",
+            category_tag="LISTEN",
+            prompt="Tap what you hear",
+            audio_text="बहुत धन्यवाद",
+            content={
+                "sentence_to_translate": "बहुत धन्यवाद",
+                "word_pool": ["बहुत", "धन्यवाद", "नमस्ते", "हाँ", "नहीं"]
+            },
+            correct_answer="बहुत धन्यवाद"
+        ),
+
+        # ==========================================
+        # LESSON 8 (Unit 3: Family 1)
+        # ==========================================
+        Exercise(
+            lesson_id=8,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "Mother"?',
+            audio_text="माँ",
+            content={
+                "target_word": "माँ",
+                "options": [
+                    {"id": "opt1", "text": "माँ", "icon": "👩‍👧"},
+                    {"id": "opt2", "text": "पिता", "icon": "👨‍👧"},
+                    {"id": "opt3", "text": "भाई", "icon": "👦"}
+                ]
+            },
+            correct_answer="माँ"
+        ),
+        Exercise(
+            lesson_id=8,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="TRANSLATE",
+            prompt="Translate this sentence",
+            audio_text="यह मेरी माँ है",
+            content={
+                "sentence_to_translate": "This is my mother",
+                "word_pool": ["यह", "मेरी", "माँ", "है", "पिता", "भाई"]
+            },
+            correct_answer="यह मेरी माँ है"
+        ),
+        Exercise(
+            lesson_id=8,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "माँ", "en": "Mother"},
+                    {"hi": "पिता", "en": "Father"},
+                    {"hi": "भाई", "en": "Brother"},
+                    {"hi": "बहन", "en": "Sister"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=8,
+            order_index=4,
+            type="FILL_BLANK",
+            category_tag="FILL BLANK",
+            prompt="Complete the sentence",
+            audio_text="वह मेरा भाई है",
+            content={
+                "prefix": "वह मेरा",
+                "suffix": "है।",
+                "options": ["भाई", "चाय", "किताब"]
+            },
+            correct_answer="भाई"
+        ),
+        Exercise(
+            lesson_id=8,
+            order_index=5,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="यह मेरी बहन है",
+            content={
+                "sentence_to_translate": "यह मेरी बहन है",
+                "hint": "This is my sister"
+            },
+            correct_answer="This is my sister"
+        ),
+
+        # ==========================================
+        # LESSON 9 (Unit 3: Food & Drinks)
+        # ==========================================
+        Exercise(
+            lesson_id=9,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "Tea"?',
+            audio_text="चाय",
+            content={
+                "target_word": "चाय",
+                "options": [
+                    {"id": "opt1", "text": "चाय", "icon": "🍵"},
+                    {"id": "opt2", "text": "पानी", "icon": "🥛"},
+                    {"id": "opt3", "text": "सेब", "icon": "🍎"}
+                ]
+            },
+            correct_answer="चाय"
+        ),
+        Exercise(
+            lesson_id=9,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="TRANSLATE",
+            prompt="Translate this sentence",
+            audio_text="मैं चाय पीता हूँ",
+            content={
+                "sentence_to_translate": "I drink tea",
+                "word_pool": ["मैं", "चाय", "पीता", "हूँ", "पानी", "दूध"]
+            },
+            correct_answer="मैं चाय पीता हूँ"
+        ),
+        Exercise(
+            lesson_id=9,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "चाय", "en": "Tea"},
+                    {"hi": "पानी", "en": "Water"},
+                    {"hi": "रोटी", "en": "Bread"},
+                    {"hi": "चावल", "en": "Rice"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=9,
+            order_index=4,
+            type="FILL_BLANK",
+            category_tag="FILL BLANK",
+            prompt="Complete the sentence",
+            audio_text="चाय गर्म है",
+            content={
+                "prefix": "चाय",
+                "suffix": "है।",
+                "options": ["गर्म", "लड़का", "औरत"]
+            },
+            correct_answer="गर्म"
+        ),
+        Exercise(
+            lesson_id=9,
+            order_index=5,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="गर्म चाय और ठंडा पानी",
+            content={
+                "sentence_to_translate": "गर्म चाय और ठंडा पानी",
+                "hint": "Hot tea and cold water"
+            },
+            correct_answer="Hot tea and cold water"
+        ),
+
+        # ==========================================
+        # LESSON 10 (Unit 3: Section 1 Trophy - Grand Finale)
+        # ==========================================
+        Exercise(
+            lesson_id=10,
+            order_index=1,
+            type="MULTIPLE_CHOICE",
+            category_tag="NEW WORD",
+            prompt='Which one of these is "India"?',
+            audio_text="भारत",
+            content={
+                "target_word": "भारत",
+                "options": [
+                    {"id": "opt1", "text": "भारत", "icon": "🇮🇳"},
+                    {"id": "opt2", "text": "घर", "icon": "🏠"},
+                    {"id": "opt3", "text": "किताब", "icon": "📖"}
+                ]
+            },
+            correct_answer="भारत"
+        ),
+        Exercise(
+            lesson_id=10,
+            order_index=2,
+            type="WORD_BANK",
+            category_tag="LISTEN",
+            prompt="Tap what you hear",
+            audio_text="नमस्ते भारत",
+            content={
+                "sentence_to_translate": "नमस्ते भारत",
+                "word_pool": ["नमस्ते", "भारत", "मेरा", "देश", "है", "सुंदर"]
+            },
+            correct_answer="नमस्ते भारत"
+        ),
+        Exercise(
+            lesson_id=10,
+            order_index=3,
+            type="MATCH_PAIRS",
+            category_tag="PAIR MATCH",
+            prompt="Tap the matching pairs",
+            content={
+                "pairs": [
+                    {"hi": "नमस्ते", "en": "Hello"},
+                    {"hi": "भारत", "en": "India"},
+                    {"hi": "दोस्त", "en": "Friend"},
+                    {"hi": "खुश", "en": "Happy"}
+                ]
+            },
+            correct_answer="ALL_MATCHED"
+        ),
+        Exercise(
+            lesson_id=10,
+            order_index=4,
+            type="TYPE_ANSWER",
+            category_tag="WRITE",
+            prompt="Write this in English",
+            audio_text="मुझे हिन्दी पसंद है",
+            content={
+                "sentence_to_translate": "मुझे हिन्दी पसंद है",
+                "hint": "I love Hindi"
+            },
+            correct_answer="I love Hindi"
+        ),
     ]
 
-    for ex in exercises_lesson_3:
+    for ex in all_exercises:
         db.add(ex)
 
     db.commit()
 
     # 6. Sample Learner Progress:
     # Learner has completed Lesson 1 with 1 crown!
-    # Lesson 2 is next available, while Unit 2 and 3 provide upcoming progression.
     prog1 = UserProgress(
         user_id=user.id,
         lesson_id=1,
@@ -354,4 +826,4 @@ def seed_database(force: bool = False):
     db.add(prog1)
     db.commit()
     db.close()
-    print("Database successfully seeded with Hindi 1 course, units, varied exercises, and sample learner progress!")
+    print("Database successfully seeded with ALL 10 lessons across 3 Units with 42 varied exercises!")
