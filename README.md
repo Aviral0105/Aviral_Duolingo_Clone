@@ -1,6 +1,6 @@
 # Duolingo Web Application Clone (Fullstack)
 
-A modern, responsive, pixel-perfect clone of the Duolingo web application built with **Next.js (TypeScript)**, **FastAPI (Python)**, and **SQLite**.
+A modern, responsive, pixel-perfect clone of the Duolingo web application built with **Next.js (TypeScript)**, **FastAPI (Python)**, and **SQLite**, specifically designed around the authentic **Hindi 1** curriculum.
 
 ---
 
@@ -9,27 +9,46 @@ A modern, responsive, pixel-perfect clone of the Duolingo web application built 
 1. **Exact 1:1 UI/UX Replication**:
    - Signature Duolingo rubbery 3D buttons (`border-b-4 active:border-b-0`).
    - Undulating S-curve skill path with Section banners, progress nodes, and mascot flourishes.
-   - Interactive popovers: **Course Switcher & Score roadmap (5 to 70)**, **October 2026 Streak Calendar**, **Shop / Super Duolingo**, **Energy & Hearts sheet**, and **Unit 1 Guidebook**.
-   - Mascot interactions (Duo the owl and Lily character).
+   - Interactive popovers: **Course Switcher**, **Streak Calendar**, **Shop / Super Duolingo**, **Energy & Hearts modal**, and **Unit Guidebooks**.
+   - Mascot interactions (Duo the owl and Vikram character avatars).
+   - High-resolution SVG Indian Flag placed directly to the left of the Streak Flame (`🔥`).
+   - Duolingo logo navigating directly to the `/learn` hub from any section.
+   - Authentic **MORE** dropdown matching desktop Duolingo (`DUOLINGO ENGLISH TEST` with green rosette icon, divider, `SETTINGS`, `HELP`, `LOG OUT`).
 
 2. **Full Lesson Player Engine (The 5 Mandatory Exercise Types)**:
-   - **Multiple Choice**: 2x2 image option cards with audio speech buttons.
-   - **Word Bank / Tap to Translate**: Assembled sentence slot with interactive token pool.
-   - **Match Pairs**: Real-time matching between foreign and English vocabulary.
+   - **Multiple Choice**: 3-card horizontal grid with character illustrations and keyboard shortcuts `1`, `2`, `3`; stacked wide pills with character speech bubbles.
+   - **Word Bank / Tap to Translate**: Sentence translation with interactive word tokens, token bank, and instant "Use keyboard" toggle.
+   - **Tap What You Hear**: Dual-speed Web Speech API Hindi pronunciation with normal speed (`0.9x`) and **Snail slow speech** (`0.5x`).
+   - **Matching Pairs (Strictly Opposing Columns)**:
+     - **Column 1 (Left)**: English vocabulary shuffled independently with shortcut badges `1`, `2`, `3`, `4`.
+     - **Column 2 (Right)**: Hindi vocabulary shuffled independently with shortcut badges `5`, `6`, `7`, `8`.
+     - **Opposite-Side Guarantee**: Pairs are strictly isolated across columns and never appear on the same side.
    - **Fill in the Blank**: Sentence gap with selectable options.
-   - **Type the Answer**: Free-text input with auto-focus and Enter key submission.
+   - **Type the Answer**: Free-text Hindi/English translation with auto-focus and Enter key submission.
 
-3. **Signature Feedback Drawer & Audio Feedback**:
-   - **Correct Answer**: Slide-up light green drawer (`#d7ffb8`), green checkmark, and synthesized high chime.
+3. **Duolingo Spaced Mistake Remediation Loop**:
+   - Incorrect answers are retained in a dedicated mistake queue.
+   - Once all standard questions are answered, Duo the Owl peeks up waving with an interstitial speech bubble: *"Let's review the exercises you missed!"*.
+   - Remediation questions display the amber `🔁 PREVIOUS MISTAKE` badge.
+   - A lesson **cannot finish** until every missed question has been successfully answered and cleared.
+
+4. **Live Dynamic Progress Bar**:
+   - Real-time progress bar tracking correctly answered questions.
+   - Animates smoothly forward upon each verified correct answer.
+   - Reaches 100% only after all exercises (including remediation) are cleared.
+
+5. **Signature Feedback Drawer & Audio Feedback**:
+   - **Correct Answer**: Slide-up light green drawer (`#d7ffb8`), green checkmark, praise titles, and synthesized high chime.
    - **Wrong Answer**: Slide-up light red drawer (`#ffdfe0`), red cross, solution text, and error thud.
-   - **Victory Screen**: Multi-color confetti explosion (`canvas-confetti`), victory fanfare, XP gained tally, and streak increment.
+   - **Victory Screen**: Multi-color confetti explosion (`canvas-confetti`), victory fanfare, XP gained tally, streak counter, and **"Review Lesson"** + **"Continue"** actions.
 
-4. **Gamification & Progress Tracking**:
-   - Hearts system (lose a heart on wrong answer; out-of-hearts modal).
-   - Hearts refill via **Practice Hub** (`/practice`) and free demo refills.
-   - Daily Streak counter and October calendar.
-   - Silver League Leaderboard (`/leaderboard`) with ranked learners.
-   - Learner Profile (`/profile`) with 4 overview stat pills (🔥 Streak, 🇫🇷 Level, 🏆 League, ⚡ Total XP) and achievements.
+6. **Gamification & Progress Tracking**:
+   - Hearts system (lose a heart on wrong answer; out-of-hearts refill modal).
+   - Daily Streak counter and calendar.
+   - Silver League Leaderboard (`/leaderboard`) featuring ranked learners.
+   - Letters Hub (`/characters`) with Hindi vowels & consonants with live audio.
+   - Daily Quests (`/quests`) with claimable reward chests and badges.
+   - Learner Profile (`/profile`) with avatar customize modal, achievements, and stats.
 
 ---
 
@@ -43,7 +62,8 @@ graph TD
         Modals["Modals (Course, Streak Calendar, Energy, Shop, Guidebook)"]
         Engine["Lesson Engine (/lesson/[id])"]
         Exercises["5 Exercise Renderers (Choice, WordBank, Pairs, Blank, Type)"]
-        Feedback["Feedback Drawer & Audio Synthesizer"]
+        Remediation["Mistake Remediation Loop & Interstitials"]
+        Feedback["Feedback Drawer & Web Audio Synthesizer"]
     end
 
     subgraph Server ["Backend: Python FastAPI"]
@@ -79,7 +99,7 @@ erDiagram
     USER {
         int id PK
         string username "Aviral Jain"
-        string handle "@AVIRALJAIN213584"
+        string handle "@AVIRALJAIN51695"
         int xp "265"
         int streak "3"
         int hearts "5"
@@ -90,16 +110,16 @@ erDiagram
 
     COURSE {
         int id PK
-        string code "fr"
-        string title "French"
-        string flag "🇫🇷"
+        string code "hi"
+        string title "Hindi"
+        string flag "🇮🇳"
     }
 
     UNIT {
         int id PK
         int course_id FK
         string section_title "SECTION 1, UNIT 1"
-        string title "Order at a café"
+        string title "Form basic sentences"
         int order_index
     }
 
@@ -116,7 +136,7 @@ erDiagram
         int id PK
         int lesson_id FK
         string type "MULTIPLE_CHOICE | WORD_BANK | MATCH_PAIRS | FILL_BLANK | TYPE_ANSWER"
-        string category_tag "NEW WORD"
+        string category_tag "NEW WORD | PAIR MATCH | TRANSLATE | LISTEN | WRITE"
         string prompt
         string audio_text
         json content
@@ -140,26 +160,29 @@ erDiagram
 - **Node.js** (v18 or higher)
 - **Python** (v3.10 or higher)
 
-### 2. Run Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 3. Run Backend (Optional / Connected Mode)
+### 2. Run Backend
 ```bash
 cd backend
 pip install -r requirements.txt
 python run.py
 ```
-Backend API will be running on [http://localhost:8000](http://localhost:8000). Interactive Swagger docs available at [http://localhost:8000/docs](http://localhost:8000/docs).
+- API Server: `http://localhost:8000`
+- Interactive Swagger Docs: `http://localhost:8000/docs`
+
+### 3. Run Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+- Web Application: `http://localhost:3000`
 
 ---
 
-## 🧠 Interview Defense & Technical Decisions
-
-- **Why Next.js App Router?** Provides clean component separation, automatic route prefetching, zero runtime overhead for static routes, and smooth client transitions.
-- **Why Web Audio API for sound effects?** Zero network dependency, zero audio latency, and works offline without downloading heavy MP3 assets.
-- **Why normalized SQLite schema with JSON exercise content?** Standard pattern in educational quiz engines: relational structure preserves rigid constraints for units/lessons/users, while polymorphic JSON content allows varied exercise types without schema fragmentation.
+## 🧪 Production Build Verification
+To verify the full production build:
+```bash
+cd frontend
+npm run build
+```
+Builds all 16 static and dynamic routes cleanly with 0 TypeScript/ESLint errors.
