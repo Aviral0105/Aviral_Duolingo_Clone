@@ -97,3 +97,37 @@ class LeaderboardResponse(BaseModel):
     league_name: str
     time_remaining: str
     entries: List[LeaderboardEntry]
+
+# ----------------- User Mistakes & Settings Schemas -----------------
+class UserMistakeCreate(BaseModel):
+    exercise_id: int
+
+class UserMistakeOut(BaseModel):
+    id: int
+    exercise_id: int
+    mistake_count: int
+    last_mistake_at: datetime
+    resolved: bool
+
+    class Config:
+        from_attributes = True
+
+class UserSettingsOut(BaseModel):
+    sound_effects: bool
+    animations: bool
+    motivational_messages: bool
+    listening_exercises: bool
+    speaking_exercises: bool
+    dark_mode: str
+
+    class Config:
+        from_attributes = True
+
+class UserSettingsUpdate(BaseModel):
+    sound_effects: Optional[bool] = None
+    animations: Optional[bool] = None
+    motivational_messages: Optional[bool] = None
+    listening_exercises: Optional[bool] = None
+    speaking_exercises: Optional[bool] = None
+    dark_mode: Optional[str] = None
+

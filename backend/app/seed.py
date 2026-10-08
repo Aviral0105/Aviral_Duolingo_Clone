@@ -1,27 +1,24 @@
 from datetime import datetime
 from .database import SessionLocal, engine, Base
-from .models import User, Course, Unit, Lesson, Exercise, UserProgress
+from .models import User, Course, Unit, Lesson, Exercise, UserProgress, UserMistake, UserSetting
 
 def seed_database(force: bool = False):
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 
-    # If force, clear old data first
+    # If force, drop and recreate all tables
     if force:
-        db.query(UserProgress).delete()
-        db.query(Exercise).delete()
-        db.query(Lesson).delete()
-        db.query(Unit).delete()
-        db.query(Course).delete()
-        db.query(User).delete()
-        db.commit()
+        Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
     elif db.query(Course).first():
-        # Check if full database is already seeded (e.g. >= 10 lessons)
+        # Check if full database is already seeded (e.g. >= 10 lessons and settings exist)
         total_exercises = db.query(Exercise).count()
-        if total_exercises >= 30:
+        if total_exercises >= 30 and db.query(UserSetting).first():
             db.close()
             return
         else:
+            db.query(UserMistake).delete()
+            db.query(UserSetting).delete()
             db.query(UserProgress).delete()
             db.query(Exercise).delete()
             db.query(Lesson).delete()
@@ -45,6 +42,18 @@ def seed_database(force: bool = False):
         last_active_date=datetime.utcnow()
     )
     db.add(user)
+
+    # 1b. Create User Settings
+    settings = UserSetting(
+        user_id=1,
+        sound_effects=True,
+        animations=True,
+        motivational_messages=True,
+        listening_exercises=True,
+        speaking_exercises=True,
+        dark_mode="system"
+    )
+    db.add(settings)
 
     # 2. Create Language Course: Hindi 1 (हिन्दी)
     course = Course(
