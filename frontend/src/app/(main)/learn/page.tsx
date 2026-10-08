@@ -190,6 +190,7 @@ export default function LearnPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* RIGHT STICKY COLUMN: BRONZE LEAGUE & DAILY QUESTS */}
       <RightPanel />
