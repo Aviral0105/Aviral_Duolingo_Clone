@@ -25,7 +25,7 @@ export default function RightPanel() {
         </Link>
       </div>
 
-      {/* 1. Bronze League Card (Exact Match to User Screenshot) */}
+      {/* 1. Bronze League Card */}
       <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-black text-gray-800">Bronze League</h3>
@@ -38,7 +38,6 @@ export default function RightPanel() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Bronze Shield with Feather */}
           <div className="w-14 h-16 rounded-2xl bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-amber-500 flex items-center justify-center text-3xl shadow-xs shrink-0">
             🪶
           </div>
@@ -55,7 +54,7 @@ export default function RightPanel() {
         </div>
       </div>
 
-      {/* 2. Daily Quests Card (Exact Match to User Screenshot) */}
+      {/* 2. Daily Quests Card */}
       <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-black text-gray-800">Daily Quests</h3>
@@ -68,7 +67,6 @@ export default function RightPanel() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Yellow Lightning Bolt */}
           <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
             <Zap className="w-7 h-7 text-[#ffc800] fill-[#ffc800]" />
           </div>
@@ -77,7 +75,6 @@ export default function RightPanel() {
             <div className="text-sm font-black text-gray-800 mb-1.5">
               Earn 10 XP
             </div>
-            {/* Gold Progress Bar */}
             <div className="relative w-full bg-gray-200 h-6 rounded-full overflow-hidden flex items-center">
               <div
                 className="bg-[#ffc800] h-full rounded-full transition-all flex items-center justify-center font-black text-xs text-amber-900"
@@ -88,11 +85,30 @@ export default function RightPanel() {
             </div>
           </div>
 
-          {/* Treasure Chest */}
           <span className="text-3xl shrink-0 cursor-pointer active:scale-95 transition" title="Chest">
             📦
           </span>
         </div>
+      </div>
+
+      {/* 3. Practice Hub Card */}
+      <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-base font-black text-gray-800">Practice Hub</h3>
+          <span className="text-[10px] font-black uppercase bg-sky-50 text-[#1cb0f6] px-2 py-0.5 rounded-md">
+            +20 XP
+          </span>
+        </div>
+        <p className="text-xs font-bold text-gray-400 mb-3">
+          Sharpen your Hindi listening, review mistakes, and earn hearts!
+        </p>
+        <Link
+          href="/practice"
+          className="w-full py-2.5 rounded-2xl border-2 border-[#84d8ff] bg-[#ddf4ff] text-[#1899d6] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition"
+        >
+          <span>🏋️‍♂️</span>
+          <span>Start Practice</span>
+        </Link>
       </div>
 
       {/* Footer Links */}

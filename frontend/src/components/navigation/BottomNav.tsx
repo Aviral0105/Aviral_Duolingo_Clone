@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Target, Sparkles, User, MoreHorizontal } from "lucide-react";
+import { Home, Trophy, Target, Sparkles, User, Dumbbell } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -13,11 +13,11 @@ export default function BottomNav() {
   const tabs = [
     { href: "/learn", type: "home", label: "Learn" },
     { href: "/characters", type: "letters", label: "Letters" },
+    { href: "/practice", type: "practice", label: "Practice" },
     { href: "/leaderboard", type: "ranks", label: "Ranks" },
     { href: "/quests", type: "quests", label: "Quests" },
     { href: "/shop", type: "shop", label: "Shop" },
     { href: "/profile", type: "profile", label: "Profile" },
-    { href: "/settings/account", type: "more", label: "More" },
   ];
 
   const renderIcon = (type: string) => {
@@ -26,6 +26,8 @@ export default function BottomNav() {
         return <Home className="w-5 h-5" />;
       case "letters":
         return <span className="font-serif font-black text-base leading-none">क</span>;
+      case "practice":
+        return <span className="text-lg leading-none">🏋️‍♂️</span>;
       case "ranks":
         return <Trophy className="w-5 h-5" />;
       case "quests":
@@ -34,8 +36,6 @@ export default function BottomNav() {
         return <Sparkles className="w-5 h-5" />;
       case "profile":
         return <User className="w-5 h-5" />;
-      case "more":
-        return <MoreHorizontal className="w-5 h-5" />;
       default:
         return <Home className="w-5 h-5" />;
     }
@@ -46,8 +46,7 @@ export default function BottomNav() {
       {tabs.map((tab) => {
         const isActive =
           pathname === tab.href ||
-          (tab.href === "/characters" && pathname === "/letters") ||
-          (tab.href === "/settings/account" && pathname.startsWith("/settings"));
+          (tab.href === "/characters" && pathname === "/letters");
         return (
           <Link
             key={tab.href}
