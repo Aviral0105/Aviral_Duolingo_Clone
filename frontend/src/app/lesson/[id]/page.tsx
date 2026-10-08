@@ -18,6 +18,8 @@ import MatchPairs from "@/components/lesson/exercises/MatchPairs";
 import FillBlank from "@/components/lesson/exercises/FillBlank";
 import TypeAnswer from "@/components/lesson/exercises/TypeAnswer";
 
+export const dynamic = "force-dynamic";
+
 const PRAISE_LIST = ["Awesome!", "Nice job!", "Excellent!", "Nicely done!", "Great!"];
 
 function LessonContent() {
@@ -85,6 +87,7 @@ function LessonContent() {
   }, [lessonId]);
 
   const initExercise = (ex: any) => {
+    if (!ex) return;
     setStatus("idle");
     setSelectedOptionId(null);
     setSelectedBlank(null);
@@ -93,7 +96,7 @@ function LessonContent() {
 
     if (ex.type === "WORD_BANK") {
       setSelectedWords([]);
-      setAvailableWords([...(ex.content.word_pool || [])]);
+      setAvailableWords([...(ex.content?.word_pool || [])]);
     }
   };
 
@@ -108,7 +111,18 @@ function LessonContent() {
     );
   }
 
-  const currentExercise = exerciseQueue[currentIndex];
+  const currentExercise = exerciseQueue[currentIndex] || exerciseQueue[0];
+
+  if (!currentExercise) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <span className="text-6xl animate-bounce">🦉</span>
+          <p className="font-black text-gray-500 mt-3 text-sm">Loading exercises...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Dynamic live progress: tracks unique original exercises completed
   const totalLessonExercises = lesson.exercises.length || 1;
@@ -136,6 +150,7 @@ function LessonContent() {
 
   // Check Answer Handler
   const handleCheck = () => {
+    if (!currentExercise) return;
     let isCorrect = false;
 
     if (currentExercise.type === "MULTIPLE_CHOICE") {
