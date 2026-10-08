@@ -6,11 +6,13 @@ import { X } from "lucide-react";
 interface LockedModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
+  lessonTitle?: string;
   isSuper?: boolean;
 }
 
-export default function LockedModal({ isOpen, onClose, title, isSuper }: LockedModalProps) {
+export default function LockedModal({ isOpen, onClose, title, lessonTitle, isSuper }: LockedModalProps) {
+  const displayTitle = lessonTitle || title || "Locked Lesson";
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -32,7 +34,7 @@ export default function LockedModal({ isOpen, onClose, title, isSuper }: LockedM
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-black text-gray-800">{title}</h3>
+            <h3 className="text-xl font-black text-gray-800">{displayTitle}</h3>
             {isSuper && (
               <span className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-black px-2 py-0.5 rounded-md uppercase">
                 Super

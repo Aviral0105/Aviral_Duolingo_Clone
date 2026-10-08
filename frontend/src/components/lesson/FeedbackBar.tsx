@@ -23,6 +23,7 @@ export default function FeedbackBar({
   onContinue,
 }: FeedbackBarProps) {
   const [showReportModal, setShowReportModal] = useState(false);
+  const [reportSubmitted, setReportSubmitted] = useState(false);
   const [feedbackNote, setFeedbackNote] = useState<string | null>(null);
 
   const handleDifficultyFeedback = (type: "easy" | "hard") => {

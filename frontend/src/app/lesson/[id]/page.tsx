@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { RotateCcw } from "lucide-react";
 import { fetchLesson, completeLesson, fetchUser, refillHearts } from "@/lib/api";
 import { LessonDetail, User, Exercise } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
@@ -26,8 +27,11 @@ function LessonContent() {
 
   const [lesson, setLesson] = useState<LessonDetail | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  
-  // Queue of exercises (including remediation for mistakes)
+
+  // Set of original exercise IDs correctly answered
+  const [completedExerciseIds, setCompletedExerciseIds] = useState<Set<number>>(new Set());
+
+  // Active queue of exercises and remediation pool
   const [exerciseQueue, setExerciseQueue] = useState<Exercise[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [missedExercises, setMissedExercises] = useState<Exercise[]>([]);
@@ -39,7 +43,7 @@ function LessonContent() {
   const [mistakesCount, setMistakesCount] = useState(0);
   const [status, setStatus] = useState<"idle" | "correct" | "incorrect">("idle");
   const [praiseText, setPraiseText] = useState("Nice job!");
-  
+
   // Interstitial States
   const [showEncouragement, setShowEncouragement] = useState(false);
   const [showReviewIntro, setShowReviewIntro] = useState(false);
@@ -93,10 +97,12 @@ function LessonContent() {
   }
 
   const currentExercise = exerciseQueue[currentIndex];
-  // Calculate live progress that advances dynamically the moment answer is verified correct
+
+  // Dynamic live progress: tracks unique original exercises completed
+  const totalLessonExercises = lesson.exercises.length || 1;
   const progressPercentage = Math.min(
     100,
-    ((currentIndex + (status === "correct" ? 1 : 0)) / exerciseQueue.length) * 100
+    (completedExerciseIds.size / totalLessonExercises) * 100
   );
 
   // Input selection detection
@@ -131,7 +137,13 @@ function LessonContent() {
       setPraiseText(PRAISE_LIST[Math.floor(Math.random() * PRAISE_LIST.length)]);
       setConsecutiveStreak((s) => s + 1);
 
-      // Trigger Duo encouraging peek at 4 in a row
+      // Advance live progress bar right away!
+      setCompletedExerciseIds((prev) => new Set(prev).add(currentExercise.id));
+
+      // Remove from missed list if answered correctly during review
+      setMissedExercises((prev) => prev.filter((e) => e.id !== currentExercise.id));
+
+      // Duo encouraging peek after 4 correct in a row
       if (consecutiveStreak === 3 && !showEncouragement) {
         setTimeout(() => setShowEncouragement(true), 300);
       }
@@ -141,10 +153,13 @@ function LessonContent() {
       setConsecutiveStreak(0);
       setMistakesCount((m) => m + 1);
 
-      // Queue exercise for Mistake Review
-      if (!missedExercises.some((e) => e.id === currentExercise.id)) {
-        setMissedExercises((prev) => [...prev, currentExercise]);
-      }
+      // Queue exercise for Mistake Remediation
+      setMissedExercises((prev) => {
+        if (!prev.some((e) => e.id === currentExercise.id)) {
+          return [...prev, currentExercise];
+        }
+        return prev;
+      });
 
       if (!user.is_super) {
         const nextHearts = Math.max(0, hearts - 1);
@@ -164,33 +179,34 @@ function LessonContent() {
       return;
     }
 
-    // If review intro active, dismiss and start review
-    if (showReviewIntro) {
-      setShowReviewIntro(false);
-      setIsReviewPhase(true);
-      setExerciseQueue(missedExercises);
-      setMissedExercises([]);
-      setCurrentIndex(0);
-      initExercise(missedExercises[0]);
-      return;
-    }
-
-    // Advance to next exercise
+    // Advance to next exercise in current queue
     if (currentIndex + 1 < exerciseQueue.length) {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       initExercise(exerciseQueue[nextIndex]);
-    } else {
-      // Reached end of current queue!
-      if (missedExercises.length > 0 && !isReviewPhase) {
-        // Trigger Mistake Review sequence
-        setShowReviewIntro(true);
-      } else {
-        // Fully complete lesson!
-        await completeLesson(lessonId, hearts, mistakesCount);
-        setIsFinished(true);
-      }
+      return;
     }
+
+    // Reached the end of current exercise queue!
+    if (missedExercises.length > 0) {
+      // Must review missed exercises before finishing!
+      setShowReviewIntro(true);
+      return;
+    }
+
+    // If no missed exercises remaining, the lesson is fully complete!
+    await completeLesson(lessonId, hearts, mistakesCount);
+    setIsFinished(true);
+  };
+
+  // Start Review Handler (when user clicks Continue on review intro screen)
+  const handleStartReview = () => {
+    setShowReviewIntro(false);
+    setIsReviewPhase(true);
+    const queueToReview = [...missedExercises];
+    setExerciseQueue(queueToReview);
+    setCurrentIndex(0);
+    initExercise(queueToReview[0]);
   };
 
   const handleRefillHearts = async () => {
@@ -201,7 +217,7 @@ function LessonContent() {
 
   if (isFinished) {
     const accuracy = Math.round(
-      ((lesson.exercises.length) / (lesson.exercises.length + mistakesCount)) * 100
+      (lesson.exercises.length / (lesson.exercises.length + mistakesCount)) * 100
     );
     return (
       <LessonComplete
@@ -209,6 +225,70 @@ function LessonContent() {
         streak={user.streak}
         accuracy={Math.max(65, accuracy)}
       />
+    );
+  }
+
+  // REVIEW INTRO SCREEN (Matching Frame 5 / 40s from User Video)
+  if (showReviewIntro) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col justify-between">
+        <LessonHeader
+          progressPercentage={progressPercentage}
+          hearts={hearts}
+          isSuper={user.is_super}
+          onQuitLesson={() => router.push("/learn")}
+        />
+
+        {/* Central area with Duo peeking and speech bubble */}
+        <main className="flex-1 flex flex-col justify-end px-4 pb-12 max-w-2xl mx-auto w-full">
+          <div className="flex items-end gap-4 animate-slide-up">
+            {/* Duo owl illustration waving */}
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 shrink-0">
+              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                {/* Duo Green Body */}
+                <ellipse cx="48" cy="62" rx="36" ry="34" fill="#58cc02" />
+                {/* Duo Tummy */}
+                <ellipse cx="48" cy="74" rx="24" ry="18" fill="#46a302" />
+                {/* Left Eye */}
+                <ellipse cx="34" cy="50" rx="14" ry="14" fill="#ffffff" />
+                <ellipse cx="36" cy="50" rx="7" ry="7" fill="#4b4b4b" />
+                <ellipse cx="38" cy="48" rx="2.5" ry="2.5" fill="#ffffff" />
+                {/* Right Eye */}
+                <ellipse cx="62" cy="50" rx="14" ry="14" fill="#ffffff" />
+                <ellipse cx="60" cy="50" rx="7" ry="7" fill="#4b4b4b" />
+                <ellipse cx="62" cy="48" rx="2.5" ry="2.5" fill="#ffffff" />
+                {/* Beak */}
+                <polygon points="48,54 42,66 54,66" fill="#ff9600" />
+                {/* Waving Wing */}
+                <path
+                  d="M74 52 C88 40, 94 28, 88 22 C82 18, 72 32, 68 44 Z"
+                  fill="#58cc02"
+                />
+              </svg>
+            </div>
+
+            {/* Speech bubble */}
+            <div className="relative bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-5 font-bold text-gray-700 text-base sm:text-lg shadow-sm mb-6 max-w-sm">
+              Let&apos;s review the exercises you missed!
+              {/* Bubble Arrow */}
+              <div className="absolute -left-2.5 bottom-5 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-10 border-r-gray-200" />
+              <div className="absolute -left-2 bottom-5 w-0 h-0 border-t-7 border-t-transparent border-b-7 border-b-transparent border-r-9 border-r-white" />
+            </div>
+          </div>
+        </main>
+
+        {/* Footer with CONTINUE button matching Duolingo Frame 5 */}
+        <footer className="border-t-2 border-[#e5e5e5] bg-white p-4 sm:p-5">
+          <div className="max-w-3xl mx-auto flex justify-end">
+            <button
+              onClick={handleStartReview}
+              className="w-full sm:w-44 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green"
+            >
+              Continue
+            </button>
+          </div>
+        </footer>
+      </div>
     );
   }
 
@@ -233,11 +313,11 @@ function LessonContent() {
 
       {/* Main Exercise Area */}
       <main className="flex-1 flex flex-col justify-center px-4 py-6 max-w-2xl mx-auto w-full pb-32">
-        {/* Yellow PREVIOUS MISTAKE Badge from Video */}
+        {/* PREVIOUS MISTAKE Badge (matching Frame 44s / 50s from Video) */}
         {isReviewPhase && (
-          <div className="flex items-center gap-1.5 text-amber-600 font-black text-xs uppercase tracking-wider mb-2">
-            <span>🔁</span>
-            <span>Previous Mistake</span>
+          <div className="flex items-center gap-2 text-[#e5a000] font-black text-xs uppercase tracking-wider mb-4 animate-fade-in">
+            <RotateCcw className="w-4 h-4 stroke-[3]" />
+            <span>PREVIOUS MISTAKE</span>
           </div>
         )}
 
@@ -246,6 +326,12 @@ function LessonContent() {
             prompt={currentExercise.prompt}
             categoryTag={currentExercise.category_tag}
             audioText={currentExercise.audio_text}
+            speechBubbleText={
+              currentExercise.content.speech_bubble ||
+              (currentExercise.content.target_word && !currentExercise.audio_text
+                ? currentExercise.content.target_word
+                : undefined)
+            }
             options={currentExercise.content.options}
             selectedId={selectedOptionId}
             onSelect={(id) => setSelectedOptionId(id)}
@@ -307,7 +393,7 @@ function LessonContent() {
         )}
       </main>
 
-      {/* Duo Peeking Encouragement Interstitial from Video */}
+      {/* Duo Peeking Encouragement Interstitial */}
       {showEncouragement && (
         <div className="fixed inset-0 bg-black/40 z-50 flex flex-col justify-end">
           <div className="bg-white p-6 rounded-t-3xl border-t-2 border-gray-200 flex flex-col items-center text-center animate-slide-up">
@@ -317,24 +403,6 @@ function LessonContent() {
             </div>
             <button
               onClick={() => setShowEncouragement(false)}
-              className="w-full max-w-sm py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Mistake Review Intro Interstitial from Video */}
-      {showReviewIntro && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex flex-col justify-end">
-          <div className="bg-white p-6 rounded-t-3xl border-t-2 border-gray-200 flex flex-col items-center text-center animate-slide-up">
-            <span className="text-7xl -mb-2">🦉</span>
-            <div className="bg-amber-50 p-4 rounded-2xl border-2 border-amber-300 font-black text-amber-900 text-sm my-3">
-              Let&apos;s review the exercises you missed!
-            </div>
-            <button
-              onClick={handleContinue}
               className="w-full max-w-sm py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green"
             >
               Continue
