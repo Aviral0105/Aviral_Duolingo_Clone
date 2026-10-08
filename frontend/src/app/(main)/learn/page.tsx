@@ -45,18 +45,45 @@ export default function LearnPage() {
 
       {/* 2. S-Curve Path Nodes */}
       <div className="flex flex-col items-center gap-7 w-full relative pb-16">
-        {/* Node 1: Active Star Node */}
+        {/* Node 1: Active Star Node with Concentric Outer Progress Ring */}
         <div className="relative flex flex-col items-center">
-          <div className="absolute -top-10 bg-[#58cc02] text-white text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md uppercase tracking-wider animate-bounce">
+          <div className="absolute -top-10 bg-[#58cc02] text-white text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md uppercase tracking-wider animate-bounce z-20">
             Start
             <div className="w-2 h-2 bg-[#58cc02] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2"></div>
           </div>
-          <button
-            onClick={() => setIsStartOpen(true)}
-            className="w-24 h-24 rounded-full btn-3d-green flex items-center justify-center shadow-lg active:scale-95 transition"
-          >
-            <span className="text-4xl">⭐</span>
-          </button>
+
+          {/* Concentric Progress Ring */}
+          <div className="relative w-28 h-28 flex items-center justify-center">
+            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="44"
+                fill="none"
+                stroke="#e5e5e5"
+                strokeWidth="7"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="44"
+                fill="none"
+                stroke="#58cc02"
+                strokeWidth="7"
+                strokeDasharray="276.46"
+                strokeDashoffset="110.58"
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            </svg>
+
+            <button
+              onClick={() => setIsStartOpen(true)}
+              className="relative w-20 h-20 rounded-full btn-3d-green flex items-center justify-center shadow-md active:scale-95 transition z-10"
+            >
+              <span className="text-3xl">⭐</span>
+            </button>
+          </div>
         </div>
 
         {/* Node 2: Shifted Right (Locked Star) */}

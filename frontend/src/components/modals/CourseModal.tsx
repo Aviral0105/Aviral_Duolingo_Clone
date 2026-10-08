@@ -1,5 +1,7 @@
 "use client";
 
+import { Plus } from "lucide-react";
+
 interface CourseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -9,23 +11,29 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-      <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 max-h-[85vh] overflow-y-auto animate-slide-up">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[85vh] overflow-y-auto animate-slide-up shadow-2xl cursor-default"
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-          <h2 className="text-xl font-black text-gray-800">Courses</h2>
+          <h2 className="text-xl font-black text-gray-800">My Courses</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 font-black text-xl p-1">
             ✕
           </button>
         </div>
 
-        {/* Current Active Course */}
+        {/* Current Active Course Card */}
         <div className="my-4 p-4 border-2 border-blue-400 bg-blue-50/50 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">🇫🇷</span>
+            <span className="text-4xl">🇮🇳</span>
             <div>
-              <h3 className="font-black text-gray-800 text-lg">French</h3>
-              <p className="text-xs font-bold text-gray-500">Your French Score is 5</p>
+              <h3 className="font-black text-gray-800 text-lg">Hindi</h3>
+              <p className="text-xs font-bold text-gray-500">Your Hindi Score is 5</p>
             </div>
           </div>
           <span className="bg-[#1cb0f6] text-white text-xs font-black px-3 py-1.5 rounded-xl uppercase tracking-wider">
@@ -33,11 +41,30 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
           </span>
         </div>
 
-        {/* Score Progress Milestones */}
+        {/* Add Course Button */}
+        <button
+          onClick={() => alert("Add Course dialog: Select from 30+ languages including Spanish, French, German...")}
+          className="w-full mb-5 py-3.5 rounded-2xl border-2 border-dashed border-gray-300 hover:border-[#1cb0f6] bg-gray-50 hover:bg-sky-50/50 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-wider text-gray-600 hover:text-[#1cb0f6] transition active:scale-95"
+        >
+          <Plus className="w-4 h-4 stroke-[3]" />
+          <span>Add a new course</span>
+        </button>
+
+        {/* Score Progress Milestones with Add Section Button */}
         <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 mb-4">
-          <div className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">
-            Score Progress
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-black text-gray-500 uppercase tracking-wider">
+              Score Progress & Sections
+            </span>
+            <button
+              onClick={() => alert("Section Added: Section 2 unlocked!")}
+              className="flex items-center gap-1 text-[11px] font-black text-[#1cb0f6] bg-sky-100 hover:bg-sky-200 px-2.5 py-1 rounded-lg transition active:scale-95"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+              <span>Add section</span>
+            </button>
           </div>
+
           <div className="space-y-3 text-xs font-bold">
             <div className="flex items-center gap-2 text-blue-600">
               <span className="text-sm">⭐ 5:</span>
@@ -58,7 +85,7 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
           </div>
         </div>
 
-        {/* Other Courses */}
+        {/* Other Courses Carousel */}
         <div className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">
           New Courses
         </div>
