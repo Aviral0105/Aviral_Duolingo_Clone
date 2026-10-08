@@ -1,0 +1,44 @@
+﻿frame_000s.jpg: NEW WORD Which one of these is "Man"? SKIP CHECK
+frame_003s.jpg: Write this in English This Julia SKIP CHECK
+frame_006s.jpg: x 2 INA ROW Write this in English This Nice job! zz TOO EASY man TOO D FFICULT Julia q REPORT CONTINUE
+frame_009s.jpg: x 2 INA ROW Write this in English This Nice job! zz TOO EASY man TOO DIFFICULT Julia OYEPORT CONTINUE
+frame_012s.jpg: x 2 IN A ROW Write this in English This Nice job! zz TOO EASY x The audio does not sound correct. The dictionary hints on hover are wrong. The audio is missing. The dictionary hints on hover are missing. My answer should not be accepted. Something else went wrong. SUBMIT CONTINUE TOO DIFFICULT q REPORT
+frame_015s.jpg: x 2 IN A ROW Write this in English x This Nice job! zz TOO EASY The audio does not sound correct. The dictionary hints on hover are wrong. The audio is missing. The dictionary hints on hover are missing. My answer should not be accepted. Something else went wrong. SUBMIT CONTINUE TOO DIFFICULT q REPORT
+frame_018s.jpg: x 2 INA ROW Write this in English This Nice job! zz TOO EASY man TOO DIFFICULT CONTINUE
+frame_021s.jpg: x Select the correct meaning man 1 2 3 SKIP CHECK
+frame_024s.jpg: x Select the correct meaning man 1 2 3 Correct solution: x zz TOO EASY TOO DIFFICULT CONTINUE q REPORT
+frame_027s.jpg: x Select the correct meaning man 1 2 3 Correåt solution: x zz TOO EASY TOO DIFFICULT CONTINUE q REPORT
+frame_030s.jpg: x 9 NEW WORD Write this in English apple SKIP That voman CHECK
+frame_033s.jpg: x 9 NEW WORD Write this in English woman apple That Correct solution: That woman zz TOO EASY TOO DIFFICULT CONTINUE q REPORT
+frame_036s.jpg: Which one of these is "Woman"? SKIP CHECK
+frame_039s.jpg: x 9 NEW WORD Write this in English and SKIP Apple man book CHECK
+frame_042s.jpg: x 9 NEW WORD Write this in English Apple SKIP and man 800k CHECK
+frame_045s.jpg: x Select the correct meaning woman 1 2 3 CHECK
+frame_048s.jpg: x Select the correct meaning woman 1 2 3 SKIP CHECK
+frame_051s.jpg: SeLWtiteåhisinEngEshing Man and CHECK
+frame_054s.jpg: 4 IN A ROW x Write this in English Man Nicely done! zz TOO EASY TOO DIFFICULT and q REPORT CONTINUE
+frame_057s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_060s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_063s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_066s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_069s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_072s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CFECK
+frame_075s.jpg: Your hard work is paying off! CONTINUE
+frame_078s.jpg: Your hard work is paying off! +NTINUE
+frame_081s.jpg: x 9 NEW WORD Write this in English Raj SKIP and That Neha CHECK
+frame_084s.jpg: x Tap what you hear CHYK
+frame_087s.jpg: x Tap what you hear CAN'T LISTEN NOW USE KEYBOARD CHECK
+frame_090s.jpg: x 7 IN A ROW Tap what you hear Awesome! Meaning: This is Julia. -CONTINUE zz TOO EASY TOO DIFFICULT q REPORT
+frame_093s.jpg: 8 INA ROW x Write this in English Woman Great job! zz TOO EASY Peter q REPORT CONTINU TOO DIFFICULT
+frame_096s.jpg: Let's review the exercises you missed! CONTINUE
+frame_099s.jpg: x PREVIOUS MISTAKE Select the correct meaning man 1 2 3 SKIP CHECK
+frame_102s.jpg: PREVIOUS MISTAKE Select the correct meaning man SKIP
+frame_105s.jpg: 9 IN A ROW x PREVIOUS MISTAKE Select the correct meaning 1 2 3 Nice job! zz TOO EASY man TOO DIFFICULT CONTINUE q REPORT
+frame_108s.jpg: x PREVIOUS MISTAKE Write this in English That SKIP woman apple CHECK
+frame_111s.jpg: 10 IN A ROW x PREVIOUS MISTAKE Write this in English That Nicely done! w man apple q REPORT CONTINUE zz TOO EASY TOO DIFFICULT
+frame_114s.jpg: x PREVIOUS MISTAKE Write this in English That woman apple
+frame_117s.jpg: .00 Lesson Complete! TOTAL XP REVIEW LESSON GREAT! CONTINUE
+frame_120s.jpg: Day 2 of your streak starts tomorrow! F Sa su w Tip: Practice tomorrow to prevent your streak from resetting! REVIEW LESSON CONTINUE
+frame_123s.jpg: duolingo LEARN LETTERS LEADERBOARDS QUESTS SHOP PROFILE MORE 5 01 e SECTION 1, UNITI Form basic sentences START GUIDEBOOK SUPER Try Super for free No ads, personalized practice, and unlimited Legendary! START MY FREE MONTH Unlock Leaderboards! Complete 1 more lesson to start competing Daily Quests Earn 10 XP 10 / 10 VIEW ALL
+frame_126s.jpg: Bootcamp CFA Convo AI zac; at-emot Vat emat«s J ep PDF x 23 x Brave Free Google Chrome Hot • de WhatsApp Web QGlS40.W Antigrav- D Hacker ank Virtual ox A c •ral o von Co DSA piler p ate Zinda i ; C arm R 4.42 SWI-Pr 0 Discord Deskto GitHub Desktop NS3 OhéDtive - Personal Postman Agen Postma TeraBöx Smart rowser A IRA JAIN MSB Control Panel Fintech Fina. Recording toolbar Fingerprint_ ai_final_ppt WizTree Five nt n Ine Met...
+frame_129s.jpg: duolingo LEARN LETTERS LEADERBOARDS QUESTS SHOP PROFILE MORE 5 01 e SECTION 1, UNITI Form basic sentences START GUIDEBOOK SUPER Try Super for free No ads, personalized practice, and unlimited Legendary! START MY FREE MONTH Unlock Leaderboards! Complete 1 more lesson to start competing Daily Quests Earn 10 XP 10 / 10 VIEW ALL

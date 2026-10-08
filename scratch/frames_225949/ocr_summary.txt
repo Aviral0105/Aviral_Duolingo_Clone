@@ -1,0 +1,23 @@
+﻿frame_000s.jpg: duolingo.com/register C, duolingo Spanish 42M learners Japanese 17.9M learners I want to Learn... French 22.7M learners German 15.9M learners ctbss Math SITE LANGUAGE: ENGLISH v English 19.8M learners o Hindi 13.6M learners
+frame_003s.jpg: duolingo.com/register C, duolingo Spanish 42M learners O Japanese 17.9M learners I want to Learn... French 22.7M learners German 15.9M learners Chess Math SITE LANGUAGE: ENGLISH v English 19.8M learners o Hindi 13.6M learners
+frame_006s.jpg: duolingo.com/register C, duolingo I want to Learn... SITE LANGUAGE: ENGLISH v
+frame_009s.jpg: duolingo.com/welcome
+frame_012s.jpg: duolingo.com/welcome LOADING...
+frame_015s.jpg: duolingo.com/welcome Hi there! I'm Duo! CONTINUE
+frame_018s.jpg: duolingo.com/welcome CONTINLÄ
+frame_021s.jpg: duolingo.com/welcome?welcomeStep=hdyhau How did you hear about Duolingo? Friends/family Facebook/lnstagram Google Search TikTok O Airtel Brawl Stars News/article/blog COWNUE
+frame_024s.jpg: duolingo.com/welcome?welcomeStep=hdyhau How did you hear about Duolingo? Friends/family Facebook/lnstagram Google Search TikTok O Airtel Brawl Stars News/article/blog CONTINUE
+frame_027s.jpg: duolingo.com/welcome?welcomeStep=learningReason Why are you learning Hindi? Connect with people Spend time productively Boost my career Other Support my education Prepare for travel Just for fun CONTINUE
+frame_030s.jpg: duolingo.com/welcome?welcomeStep=learningReason Let's unlock new opportunities for you! Connect with people Spend time productively Boost my career Other Support my education Prepare for travel Just for fun CONTINUE
+frame_033s.jpg: duolingo.com/welcome?welcomeStep=proficiency How much Hindi do you know COWINUE
+frame_036s.jpg: duolingo.com/welcome?welcomeStep=proficiency Wow, that's great! I know some common words I can have basic conversations I can talk about various topics I can discuss most topics in detail CONTINUE
+frame_039s.jpg: Here's what you can achieve! Converse with confidence Stress-free speaking and listening exercises Build a large vocabulary Common words and practical phrases Develop a learning hebit Smart reminders, fun challenges, and more CONTINUE
+frame_042s.jpg: Here's what you can achieve! Converse with confidence Stress-free speaking and listening exercises Build a large vocabulary Common words and practical phrases Develop a learning habit Smart reminders, fun challenges, and more CONTINUE
+frame_045s.jpg: duolingo.com/welcome?welcomeStep=dailyGoal That's 50 words in your first week! 5 min / day 10 min / day 15 min / day 20 min / day Casual Regular Serious Intense CONTINUE
+frame_048s.jpg: mer I'll remind you to practice so it becomes a habit! www.duolingo.com wants to A Show notifications BLOCK x ALLOW CONTINUE
+frame_051s.jpg: duolingo.com/welcome?welcomeStep=choosePath CONTINUE
+frame_054s.jpg: duolingo.com/welcome?welcomeStep=choosePath Now let's find the best place to start! 1 Start from scratch Take the easiest lesson of the Hindi course Find my level Let Duo recommend where you should start learning CONTINUE
+frame_057s.jpg: duolingo.com/welcome?welcomeStep=choosePath It can be hard to stay motivated... CONTINUE
+frame_060s.jpg: duolingo.com/welcome?welcomeStep=choosePath ...so Duolingo is designed to be fun like a game! CONTINUE
+frame_063s.jpg: duolingo.com/lesson LOADING... More Americans are learning a language on Duolingo than in the U.S. public school system.
+frame_066s.jpg: duolingo.com/lesson NEW WORD Which one of these is "Book"? oo SKIP CHECK
