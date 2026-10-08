@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { RotateCcw } from "lucide-react";
 import { fetchLesson, completeLesson, fetchUser, refillHearts, recordMistake, resolveMistake } from "@/lib/api";
@@ -59,6 +59,16 @@ function LessonContent() {
   const [pairsMatched, setPairsMatched] = useState(false);
   const [selectedBlank, setSelectedBlank] = useState<string | null>(null);
   const [typedAnswer, setTypedAnswer] = useState("");
+
+  // Keyboard handler lives in a ref so the listener can be registered BEFORE any early return.
+  // (Calling useEffect after the "Loading lesson..." early return breaks the Rules of Hooks and
+  // crashes the page with "Rendered more hooks than during the previous render".)
+  const keyHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => keyHandlerRef.current?.(e);
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -282,25 +292,20 @@ function LessonContent() {
   };
 
   // Authentic Duolingo Keyboard Navigation: Enter to Check, Enter to Continue
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        if (showReviewIntro) {
-          e.preventDefault();
-          handleStartReview();
-        } else if (status === "idle" && hasSelection) {
-          e.preventDefault();
-          handleCheck();
-        } else if (status === "correct" || status === "incorrect") {
-          e.preventDefault();
-          handleContinue();
-        }
+  keyHandlerRef.current = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (showReviewIntro) {
+        e.preventDefault();
+        handleStartReview();
+      } else if (status === "idle" && hasSelection) {
+        e.preventDefault();
+        handleCheck();
+      } else if (status === "correct" || status === "incorrect") {
+        e.preventDefault();
+        handleContinue();
       }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [status, hasSelection, showReviewIntro, currentIndex, exerciseQueue, missedExercises]);
+    }
+  };
 
   if (isFinished) {
     const accuracy = Math.round(
