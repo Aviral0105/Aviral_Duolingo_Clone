@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #4b4b4b;
+}
+
+body {
+  background-color: #f7f7f7;
+  color: #4b4b4b;
+  font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+}
+
+/* Duolingo 3D Button Physics */
+.btn-3d-green {
+  background-color: #58cc02;
+  border-bottom: 4px solid #46a302;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-green:hover {
+  background-color: #61e002;
+}
+.btn-3d-green:active {
+  border-bottom-width: 0px;
+  transform: translateY(4px);
+}
+
+.btn-3d-blue {
+  background-color: #1cb0f6;
+  border-bottom: 4px solid #1899d6;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-blue:hover {
+  background-color: #2ec1ff;
+}
+.btn-3d-blue:active {
+  border-bottom-width: 0px;
+  transform: translateY(4px);
+}
+
+.btn-3d-red {
+  background-color: #ff4b4b;
+  border-bottom: 4px solid #ea2b2b;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-red:active {
+  border-bottom-width: 0px;
+  transform: translateY(4px);
+}
+
+.btn-3d-white {
+  background-color: #ffffff;
+  border: 2px solid #e5e5e5;
+  border-bottom: 4px solid #e5e5e5;
+  color: #4b4b4b;
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-white:hover {
+  background-color: #f7f7f7;
+}
+.btn-3d-white:active {
+  border-bottom-width: 2px;
+  transform: translateY(2px);
+}
+.btn-3d-white.selected {
+  background-color: #ddf4ff;
+  border-color: #84d8ff;
+  border-bottom-color: #1cb0f6;
+  color: #1899d6;
+}
+
+.btn-3d-gray {
+  background-color: #e5e5e5;
+  border-bottom: 4px solid #afafaf;
+  color: #afafaf;
+  cursor: not-allowed;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -1,0 +1,43 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from ..database import get_db
+from ..models import User
+from ..schemas import LeaderboardResponse, LeaderboardEntry
+
+router = APIRouter(prefix="/api/leaderboard", tags=["Leaderboard"])
+
+@router.get("", response_model=LeaderboardResponse)
+def get_leaderboard(db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == 1).first()
+    user_xp = user.xp if user else 265
+
+    # Seeded learners for Silver League
+    seeded_players = [
+        {"username": "Elena_G", "avatar": "👧", "xp": 410, "is_current_user": False},
+        {"username": "Marco_Dev", "avatar": "👨‍💻", "xp": 340, "is_current_user": False},
+        {"username": "Aviral Jain", "avatar": "🧑", "xp": user_xp, "is_current_user": True},
+        {"username": "Carlos99", "avatar": "🧔", "xp": 220, "is_current_user": False},
+        {"username": "Sophie_Paris", "avatar": "👩", "xp": 180, "is_current_user": False},
+        {"username": "Kenji_Tokyo", "avatar": "🥷", "xp": 140, "is_current_user": False},
+        {"username": "Maria_L", "avatar": "👩‍🦰", "xp": 95, "is_current_user": False},
+    ]
+
+    # Sort descending by XP
+    sorted_players = sorted(seeded_players, key=lambda x: x["xp"], reverse=True)
+
+    entries = [
+        LeaderboardEntry(
+            rank=idx + 1,
+            username=p["username"],
+            avatar=p["avatar"],
+            xp=p["xp"],
+            is_current_user=p["is_current_user"]
+        )
+        for idx, p in enumerate(sorted_players)
+    ]
+
+    return {
+        "league_name": "Silver League",
+        "time_remaining": "2 DAYS",
+        "entries": entries
+    }

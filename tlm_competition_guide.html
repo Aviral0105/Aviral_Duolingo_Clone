@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>National Science TLM Competition Blueprint</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+  body {
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: #222;
+    line-height: 1.5;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+  }
+  h1, h2, h3, h4 {
+    color: #0d3b66;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 22pt;
+    border-bottom: 3px solid #0d3b66;
+    padding-bottom: 6pt;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  h2 {
+    font-size: 15pt;
+    border-bottom: 1.5px solid #00a896;
+    padding-bottom: 3pt;
+    color: #028090;
+    margin-top: 18pt;
+  }
+  h3 {
+    font-size: 12pt;
+    color: #05668d;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+  }
+  .header-box {
+    background: linear-gradient(135deg, #0d3b66, #028090);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .header-box h1 {
+    color: white;
+    border-bottom: 2px solid #f0f3f4;
+    margin: 0 0 8px 0;
+    font-size: 20pt;
+  }
+  .header-box p {
+    margin: 4px 0;
+    font-size: 10pt;
+    opacity: 0.95;
+  }
+  .tag-badge {
+    display: inline-block;
+    background: #f4d35e;
+    color: #0d3b66;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 8.5pt;
+    margin-right: 6px;
+    text-transform: uppercase;
+  }
+  .project-card {
+    border: 1px solid #dce1e3;
+    border-left: 5px solid #028090;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    background: #ffffff;
+    page-break-inside: avoid;
+  }
+  .project-title {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #0d3b66;
+    margin-top: 0;
+    margin-bottom: 6pt;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 9pt;
+  }
+  .meta-item strong {
+    color: #05668d;
+    display: block;
+    font-size: 8pt;
+    text-transform: uppercase;
+  }
+  .section-label {
+    font-weight: 700;
+    color: #0d3b66;
+    margin-top: 8pt;
+    margin-bottom: 2pt;
+    font-size: 10pt;
+  }
+  ul, ol {
+    margin-top: 4pt;
+    margin-bottom: 8pt;
+    padding-left: 20pt;
+  }
+  li {
+    margin-bottom: 3pt;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14pt 0;
+    font-size: 9pt;
+  }
+  table, th, td {
+    border: 1px solid #c8d1d3;
+  }
+  th {
+    background: #0d3b66;
+    color: white;
+    padding: 8px 6px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 6px 6px;
+    vertical-align: middle;
+  }
+  tr:nth-child(even) {
+    background-color: #f7fafc;
+  }
+  .highlight-row {
+    background-color: #e6f7f5 !important;
+    font-weight: bold;
+  }
+  .playbook-box {
+    background: #fbfcfe;
+    border: 1px solid #b5d5d5;
+    border-left: 6px solid #e76f51;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-top: 15pt;
+    page-break-before: always;
+  }
+  .qna-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+  .qna-box strong {
+    color: #c0392b;
+    display: block;
+    margin-bottom: 2pt;
+    font-size: 9.5pt;
+  }
+  .qna-box p {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 9.5pt;
+  }
+  .callout-quote {
+    font-style: italic;
+    background: #fdf2e9;
+    border-left: 4px solid #f39c12;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 10pt;
+    color: #7e5109;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+  .score-badge {
+    background: #e8f8f5;
+    color: #117a65;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #a3e4d7;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-box">
+  <h1>National Science TLM Competition Blueprint</h1>
+  <p><strong>Handbook for Hands-on Science Demonstrations (Class 1–10)</strong></p>
+  <p>Zero Software | Ultra-Low Budget (₹50–₹250) | High Wow-Factor &amp; Interactive Learning</p>
+</div>
+
+<p>This master document provides complete technical specifications, construction blueprints, pedagogical rationales, failure recovery protocols, and competitive scoring breakdowns for the <strong>Top 10 National-Level Science TLMs</strong>.</p>
+
+<div class="callout-quote">
+  <strong>The Evaluation Standard:</strong> "A beautiful model that teaches nothing scores poorly. A complicated model that fails during demonstration scores zero. The winning TLM creates immediate cognitive conflict, resets with zero latency, and empowers the judge to operate the scientific discovery themselves."
+</div>
+
+<h2>Comparative Ranking &amp; Decision Matrix</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Project Name</th>
+      <th>Cost</th>
+      <th>Build</th>
+      <th>Edu</th>
+      <th>Innov</th>
+      <th>Inter</th>
+      <th>Reliab</th>
+      <th>Wow</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="highlight-row">
+      <td><strong>🏆 1</strong></td>
+      <td><strong>SonoScope (Laser Acoustic Visualizer)</strong></td>
+      <td><strong>₹72</strong></td>
+      <td><strong>20 min</strong></td>
+      <td>9.5</td>
+      <td>9.5</td>
+      <td>10.0</td>
+      <td>9.5</td>
+      <td>10.0</td>
+      <td><strong>9.69/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>🛡️ 2</strong></td>
+      <td><strong>MagnoBrake (Lenz’s Law Eddy Sled)</strong></td>
+      <td>₹215</td>
+      <td>20 min</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>10.0</td>
+      <td>10.0</td>
+      <td>10.0</td>
+      <td><strong>9.50/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>HydroGrip (Hydraulic Arm Manipulator)</strong></td>
+      <td>₹100</td>
+      <td>45 min</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>9.5</td>
+      <td><strong>9.38/10</strong></td>
+    </tr>
+    <tr class="highlight-row">
+      <td><strong>⚡ 4</strong></td>
+      <td><strong>AeroFloat (Bernoulli Dynamic Rig)</strong></td>
+      <td><strong>₹67</strong></td>
+      <td><strong>15 min</strong></td>
+      <td>9.0</td>
+      <td>8.5</td>
+      <td>10.0</td>
+      <td>10.0</td>
+      <td>9.5</td>
+      <td><strong>9.38/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>ElectroVolt (Stoichiometric Electrolysis)</strong></td>
+      <td>₹80</td>
+      <td>25 min</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>8.5</td>
+      <td>9.5</td>
+      <td>9.5</td>
+      <td><strong>9.38/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>FlexoBone (Antagonistic Arm Mechanics)</strong></td>
+      <td>₹55</td>
+      <td>30 min</td>
+      <td>9.0</td>
+      <td>8.5</td>
+      <td>10.0</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td><strong>9.31/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td><strong>CardioPulse (Valved Ventricle Pump)</strong></td>
+      <td>₹120</td>
+      <td>35 min</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>10.0</td>
+      <td>9.5</td>
+      <td>9.0</td>
+      <td><strong>9.25/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>8</strong></td>
+      <td><strong>GenoLink (Punnett Slider Computer)</strong></td>
+      <td>₹50</td>
+      <td>35 min</td>
+      <td>9.5</td>
+      <td>9.0</td>
+      <td>9.5</td>
+      <td>9.5</td>
+      <td>8.5</td>
+      <td><strong>9.13/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>9</strong></td>
+      <td><strong>LuminaTrace (Geometric Optics Box)</strong></td>
+      <td>₹175</td>
+      <td>35 min</td>
+      <td>10.0</td>
+      <td>9.0</td>
+      <td>8.0</td>
+      <td>9.0</td>
+      <td>9.5</td>
+      <td><strong>9.06/10</strong></td>
+    </tr>
+    <tr>
+      <td><strong>10</strong></td>
+      <td><strong>TerraSphere (Micro-Biome Equilibrium)</strong></td>
+      <td>₹70</td>
+      <td>30 min</td>
+      <td>9.5</td>
+      <td>8.5</td>
+      <td>8.0</td>
+      <td>9.0</td>
+      <td>8.5</td>
+      <td><strong>8.88/10</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin-top: 10px; font-size: 9pt; background: #eef4f8; padding: 10px; border-radius: 6px;">
+  <strong>Strategic Summary:</strong>
+  <ul>
+    <li><strong>🏆 THE WINNER:</strong> Project #1 (SonoScope) — Unrivaled sensory impact, transforms invisible vocal sound into moving laser waveforms. Highly adaptable for physics &amp; biology.</li>
+    <li><strong>🛡️ SAFE BACKUP:</strong> Project #2 (MagnoBrake) — 100% mechanical reliability, impossible to fail on stage, demonstrates Lenz's law non-contact levitation braking.</li>
+    <li><strong>⚡ 1-HOUR EMERGENCY OPTION:</strong> Project #4 (AeroFloat) — Assembled in 15 minutes from a funnel and ping-pong balls; delivers immediate cognitive conflict against gravity.</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PROJECT 1 -->
+<div class="project-card">
+  <div class="project-title">1. SonoScope: Acoustic Laser Wave Visualizer &amp; Ear Simulator</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹72</div>
+    <div class="meta-item"><strong>Build Time</strong>20 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.69 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Sound as Mechanical Longitudinal Pressure Waves, Frequency, Amplitude, Harmonics, 2D Lissajous Waveforms, Human Tympanic Membrane (Eardrum) and Auditory Ossicles Biomechanics.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To convert invisible acoustic pressure waves directly into visible 2D transverse geometric laser patterns in real-time without software, oscilloscopes, or electronic circuitry.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>1 cut plastic cup or PVC pipe section (10 cm diameter): ₹10</li>
+    <li>1 party balloon (stretched membrane): ₹5</li>
+    <li>1 tiny mirror chip (4 mm × 4 mm cut from scrap glass or reflective disc): ₹5</li>
+    <li>1 red keychain laser pointer: ₹40</li>
+    <li>Rubber bands, black electrical tape, cardboard baseboard: ₹12</li>
+  </ul>
+
+  <div class="section-label">Construction Steps:</div>
+  <ol>
+    <li>Cut the bottom off a plastic cup to produce an open acoustic horn. Smooth edges with tape.</li>
+    <li>Stretch a balloon tightly across the cut end like a drum; secure tightly with rubber bands and tape.</li>
+    <li>Glue the 4mm mirror chip using a drop of Fevikwik <strong>one-third of the way from the rim</strong> (captures maximum 2D angular tilt, not dead center).</li>
+    <li>Mount the cylinder and laser on a rigid cardboard base so the laser strikes the mirror at a 45° angle, reflecting onto a dark paper screen.</li>
+  </ol>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Hum a low steady note into the cone: the idle laser dot instantly expands into a rotating ellipse. Whistle a high note: the trace splits into complex nodal rings. Speak with high volume: the pattern explodes in diameter. Hand the cone to the judge to visualize their own voice pattern.</p>
+
+  <div class="section-label">Pedagogy &amp; Why It Wins:</div>
+  <p>Demonstrates <em>Inquiry-Based &amp; Multi-Sensory Learning</em>. It transforms abstract physics into a stunning visual spectacle that captivates judges and spectators alike.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Laser dies:</strong> Keep a pre-aligned backup laser clamped with fresh button cells. <strong>Mirror falls:</strong> Mount with high-tack double-sided foam tape in 10 seconds. <strong>Bright hall:</strong> Fold a 3-sided black chart paper shadow chamber directly on the base.</p>
+</div>
+
+<!-- PROJECT 2 -->
+<div class="project-card">
+  <div class="project-title">2. MagnoBrake: Lenz’s Law Eddy Current Levitation Slider</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹215</div>
+    <div class="meta-item"><strong>Build Time</strong>20 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.50 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Electromagnetic Induction, Faraday’s Law (&epsilon; = -d&Phi;<sub>B</sub>/dt), Lenz’s Law of Conservation of Energy, Magnetic Drag, Non-contact Eddy Current Braking in High-Speed Trains.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To demonstrate that changing magnetic fields induce circular electrical currents in non-magnetic conductors, generating counter-magnetic forces that produce frictionless deceleration.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>1 thick-walled copper pipe (15–20 cm long, 3/4 inch plumbing cut) or aluminum tube: ₹120</li>
+    <li>1 strong Neodymium disc magnet (12 mm × 3 mm, Grade N52): ₹60</li>
+    <li>1 identical-sized non-magnetic steel cylinder/weight: ₹10</li>
+    <li>1 clear acrylic/plastic tube (identical dimensions for control trial): ₹15</li>
+    <li>Cardboard vertical mounting stand: ₹10</li>
+  </ul>
+
+  <div class="section-label">Construction Steps:</div>
+  <ol>
+    <li>Mount the copper tube and clear plastic tube vertically side-by-side on a cardboard A-frame.</li>
+    <li>Create padded drop receptacles at the bottom of both tubes using cotton wool or foam.</li>
+    <li>Prepare the two test cylinders: the non-magnetic steel disc and the Neodymium disc.</li>
+    <li>Mark distance intervals along an adjacent aluminum sliding ruler for track comparisons.</li>
+  </ol>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Drop the steel weight down the copper pipe: it falls instantly in 0.15s. Drop the Neodymium magnet: it appears to float through honey, taking 3–4 seconds to drift down. The judge looks through the top to watch the magnet float without touching the walls.</p>
+
+  <div class="section-label">Pedagogy &amp; Why It Wins:</div>
+  <p><em>Discrepant Event Learning</em>. Zero mechanical parts, zero electrical wires, 100% reliability, and an immediate visual defying of gravity.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Magnet tumbling inside:</strong> Ensure tube is strictly plumb vertical. Magnet clearance should be 2–3mm from inner tube diameter.</p>
+</div>
+
+<!-- PROJECT 3 -->
+<div class="project-card">
+  <div class="project-title">3. HydroGrip: Syringe Transmission &amp; Articulated Hydraulic Manipulator</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹100</div>
+    <div class="meta-item"><strong>Build Time</strong>45 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.38 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Pascal’s Law (P = F/A), Incompressibility of Liquids, Hydraulic Pressure Transmission, Mechanical Advantage, Levers (Classes 1 and 3), Robotic Biomechanics.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To demonstrate how enclosed fluids transmit force undiminished in all directions to actuate remote mechanical linkages with amplified force.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>4 disposable 10ml syringes: ₹40</li>
+    <li>1 meter medical IV infusion tubing: ₹25</li>
+    <li>Cardboard box scrap (arms and claws): ₹0</li>
+    <li>Toothpicks / paper clips / bamboo skewers: ₹10</li>
+    <li>Fevikwik / Hot glue + food color / Ujala liquid blue: ₹25</li>
+  </ul>
+
+  <div class="section-label">Construction Steps:</div>
+  <ol>
+    <li>Cut cardboard linkage arms (15 cm) and articulated claw fingers (8 cm).</li>
+    <li>Pin linkages with toothpicks at pivot holes; secure ends with glue droplets to ensure free rotation.</li>
+    <li>Mount the slave syringe barrel to the base arm and connect its plunger to the claw mechanism.</li>
+    <li>Purge all air bubbles by priming the syringe and tubing underwater with colored liquid.</li>
+    <li>Connect the slave cylinder to a handheld master syringe via the flexible tube.</li>
+  </ol>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Push the plunger of the control syringe: the mechanical claw across the table moves instantly to grasp a cup or pen. Pull back: the claw releases. Hand the master cylinder to the judge to operate the remote robotic arm.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Spongy response:</strong> Air trapped in tube. Bleed the fluid column underwater. <strong>Tube leaks:</strong> Tighten joints with zip-ties or tight thread wraps.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PROJECT 4 -->
+<div class="project-card">
+  <div class="project-title">4. AeroFloat: Pressure Differential &amp; Dynamic Lift Demonstrator</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 7 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹67</div>
+    <div class="meta-item"><strong>Build Time</strong>15 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.38 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Bernoulli’s Principle (P + 0.5&rho;v<sup>2</sup> = const), Aerodynamic Lift, Pressure Inversion, Venturi Effect, Coandă Effect.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To demonstrate that increasing fluid velocity reduces static pressure, generating net lift forces that counteract gravity and pull objects together.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>1 plastic funnel: ₹15</li>
+    <li>2 genuine table tennis (ping-pong) balls: ₹20</li>
+    <li>Bendable drinking straws: ₹5</li>
+    <li>2 suspended lightweight plastic cups + cotton threads: ₹12</li>
+    <li>Cardboard display stand: ₹15</li>
+  </ul>
+
+  <div class="section-label">Construction Steps:</div>
+  <ol>
+    <li><strong>Station A:</strong> Invert a plastic funnel downward. Place a ping-pong ball inside. Connect a straw to the top spout.</li>
+    <li><strong>Station B:</strong> Bend a straw vertically into an upright collar to create a levitation column.</li>
+    <li><strong>Station C:</strong> Hang two plastic cups 2 cm apart from a crossbar on fine threads.</li>
+  </ol>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Invert the funnel downward. Challenge the judge: <em>"If I blow down, the ball must fall, right?"</em> Blow hard: the ball clings upward against gravity! Stop blowing: it falls. Blow between the two hanging cups: they slam together instead of parting.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Ball drops:</strong> Heavy ball used. Must use genuine lightweight celluloid ping-pong balls. Blow must be centered and steady.</p>
+</div>
+
+<!-- PROJECT 5 -->
+<div class="project-card">
+  <div class="project-title">5. ElectroVolt: Transparent Redox &amp; Stoichiometric Electrolysis Chamber</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 7 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹80</div>
+    <div class="meta-item"><strong>Build Time</strong>25 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.38 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Electrolysis of Water, Chemical Effects of Current, Stoichiometry of H<sub>2</sub>O (2:1 Ratio), Oxidation &amp; Reduction, Ion Migration.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To provide visual and quantitative proof of the 2:1 stoichiometric gas displacement of hydrogen and oxygen during electrochemical decomposition of water.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>2 transparent 10ml syringes (graduated markings intact): ₹20</li>
+    <li>1 9V battery with snap connector: ₹35</li>
+    <li>2 high-purity graphite pencil rods or stainless-steel thumbtacks: ₹10</li>
+    <li>Baking soda (electrolyte) + natural pH indicator (hibiscus/turmeric): ₹10</li>
+    <li>Clear transparent plastic basin/cup: ₹5</li>
+  </ul>
+
+  <div class="section-label">Construction Steps:</div>
+  <ol>
+    <li>Push two pencil graphite rods through the base of a clear cup; seal watertight with hot glue.</li>
+    <li>Fill the cup with water containing 1/2 tsp baking soda and natural pH indicator.</li>
+    <li>Fill two 10ml syringes completely with the electrolyte solution and invert them over the graphite tips to capture gas.</li>
+    <li>Connect the external graphite terminal pins to the 9V battery snap connector.</li>
+  </ol>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Snap the battery on: gas bubbles immediately stream off both electrodes. Show the syringes displacing liquid: the cathode produces gas at exactly twice the rate of the anode (2H<sub>2</sub> : 1O<sub>2</sub>), visually confirming the formula H<sub>2</sub>O. Point out the distinct indicator color shift around the electrodes.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Slow bubbling:</strong> Low conductivity. Add a pinch of baking soda. <strong>Trapped bubbles:</strong> Tap the syringe barrel gently to release clinging gas.</p>
+</div>
+
+<!-- PROJECT 6 -->
+<div class="project-card">
+  <div class="project-title">6. FlexoBone: Dual-String Antagonistic Biomechanical Arm</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 9</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹55</div>
+    <div class="meta-item"><strong>Build Time</strong>30 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.31 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Human Locomotion, Hinge Joints, Tendon-Bone Attachments, Antagonistic Muscle Pairs (Biceps &amp; Triceps), Actomyosin Sliding Filament Theory.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To tangibly prove that skeletal muscles can <strong>only contract (pull) and never push</strong>, demonstrating the mechanical necessity of opposing muscle pairs across joints.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>Cardboard strips or mailing tubes (Humerus, Radius, Ulna): ₹10</li>
+    <li>2 long modeling balloons or wide elastic bands (muscle bellies): ₹20</li>
+    <li>Braided nylon twine / kite string: ₹10</li>
+    <li>1 pivot bolt / brass fastener + straw guide loops: ₹15</li>
+  </ul>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Pull the bicep cord: the balloon bulges realistically and flexes the forearm to 90°. Ask the judge: <em>"Try to straighten the arm by pushing the bicep cord."</em> It collapses limp! Pull the triceps cord: the arm snaps straight. The judge operates the dual cords to experience the push-pull mechanics firsthand.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Joint bends backwards:</strong> Add a cardboard stop behind the elbow hinge to limit extension to 180°.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PROJECT 7 -->
+<div class="project-card">
+  <div class="project-title">7. CardioPulse: Interactive Valved Ventricle Simulator</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹120</div>
+    <div class="meta-item"><strong>Build Time</strong>35 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.25 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Human Circulatory System, Hydrodynamic Check Valves, Prevention of Backflow (Tricuspid/Bicuspid/Aortic Valves), Systole &amp; Diastole Pressure Cycles.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To prove why heart chambers require unidirectional check valves to transform volumetric compression into continuous forward blood circulation.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>1 clear flexible squeeze bottle or large 50ml feeding syringe: ₹40</li>
+    <li>2 plastic one-way aquarium check valves (or DIY balloon-flap valves): ₹40</li>
+    <li>1 meter clear vinyl flexible tubing: ₹20</li>
+    <li>Food dye (red) + 2 plastic reservoir cups: ₹20</li>
+  </ul>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Squeeze the bottle (Systole): inlet valve snaps shut, outlet valve opens, jetting red fluid forward. Release (Diastole): outlet valve seals, inlet draws fluid smoothly from the atrium. Remove one valve to demonstrate heart failure: fluid sloshes back and forth with zero forward flow.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Air leakage at cap:</strong> Seal around tube entry holes with hot glue or M-Seal. <strong>Valve installed backwards:</strong> Mark flow arrows clearly with permanent marker.</p>
+</div>
+
+<!-- PROJECT 8 -->
+<div class="project-card">
+  <div class="project-title">8. GenoLink: Mechanical Allele Pairing &amp; Punnett Inheritance Board</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 8 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹50</div>
+    <div class="meta-item"><strong>Build Time</strong>35 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.13 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Mendelian Genetics, Monohybrid Crosses, Law of Segregation, Dominant vs Recessive Phenotypes, Genotypic (1:2:1) &amp; Phenotypic (3:1) Ratios.</p>
+
+  <div class="section-label">Learning Objective:</div>
+  <p>To convert abstract probability mathematics into a hands-on mechanical puzzle board that reveals genetic traits without rote memorization.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>Corrugated cardboard base and channel sliders: ₹15</li>
+    <li>4 colors of plastic bottle caps / tokens: ₹10</li>
+    <li>Color-coded paper reveal tabs: ₹15</li>
+    <li>Toothpicks, split pins, rubber bands: ₹10</li>
+  </ul>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Set parent traits as heterozygous (Tt &times; Tt). Slide the mechanical linkage bars into the matrix: the 4 internal windows mechanically reveal TT, Tt, Tt, tt, showing the 3:1 phenotypic outcome. The judge selects custom parent traits and tests offspring probabilities.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Sliders sticking:</strong> Rub candle wax or pencil lead along cardboard tracks to ensure smooth gliding.</p>
+</div>
+
+<!-- PROJECT 9 -->
+<div class="project-card">
+  <div class="project-title">9. LuminaTrace: Universal Geometric Optics Chamber</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 10</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹175</div>
+    <div class="meta-item"><strong>Build Time</strong>35 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">9.06 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Rectilinear Propagation of Light, Laws of Reflection, Snell’s Law of Refraction, Total Internal Reflection (TIR), Focal Points of Lenses &amp; Mirrors.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>3 keychain red laser pointers: ₹120</li>
+    <li>1 transparent plastic container / CD case: ₹15</li>
+    <li>1 incense stick (agarbatti) for scattering smoke: ₹5</li>
+    <li>Interchangeable glass block / water prism / flat mirror strip: ₹30</li>
+    <li>Cardboard protractor dial: ₹5</li>
+  </ul>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Turn on 3 parallel laser beams inside the smoke-filled chamber: sharp rays slice through the mist. Place a convex lens: rays converge cleanly at the focal point. Place a concave lens: they diverge. Rotate a prism past 48.6°: demonstrate Total Internal Reflection and optical fiber transmission.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Smoke clears:</strong> Keep an incense stick ember on foil inside the sealed box. <strong>Batteries dim:</strong> Carry spare button cells.</p>
+</div>
+
+<!-- PROJECT 10 -->
+<div class="project-card">
+  <div class="project-title">10. TerraSphere: Micro-Ecosystem Equilibrium Biome</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Target Classes</strong>Class 6 – 9</div>
+    <div class="meta-item"><strong>Total Cost</strong>₹70</div>
+    <div class="meta-item"><strong>Build Time</strong>30 minutes</div>
+    <div class="meta-item"><strong>Competition Score</strong><span class="score-badge">8.88 / 10</span></div>
+  </div>
+
+  <div class="section-label">Scientific Concept:</div>
+  <p>Ecosystem Dynamics, Photosynthesis &amp; Cellular Respiration Equilibrium, Water &amp; Carbon Cycles, Producers vs Decomposers, Closed Thermodynamics.</p>
+
+  <div class="section-label">Bill of Materials:</div>
+  <ul>
+    <li>2 clear 500ml PET bottles: ₹10</li>
+    <li>Gravel, activated charcoal, fertile garden soil: ₹15</li>
+    <li>Hardy plant cutting (Fern / Money plant) + aquatic sprig: ₹15</li>
+    <li>Bromothymol Blue or natural red cabbage pH indicator: ₹20</li>
+    <li>Cotton wick and airtight tape: ₹10</li>
+  </ul>
+
+  <div class="section-label">Demonstration &amp; Interactive Element:</div>
+  <p>Show condensation cycles on the upper dome. Exhale into the indicator solution to turn it acidic/yellow (CO<sub>2</sub>). Seal inside with the plant under ambient light: as the plant absorbs CO<sub>2</sub> via photosynthesis, the solution shifts back to deep blue.</p>
+
+  <div class="section-label">Failure Points &amp; Venue Fixes:</div>
+  <p><strong>Cloudy condensation:</strong> Wash gravel and soil before assembly. <strong>Plant wilts:</strong> Use resilient cuttings like Money Plant.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PLAYBOOK FOR WINNER -->
+<div class="playbook-box">
+  <h2 style="color: #e76f51; border-bottom: 2px solid #e76f51; margin-top:0;">🏆 Complete Competition Playbook: SonoScope</h2>
+  <p><strong>Your step-by-step master plan for winning tomorrow's competition with Project #1.</strong></p>
+
+  <h3>1. Before Leaving Home Checklist</h3>
+  <ul>
+    <li>[ ] 2 Red keychain laser pointers (1 primary + 1 spare, test fresh batteries tonight).</li>
+    <li>[ ] 1 Pack of high-elasticity latex balloons (10-inch or punch balloons).</li>
+    <li>[ ] 2 Small mirror chips (approx. 4 mm × 4 mm, cut from glass mirror or reflective CD piece).</li>
+    <li>[ ] 1 Clean plastic disposable cup or 500ml empty water bottle.</li>
+    <li>[ ] 1 Craft cutter, 1 small scissors, 1 roll black electrical insulation tape, 4 strong rubber bands.</li>
+    <li>[ ] 1 Tube Fevikwik or quick-setting adhesive.</li>
+    <li>[ ] 1 Sheet black chart paper (for projection shadow box) + 1 sturdy cardboard base (30 cm × 20 cm).</li>
+  </ul>
+
+  <h3>2. Venue Assembly Plan (20 Minutes Total)</h3>
+  <ol>
+    <li><strong>Min 0–5: Acoustic Cone</strong> — Cut bottom 3 cm off the cup. Smooth edge with electrical tape.</li>
+    <li><strong>Min 5–8: Tympanic Membrane</strong> — Cut balloon neck, stretch tightly across cut rim, secure with 2 rubber bands and tape.</li>
+    <li><strong>Min 8–11: Optical Pivot</strong> — Glue the 4mm mirror chip with Fevikwik <strong>one-third from the rim</strong> (crucial for 2D tilt).</li>
+    <li><strong>Min 11–17: Alignment</strong> — Tape the cone horizontally. Mount the laser at 45° to reflect onto the vertical black chart screen.</li>
+    <li><strong>Min 17–20: Test</strong> — Hum a low note into the cone. Verify the laser point expands into a clean ellipse.</li>
+  </ol>
+
+  <h3>3. Display Arrangement</h3>
+  <ul>
+    <li>Mount all components on a clean white/kraft cardboard baseboard.</li>
+    <li>Build a 3-sided black chart paper shadow chamber around the projection screen to ensure crisp visibility under bright hall lights.</li>
+    <li>Label key components: <strong>"Ear Canal (Cone)"</strong>, <strong>"Eardrum (Balloon)"</strong>, <strong>"Ear Bones (Mirror)"</strong>, <strong>"Waveform Screen"</strong>.</li>
+  </ul>
+
+  <h3>4. 60–90 Second Demonstration Sequence</h3>
+  <ul>
+    <li><strong>00–15s (The Hook):</strong> Point to idle red dot. <em>"Textbooks describe sound as invisible pressure waves. Today, I make sound visible in real time."</em></li>
+    <li><strong>15–35s (The Action):</strong> Hum a low note (dot expands into wide ellipse). Whistle a high note (splits into dual loops). Speak loud vs soft (amplitude grows/shrinks).</li>
+    <li><strong>35–60s (Curriculum Tie-in):</strong> <em>"This proves: (1) Sound transfers mechanical energy. (2) Pitch governs frequency and wave nodes. (3) Loudness governs amplitude."</em></li>
+    <li><strong>60–90s (Judge Interaction):</strong> Hand the cone to the judge: <em>"Sir/Ma'am, please hum a note and see your voice's unique wave signature."</em></li>
+  </ul>
+
+  <h3>5. Verbatim Judge Presentation Script</h3>
+  <div class="callout-quote" style="background:#fff; border-left: 4px solid #0d3b66; color:#222;">
+    "Good morning, respected judges. In Classes 6 to 9, sound is one of the most abstract topics. Students memorize definitions of frequency, amplitude, and longitudinal waves, but never see them in action.<br><br>
+    This TLM is the <strong>SonoScope</strong>, built entirely from a plastic cup, balloon, mirror chip, and keychain laser for under ₹75. It functions as an optical oscilloscope and a mechanical model of the human ear.<br><br>
+    When sound enters the cone, pressure waves vibrate the membrane. The off-center mirror tilts across two axes simultaneously. The reflected laser acts as an optical lever, amplifying microscopic vibrations into visible 2D patterns.<br><br>
+    Low pitch creates a fundamental ellipse; high pitch produces harmonic loops; and volume increases amplitude. It turns invisible physics into a dynamic visual experience. Sir, please try it yourself."
+  </div>
+
+  <h3>6. 10 Tough Judge Questions &amp; Bulletproof Answers</h3>
+  
+  <div class="qna-box">
+    <strong>Q1: Why does the laser draw a circle rather than a straight line?</strong>
+    <p>The circular membrane vibrates in two-dimensional radial and circular modes (Bessel modes). Placing the mirror off-center catches both tilts simultaneously, forming a 2D Lissajous pattern.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q2: Sound waves are longitudinal, but this pattern looks transverse. Isn't that misleading?</strong>
+    <p>That is the core learning opportunity! The sound through the tube is longitudinal pressure. When it strikes the membrane, it converts into transverse mechanical displacement, which our optical lever magnifies.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q3: How do you show loudness vs pitch to a Class 8 student?</strong>
+    <p>For loudness: Hum at a steady pitch softly, then loudly—pattern shape stays the same but grows larger. For pitch: Hum softly at low pitch, then high pitch—pattern size stays small but splits into complex loops.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q4: Why not just use a phone oscilloscope app?</strong>
+    <p>A phone app is a digital black box. This TLM has zero software or hidden circuits: every physical step—air pressure, flexing membrane, tilting mirror, bouncing light—is completely visible and intuitive.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q5: What happens if there is a hole in the membrane?</strong>
+    <p>Pressure waves pass through without exerting force on the surface. That directly demonstrates a ruptured eardrum and conductive hearing loss to biology students.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q6: Why did you mount the mirror off-center?</strong>
+    <p>The dead center of a clamped membrane is an antinode with zero angular tilt—it only pushes forward and back. Mounting it at one-third radius gives maximum angular tilt, which is what sweeps the laser across the screen.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q7: Can this distinguish different vowel sounds ('AA' vs 'EE')?</strong>
+    <p>Yes! Vowels share the same pitch but differ in harmonic formants. Switching from 'AA' to 'EE' adds small ripples and notches along the perimeter, demonstrating acoustic timbre.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q8: How does this map to the NCERT curriculum?</strong>
+    <p>NCERT Class 9 Chapter 12: Sound Waves, Characteristics of Sound (Amplitude, Frequency), and Human Ear Anatomy. Also Class 8 Chapter 13: How Humans Produce and Hear Sound.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q9: Can we calculate frequency in Hertz with this model?</strong>
+    <p>Yes. By sweeping the laser horizontally across the screen at a known linear speed, the pattern stretches into a standard time-domain wave, allowing students to measure wavelength and calculate frequency.</p>
+  </div>
+
+  <div class="qna-box">
+    <strong>Q10: Does it work in a bright exhibition hall?</strong>
+    <p>Yes. The integrated 3-sided black chart paper shadow chamber blocks overhead lights, keeping the laser pattern crisp and visible in normal indoor lighting.</p>
+  </div>
+
+  <h3>7. Three Zero-Cost Competition-Winning Touches</h3>
+  <ol>
+    <li><strong>Biological Analogy Labels:</strong> Label the cone as <em>Ear Canal</em>, balloon as <em>Eardrum</em>, and mirror as <em>Ear Ossicles</em> to demonstrate biology-physics integration.</li>
+    <li><strong>Reference Target Card:</strong> Mount an index card showing target waveforms (Circle = Bass, Figure-8 = Whistle, Nebula = Whisper) for judges to test against.</li>
+    <li><strong>Rubber-Band Hands-Free Switch:</strong> Wrap a rubber band with a folded paper wedge around the laser pointer to slide it ON/OFF hands-free without fumbling.</li>
+  </ol>
+</div>
+
+<div class="callout-quote" style="text-align: center; font-size: 11pt; margin-top: 20px; font-weight: bold;">
+  "If I were you, I would build the SonoScope because it costs under ₹75, takes only 20 minutes to assemble, never jams or leaks, and turns an invisible, abstract concept into a bright, interactive laser demonstration that draws a crowd every single time."
+</div>
+
+</body>
+</html>
