@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { X, Sparkles, BookOpen } from "lucide-react";
+import { X } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 
 interface StartLessonModalProps {
@@ -86,7 +86,7 @@ export default function StartLessonModal({
         </p>
 
         {/* Action Buttons */}
-        <div className="space-y-3">
+        <div>
           <Link
             href={`/lesson/${lessonId}`}
             onClick={() => sounds.playTap()}
@@ -94,22 +94,6 @@ export default function StartLessonModal({
           >
             Start (+{xpReward} XP)
           </Link>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/guidebook"
-              onClick={onClose}
-              className="flex-1 py-3 rounded-2xl border-2 border-gray-200 hover:border-gray-300 bg-white font-black text-xs uppercase tracking-wider text-gray-600 text-center transition flex items-center justify-center gap-1.5"
-            >
-              <BookOpen className="w-4 h-4 text-gray-400" />
-              <span>Guidebook</span>
-            </Link>
-            <button
-              onClick={onClose}
-              className="flex-1 py-3 rounded-2xl border-2 border-transparent hover:bg-gray-100 font-black text-xs uppercase tracking-wider text-gray-400 hover:text-gray-600 transition"
-            >
-              Back to path
-            </button>
-          </div>
         </div>
       </div>
     </div>,
