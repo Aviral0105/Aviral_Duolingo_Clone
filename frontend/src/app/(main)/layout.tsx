@@ -33,7 +33,16 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const [isEnergyOpen, setIsEnergyOpen] = useState(false);
 
   useEffect(() => {
-    fetchUser().then(setUser);
+    const refreshUser = () => fetchUser().then(setUser);
+    refreshUser();
+
+    window.addEventListener("duo_progress_updated", refreshUser);
+    window.addEventListener("focus", refreshUser);
+
+    return () => {
+      window.removeEventListener("duo_progress_updated", refreshUser);
+      window.removeEventListener("focus", refreshUser);
+    };
   }, []);
 
   const handleRefill = async () => {

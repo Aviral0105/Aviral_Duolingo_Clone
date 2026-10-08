@@ -24,25 +24,40 @@ export default function SectionsModal({ isOpen, onClose }: SectionsModalProps) {
           <div className="border-2 border-[#58cc02] bg-emerald-50/50 rounded-2xl p-4 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-black text-[#58cc02] uppercase tracking-wider">
-                Section 1
+                Section 1 • Unlocked
               </span>
               <h3 className="text-sm font-black text-gray-800">Rookie: Form basic sentences</h3>
-              <span className="text-[10px] text-gray-500 font-bold">🇮🇳 Units 1 to 5</span>
+              <span className="text-[10px] text-gray-500 font-bold">🇮🇳 Units 1 to 3</span>
             </div>
-            <span className="text-3xl">🦉</span>
+            <button
+              onClick={() => {
+                onClose();
+                const el = document.getElementById("unit-1");
+                el?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="btn-3d-green px-3 py-1.5 text-xs font-black rounded-xl text-white uppercase"
+            >
+              Continue
+            </button>
           </div>
 
           {/* Section 2 */}
-          <div className="border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between">
+          <div className="border-2 border-sky-300 bg-sky-50/40 rounded-2xl p-4 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">
-                Section 2
+              <span className="text-[10px] font-black text-[#1cb0f6] uppercase tracking-wider">
+                Section 2 • Explorer
               </span>
-              <h3 className="text-sm font-black text-gray-700">Explorer: Talk about daily life</h3>
-              <span className="text-[10px] text-gray-400 font-bold">🇮🇳 Units 6 to 12</span>
+              <h3 className="text-sm font-black text-gray-800">Greet people & describe things</h3>
+              <span className="text-[10px] text-gray-500 font-bold">🇮🇳 Unit 2</span>
             </div>
             <button
-              onClick={() => alert("Complete Section 1 to unlock Section 2!")}
+              onClick={() => {
+                onClose();
+                const el = document.getElementById("unit-2");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
               className="btn-3d-white px-3 py-1 text-xs font-black rounded-xl"
             >
               Jump here
@@ -53,13 +68,19 @@ export default function SectionsModal({ isOpen, onClose }: SectionsModalProps) {
           <div className="border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">
-                Section 3
+                Section 3 • Traveler
               </span>
-              <h3 className="text-sm font-black text-gray-700">Traveler: Ask directions and food</h3>
-              <span className="text-[10px] text-gray-400 font-bold">🇮🇳 Units 13 to 20</span>
+              <h3 className="text-sm font-black text-gray-700">Talk about family & food</h3>
+              <span className="text-[10px] text-gray-400 font-bold">🇮🇳 Unit 3</span>
             </div>
             <button
-              onClick={() => alert("Complete Section 2 to unlock Section 3!")}
+              onClick={() => {
+                onClose();
+                const el = document.getElementById("unit-3");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
               className="btn-3d-white px-3 py-1 text-xs font-black rounded-xl"
             >
               Jump here

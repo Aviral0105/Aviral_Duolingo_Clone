@@ -104,9 +104,13 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   return (
     <>
       <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40 overflow-visible">
-        {/* Brand Logo */}
-        <Link href="/learn" className="flex items-center gap-2 px-3 mb-6">
-          <span className="text-3xl font-black text-[#58cc02] tracking-tighter hover:opacity-90 transition">
+        {/* Brand Logo - Navigates directly to Learn from any other section */}
+        <Link
+          href="/learn"
+          className="flex items-center gap-2 px-3 mb-6 cursor-pointer group select-none"
+          title="Go to Learn section"
+        >
+          <span className="text-3xl font-black text-[#58cc02] tracking-tighter group-hover:opacity-85 transition active:scale-95 inline-block">
             duolingo
           </span>
         </Link>
