@@ -202,9 +202,9 @@ export default function HelpCenterPage() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-3xl mx-auto px-4 pt-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
         {/* Breadcrumb matching frames */}
-        <div className="flex items-center gap-2 text-xs font-black tracking-wider text-[#1cb0f6] uppercase mb-8">
+        <div className="flex items-center gap-2 text-xs font-black tracking-wider text-[#1cb0f6] uppercase mb-6">
           <button
             onClick={() => {
               setView("faq");
@@ -224,47 +224,47 @@ export default function HelpCenterPage() {
         {/* VIEW 1: FAQ ACCORDION LIST (Frames 001 - 035)            */}
         {/* ======================================================== */}
         {view === "faq" && (
-          <div className="space-y-8 animate-fade-in">
-            <h1 className="text-3xl sm:text-4xl font-black text-gray-800 text-center mb-8">
+          <div className="space-y-6 animate-fade-in pb-16">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-800 text-center mb-8 tracking-tight">
               Frequently Asked Questions
             </h1>
 
             {FAQ_DATA.map((category) => (
               <div
                 key={category.title}
-                className="bg-white border-2 border-gray-200 rounded-3xl overflow-hidden shadow-xs"
+                className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs"
               >
                 {/* Category Header */}
-                <div className="p-5 sm:p-6 border-b-2 border-gray-100">
-                  <h2 className="text-base sm:text-lg font-black text-[#1cb0f6]">
+                <div className="px-6 py-4.5 border-b border-gray-100">
+                  <h2 className="text-sm sm:text-base font-black text-[#1cb0f6]">
                     {category.title}
                   </h2>
                 </div>
 
                 {/* Question Accordion List */}
-                <div className="divide-y-2 divide-gray-100">
+                <div className="divide-y divide-gray-100">
                   {category.items.map((item) => {
                     const isExpanded = Boolean(expandedItems[item.id]);
                     return (
                       <div key={item.id} className="transition-colors">
                         <button
                           onClick={() => toggleItem(item.id)}
-                          className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-gray-50/70 transition"
+                          className="w-full text-left px-6 py-4.5 flex items-center justify-between gap-4 hover:bg-gray-50/70 transition"
                         >
-                          <span className="font-bold text-sm sm:text-base text-gray-800">
+                          <span className="font-bold text-sm sm:text-base text-gray-700">
                             {item.question}
                           </span>
                           <span className="text-gray-400 shrink-0">
                             {isExpanded ? (
-                              <ChevronUp className="w-5 h-5 stroke-[2.5]" />
+                              <ChevronUp className="w-4 h-4 stroke-[2.5]" />
                             ) : (
-                              <ChevronDown className="w-5 h-5 stroke-[2.5]" />
+                              <ChevronDown className="w-4 h-4 stroke-[2.5]" />
                             )}
                           </span>
                         </button>
 
                         {isExpanded && (
-                          <div className="px-5 pb-6 pt-1 sm:px-6 text-xs sm:text-sm text-gray-600 font-bold leading-relaxed space-y-3 bg-gray-50/40 border-t border-gray-100 animate-fade-in">
+                          <div className="px-6 pb-5 pt-1 text-xs sm:text-sm text-gray-600 font-bold leading-relaxed space-y-3 bg-gray-50/40 border-t border-gray-100 animate-fade-in">
                             {item.answer.map((para, pIdx) => (
                               <p key={pIdx} className="whitespace-pre-line">
                                 {para}
@@ -284,9 +284,9 @@ export default function HelpCenterPage() {
               </div>
             ))}
 
-            {/* Bottom Call to Action matching Frame 004 */}
-            <div className="text-center pt-8 pb-12 space-y-4">
-              <p className="text-base font-black text-gray-800">
+            {/* Bottom Call to Action matching Frame 004 & User Screenshot 3 */}
+            <div className="text-center pt-8 space-y-3.5">
+              <p className="text-sm sm:text-base font-black text-gray-800">
                 Still unsure about something?
               </p>
               <button
@@ -294,7 +294,7 @@ export default function HelpCenterPage() {
                   setView("feedback");
                   sounds.playTap();
                 }}
-                className="px-8 py-3.5 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-wider btn-3d-blue shadow-md"
+                className="px-8 py-3 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-wider btn-3d-blue shadow-md"
               >
                 SEND FEEDBACK
               </button>
