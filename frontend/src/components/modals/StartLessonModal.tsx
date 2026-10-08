@@ -60,7 +60,7 @@ export default function StartLessonModal({
         </div>
 
         <p className="text-xs font-bold text-gray-500 mb-6">
-          Learn basic phrases, greetings, and ordering food at a French café.
+          Learn basic Hindi vocabulary, letters, and how to form your first sentences.
         </p>
 
         <div className="space-y-2">

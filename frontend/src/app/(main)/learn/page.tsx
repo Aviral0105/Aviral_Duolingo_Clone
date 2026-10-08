@@ -27,22 +27,23 @@ export default function LearnPage() {
       {/* LEFT/CENTER COLUMN: LEARNING PATH */}
       <div className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center select-none relative">
       {/* 1. Unit Header Banner */}
-      <div className="w-full bg-[#58cc02] rounded-3xl p-5 text-white shadow-sm flex items-center justify-between mb-10 cursor-pointer group">
+      <div className="w-full bg-[#58cc02] rounded-2xl p-4 text-white shadow-sm flex items-center justify-between mb-8 cursor-pointer group">
         <div onClick={() => setIsSectionsOpen(true)} className="flex-1">
           <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
-            <span>Section 1, Unit 1</span>
-            <span className="text-xs group-hover:translate-x-1 transition">›</span>
+            <span className="text-sm font-bold">←</span>
+            <span>SECTION 1, UNIT 1</span>
           </div>
-          <h1 className="text-2xl font-black mt-0.5">Order at a café</h1>
+          <h1 className="text-xl sm:text-2xl font-black mt-0.5">Form basic sentences</h1>
         </div>
         <button
           onClick={(e) => {
             e.stopPropagation();
             setIsGuidebookOpen(true);
           }}
-          className="bg-white/20 hover:bg-white/30 p-3 rounded-2xl text-white font-bold transition ml-2 active:scale-95"
+          className="border-2 border-white/40 hover:bg-white/10 px-4 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 transition ml-2 active:scale-95"
         >
-          <BookOpen className="w-6 h-6" />
+          <BookOpen className="w-4 h-4" />
+          <span>GUIDEBOOK</span>
         </button>
       </div>
 

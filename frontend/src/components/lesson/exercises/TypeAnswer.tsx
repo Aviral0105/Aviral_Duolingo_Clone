@@ -61,7 +61,7 @@ export default function TypeAnswer({
             onSubmit();
           }
         }}
-        placeholder="Type in French..."
+        placeholder="Type in Hindi or English..."
         className="w-full p-4 bg-white border-2 border-gray-300 rounded-2xl text-lg font-bold focus:border-[#1cb0f6] focus:outline-hidden transition resize-none"
       />
     </div>
