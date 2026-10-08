@@ -11,6 +11,7 @@ import {
   Headphones,
   BookOpen,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -210,18 +211,25 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
                   <span>Help</span>
                 </button>
 
+                <Link
+                  href="/welcome"
+                  onClick={() => setIsMoreOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 text-[#58cc02] transition"
+                >
+                  <Sparkles className="w-5 h-5 text-[#58cc02]" />
+                  <span>Welcome / Home</span>
+                </Link>
+
                 <div className="border-t border-gray-100 my-1" />
 
-                <button
-                  onClick={() => {
-                    alert("You have logged out.");
-                    setIsMoreOpen(false);
-                  }}
+                <Link
+                  href="/welcome"
+                  onClick={() => setIsMoreOpen(false)}
                   className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 transition text-left"
                 >
                   <LogOut className="w-5 h-5" />
                   <span>Log out</span>
-                </button>
+                </Link>
               </div>
             </div>
           )}
