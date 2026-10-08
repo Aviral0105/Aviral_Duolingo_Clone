@@ -197,6 +197,32 @@ export async function fetchLesson(id: number): Promise<LessonDetail> {
   };
 }
 
+export async function recordMistake(lessonId: number, exerciseId: number) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/record-mistake`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ exercise_id: exerciseId }),
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Failed to log mistake to backend");
+  }
+}
+
+export async function resolveMistake(lessonId: number, exerciseId: number) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/resolve-mistake`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ exercise_id: exerciseId }),
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Failed to log mistake resolution to backend");
+  }
+}
+
 export async function completeLesson(id: number, heartsLeft: number, mistakesCount: number) {
   try {
     const res = await fetch(`${API_BASE_URL}/api/lessons/${id}/complete`, {

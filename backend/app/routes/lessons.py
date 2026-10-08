@@ -2,8 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from ..database import get_db
-from ..models import User, Lesson, Exercise, UserProgress, Unit
-from ..schemas import LessonDetailOut, LessonCompleteRequest, LessonCompleteResponse
+from ..models import User, Lesson, Exercise, UserProgress, Unit, UserMistake
+from ..schemas import (
+    LessonDetailOut,
+    LessonCompleteRequest,
+    LessonCompleteResponse,
+    MistakeActionRequest,
+    MistakeActionResponse
+)
 
 router = APIRouter(prefix="/api/lessons", tags=["Lessons"])
 
@@ -19,6 +25,88 @@ def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
         "title": lesson.title,
         "xp_reward": lesson.xp_reward,
         "exercises": exercises
+    }
+
+@router.post("/{lesson_id}/record-mistake", response_model=MistakeActionResponse)
+def record_mistake(
+    lesson_id: int,
+    payload: MistakeActionRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.id == 1).first()
+    exercise = db.query(Exercise).filter(
+        Exercise.id == payload.exercise_id,
+        Exercise.lesson_id == lesson_id
+    ).first()
+
+    if not user or not exercise:
+        raise HTTPException(status_code=404, detail="User or Exercise not found")
+
+    mistake = db.query(UserMistake).filter(
+        UserMistake.user_id == user.id,
+        UserMistake.exercise_id == exercise.id
+    ).first()
+
+    if mistake:
+        mistake.mistake_count += 1
+        mistake.last_mistake_at = datetime.utcnow()
+        mistake.resolved = False
+    else:
+        mistake = UserMistake(
+            user_id=user.id,
+            exercise_id=exercise.id,
+            mistake_count=1,
+            last_mistake_at=datetime.utcnow(),
+            resolved=False
+        )
+        db.add(mistake)
+
+    db.commit()
+    db.refresh(mistake)
+
+    return {
+        "success": True,
+        "exercise_id": exercise.id,
+        "mistake_count": mistake.mistake_count,
+        "resolved": mistake.resolved,
+        "message": f"Mistake recorded for exercise {exercise.id} (count: {mistake.mistake_count})"
+    }
+
+@router.post("/{lesson_id}/resolve-mistake", response_model=MistakeActionResponse)
+def resolve_mistake(
+    lesson_id: int,
+    payload: MistakeActionRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.id == 1).first()
+    exercise = db.query(Exercise).filter(
+        Exercise.id == payload.exercise_id,
+        Exercise.lesson_id == lesson_id
+    ).first()
+
+    if not user or not exercise:
+        raise HTTPException(status_code=404, detail="User or Exercise not found")
+
+    mistake = db.query(UserMistake).filter(
+        UserMistake.user_id == user.id,
+        UserMistake.exercise_id == exercise.id
+    ).first()
+
+    if mistake:
+        mistake.resolved = True
+        mistake.last_mistake_at = datetime.utcnow()
+        db.commit()
+        db.refresh(mistake)
+        count = mistake.mistake_count
+    else:
+        count = 0
+
+    return {
+        "success": True,
+        "exercise_id": exercise.id,
+        "mistake_count": count,
+        "resolved": True,
+        "message": f"Mistake resolved for exercise {exercise.id}"
     }
 
 @router.post("/{lesson_id}/complete", response_model=LessonCompleteResponse)

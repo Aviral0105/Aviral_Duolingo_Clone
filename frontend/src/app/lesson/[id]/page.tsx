@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { RotateCcw } from "lucide-react";
-import { fetchLesson, completeLesson, fetchUser, refillHearts } from "@/lib/api";
+import { fetchLesson, completeLesson, fetchUser, refillHearts, recordMistake, resolveMistake } from "@/lib/api";
 import { LessonDetail, User, Exercise } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
 
@@ -140,7 +140,10 @@ function LessonContent() {
       // Advance live progress bar right away!
       setCompletedExerciseIds((prev) => new Set(prev).add(currentExercise.id));
 
-      // Remove from missed list if answered correctly during review
+      // Remove from missed list if answered correctly during review & notify backend
+      if (isReviewPhase) {
+        resolveMistake(lessonId, currentExercise.id);
+      }
       setMissedExercises((prev) => prev.filter((e) => e.id !== currentExercise.id));
 
       // Duo encouraging peek after 4 correct in a row
@@ -152,6 +155,9 @@ function LessonContent() {
       setStatus("incorrect");
       setConsecutiveStreak(0);
       setMistakesCount((m) => m + 1);
+
+      // Log mistake to backend persistence pipeline
+      recordMistake(lessonId, currentExercise.id);
 
       // Queue exercise for Mistake Remediation
       setMissedExercises((prev) => {

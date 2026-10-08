@@ -63,6 +63,17 @@ class LessonCompleteResponse(BaseModel):
     unlocked_next_lesson_id: Optional[int] = None
     message: str
 
+class MistakeActionRequest(BaseModel):
+    exercise_id: int
+
+class MistakeActionResponse(BaseModel):
+    success: bool
+    exercise_id: int
+    mistake_count: int
+    resolved: bool
+    message: str
+
+
 # ----------------- Learning Path Schemas -----------------
 class LessonNodeOut(BaseModel):
     id: int
