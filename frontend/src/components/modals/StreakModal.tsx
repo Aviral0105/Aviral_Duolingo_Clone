@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { X, Lock, Users, ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
+import { X, Lock, Users, ChevronLeft, ChevronRight, UserPlus, Check } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 
 interface StreakModalProps {
@@ -20,13 +20,69 @@ export default function StreakModal({
 }: StreakModalProps) {
   const [tab, setTab] = useState<"personal" | "friends">(initialTab);
 
+  // Real Dynamic Calendar State (initialized with stable date, hydrated in useEffect)
+  const [viewDate, setViewDate] = useState<Date>(() => new Date(2026, 9, 1));
+  const [today, setToday] = useState<Date>(() => new Date(2026, 9, 9));
+  const [selectedDayInfo, setSelectedDayInfo] = useState<string | null>(null);
+
+  useEffect(() => {
+    const now = new Date();
+    setToday(now);
+    setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       setTab(initialTab);
+      setSelectedDayInfo(null);
     }
   }, [isOpen, initialTab]);
 
   if (!isOpen) return null;
+
+  // Real calendar calculations
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const monthName = viewDate.toLocaleString("en-US", { month: "long" }).toUpperCase();
+  const monthYearLabel = `${monthName} ${year}`;
+
+  const firstDayIndex = new Date(year, month, 1).getDay(); // 0 = Sunday, 1 = Monday, ...
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Real system date detection for streaks
+  const isCurrentMonthView = today.getFullYear() === year && today.getMonth() === month;
+  const currentDay = today.getDate();
+
+  // Calculate active streak days for current month
+  // Streak extends back from today by `streak` days
+  const streakEnd = currentDay;
+  const streakStart = Math.max(1, currentDay - streak + 1);
+
+  const handlePrevMonth = () => {
+    sounds.playTap();
+    setViewDate(new Date(year, month - 1, 1));
+    setSelectedDayInfo(null);
+  };
+
+  const handleNextMonth = () => {
+    sounds.playTap();
+    setViewDate(new Date(year, month + 1, 1));
+    setSelectedDayInfo(null);
+  };
+
+  const handleDayClick = (dayNumber: number) => {
+    sounds.playTap();
+    if (isCurrentMonthView && dayNumber >= streakStart && dayNumber <= streakEnd) {
+      setSelectedDayInfo(`Day ${dayNumber}: Streak completed! 🔥 (XP earned)`);
+    } else if (isCurrentMonthView && dayNumber === currentDay) {
+      setSelectedDayInfo(`Today (Day ${dayNumber}): Complete a lesson to extend your streak!`);
+    } else if (isCurrentMonthView && dayNumber > currentDay) {
+      setSelectedDayInfo(`Day ${dayNumber}: Future date. Keep learning daily!`);
+    } else {
+      setSelectedDayInfo(`Day ${dayNumber} ${monthName}: Rest day.`);
+    }
+    setTimeout(() => setSelectedDayInfo(null), 3000);
+  };
 
   return (
     <div
@@ -88,7 +144,7 @@ export default function StreakModal({
         <div className="overflow-y-auto p-5 space-y-6 flex-1">
           {tab === "personal" ? (
             /* ======================================================== */
-            /* TAB 1: PERSONAL VIEW (Screenshots 2 & 3)                 */
+            /* TAB 1: PERSONAL VIEW (Real Dynamic Calendar)             */
             /* ======================================================== */
             <>
               {/* Orange Hero Card */}
@@ -111,20 +167,41 @@ export default function StreakModal({
                 </div>
               </div>
 
-              {/* Calendar Section */}
+              {/* Real Interactive Calendar Section */}
               <div>
-                <h3 className="font-black text-base text-gray-800 mb-3">Calendar</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-black text-base text-gray-800">Calendar</h3>
+                  {selectedDayInfo && (
+                    <span className="text-xs font-bold text-[#ff9600] animate-fade-in truncate max-w-[200px]">
+                      {selectedDayInfo}
+                    </span>
+                  )}
+                </div>
 
                 <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 shadow-xs">
-                  {/* Month Switcher Header */}
-                  <div className="flex items-center justify-between text-xs font-black text-gray-600 mb-4 px-2">
-                    <ChevronLeft className="w-4 h-4 cursor-pointer hover:text-gray-900" />
-                    <span className="uppercase tracking-wider">OCTOBER 2026</span>
-                    <ChevronRight className="w-4 h-4 cursor-pointer hover:text-gray-900" />
+                  {/* Real Month Switcher Navigation */}
+                  <div className="flex items-center justify-between text-xs font-black text-gray-600 mb-4 px-2 select-none">
+                    <button
+                      onClick={handlePrevMonth}
+                      className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                      title="Previous month"
+                    >
+                      <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                    <span className="uppercase tracking-wider font-black text-gray-700">
+                      {monthYearLabel}
+                    </span>
+                    <button
+                      onClick={handleNextMonth}
+                      className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                      title="Next month"
+                    >
+                      <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                    </button>
                   </div>
 
-                  {/* Days of Week */}
-                  <div className="grid grid-cols-7 text-center text-xs font-black text-gray-400 mb-3">
+                  {/* Day Header: S M T W T F S */}
+                  <div className="grid grid-cols-7 text-center text-xs font-black text-gray-400 mb-3 select-none">
                     <span>S</span>
                     <span>M</span>
                     <span>T</span>
@@ -134,58 +211,57 @@ export default function StreakModal({
                     <span>S</span>
                   </div>
 
-                  {/* Calendar Dates Grid */}
-                  <div className="grid grid-cols-7 text-center text-xs font-bold text-gray-600 gap-y-3 items-center">
-                    {/* Empty offsets for October 1st starting on Thursday */}
-                    <span />
-                    <span />
-                    <span />
-                    <span />
-                    <span>1</span>
-                    <span>2</span>
-                    <span>3</span>
+                  {/* Real Days Grid */}
+                  <div className="grid grid-cols-7 text-center text-xs font-bold text-gray-600 gap-y-2.5 items-center">
+                    {/* Empty padding slots before the 1st of the month */}
+                    {Array.from({ length: firstDayIndex }).map((_, i) => (
+                      <span key={`empty-${i}`} className="w-7 h-7" />
+                    ))}
 
-                    <span>4</span>
-                    <span>5</span>
-                    <span>6</span>
-                    <span>7</span>
-                    {/* Active Days 8 & 9 highlighted in connected pill */}
-                    <div className="col-span-2 relative flex items-center justify-center">
-                      <div className="absolute inset-y-0.5 inset-x-2 bg-amber-100 rounded-full" />
-                      <div className="relative z-10 w-full flex items-center justify-around">
-                        <span className="w-7 h-7 rounded-full bg-[#ff9600] text-white flex items-center justify-center font-black shadow-xs">
-                          8
-                        </span>
-                        <span className="w-7 h-7 rounded-full bg-[#ff9600] text-white flex items-center justify-center font-black shadow-xs">
-                          9
-                        </span>
-                      </div>
-                    </div>
-                    <span>10</span>
+                    {/* Actual Days of the Month */}
+                    {Array.from({ length: daysInMonth }).map((_, i) => {
+                      const dayNumber = i + 1;
+                      const isStreakDay =
+                        isCurrentMonthView &&
+                        dayNumber >= streakStart &&
+                        dayNumber <= streakEnd;
 
-                    <span>11</span>
-                    <span>12</span>
-                    <span>13</span>
-                    <span>14</span>
-                    <span>15</span>
-                    <span>16</span>
-                    <span>17</span>
+                      const isFirstStreakDay = isStreakDay && dayNumber === streakStart;
+                      const isLastStreakDay = isStreakDay && dayNumber === streakEnd;
+                      const isToday = isCurrentMonthView && dayNumber === currentDay;
 
-                    <span>18</span>
-                    <span>19</span>
-                    <span>20</span>
-                    <span>21</span>
-                    <span>22</span>
-                    <span>23</span>
-                    <span>24</span>
+                      return (
+                        <div
+                          key={`day-${dayNumber}`}
+                          className="relative flex items-center justify-center cursor-pointer group"
+                          onClick={() => handleDayClick(dayNumber)}
+                        >
+                          {/* Connected pill background for consecutive streak days */}
+                          {isStreakDay && (
+                            <div
+                              className={`absolute inset-y-0.5 bg-amber-100 ${
+                                isFirstStreakDay ? "left-1 rounded-l-full" : "left-0"
+                              } ${
+                                isLastStreakDay ? "right-1 rounded-r-full" : "right-0"
+                              }`}
+                            />
+                          )}
 
-                    <span>25</span>
-                    <span>26</span>
-                    <span>27</span>
-                    <span>28</span>
-                    <span>29</span>
-                    <span>30</span>
-                    <span>31</span>
+                          {/* Day Circle / Badge */}
+                          <div
+                            className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center font-black transition group-hover:scale-110 ${
+                              isStreakDay
+                                ? "bg-[#ff9600] text-white shadow-xs"
+                                : isToday
+                                ? "border-2 border-[#ff9600] text-[#ff9600]"
+                                : "text-gray-600 hover:bg-gray-100"
+                            }`}
+                          >
+                            {dayNumber}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -224,7 +300,7 @@ export default function StreakModal({
             </>
           ) : (
             /* ======================================================== */
-            /* TAB 2: FRIENDS VIEW (Screenshot 4)                       */
+            /* TAB 2: FRIENDS VIEW                                      */
             /* ======================================================== */
             <div className="py-6 text-center space-y-6">
               {/* Illustration of Duo & Lily with flame */}
