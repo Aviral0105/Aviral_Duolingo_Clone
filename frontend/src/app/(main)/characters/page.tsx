@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Volume2, Sparkles, CheckCircle2, ChevronRight, Zap } from "lucide-react";
+import RightPanel from "@/components/navigation/RightPanel";
 
 interface Letter {
   char: string;
@@ -193,66 +194,8 @@ export default function CharactersPage() {
         </div>
       </div>
 
-      {/* RIGHT STICKY COLUMN: PROMO & DAILY QUESTS (Static across Main Pages) */}
-      <div className="w-full lg:w-80 shrink-0 space-y-6">
-        {/* Super Duolingo Promo Card */}
-        <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-            <h3 className="text-base font-black uppercase tracking-wider text-amber-300">
-              Super Duolingo
-            </h3>
-          </div>
-          <p className="text-xs font-bold text-purple-200 leading-relaxed mb-4">
-            Learn Hindi script faster with unlimited listening practice and zero ads.
-          </p>
-          <Link
-            href="/shop"
-            className="block text-center w-full py-2.5 rounded-2xl bg-white text-purple-900 font-black uppercase text-xs tracking-wider border-b-4 border-gray-200 active:border-b-0 active:translate-y-1 transition hover:bg-gray-50"
-          >
-            TRY FOR FREE
-          </Link>
-        </div>
-
-        {/* Daily Quests Widget */}
-        <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-black text-gray-800">Daily Quests</h3>
-            <Link
-              href="/quests"
-              className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
-            >
-              VIEW ALL
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-              <Zap className="w-5 h-5 text-[#ffc800] fill-[#ffc800]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-black text-gray-800 mb-1">
-                Earn 10 XP
-              </div>
-              <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                <div className="bg-[#ffc800] h-full rounded-full" style={{ width: "100%" }} />
-              </div>
-            </div>
-            <span className="text-xl">📦</span>
-          </div>
-        </div>
-
-        {/* Footer Links */}
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-black text-gray-400 uppercase tracking-wider px-2">
-          <a href="#" className="hover:underline">About</a>
-          <a href="#" className="hover:underline">Blog</a>
-          <a href="#" className="hover:underline">Store</a>
-          <a href="#" className="hover:underline">Efficacy</a>
-          <a href="#" className="hover:underline">Careers</a>
-          <a href="#" className="hover:underline">Terms</a>
-          <a href="#" className="hover:underline">Privacy</a>
-        </div>
-      </div>
+      {/* RIGHT STICKY COLUMN: BRONZE LEAGUE & DAILY QUESTS */}
+      <RightPanel />
 
       {/* Interactive Letters Practice Quiz Modal */}
       {isQuizModalOpen && (

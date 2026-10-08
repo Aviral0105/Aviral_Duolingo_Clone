@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { sounds } from "@/lib/sounds";
 import { Heart, Zap, Sparkles, Check, Lock, Gift } from "lucide-react";
+import RightPanel from "@/components/navigation/RightPanel";
 
 export default function ShopPage() {
   const [isSuper, setIsSuper] = useState(false);
@@ -16,7 +17,9 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="flex flex-col select-none max-w-2xl mx-auto w-full pb-12">
+    <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
+      {/* CENTER FEED: HEARTS & POWER-UPS */}
+      <div className="flex-1 w-full max-w-xl mx-auto space-y-8">
       {/* Super Duolingo Promotion Hero */}
       <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-500 rounded-3xl text-white p-6 sm:p-8 flex items-center justify-between shadow-sm mb-8 relative overflow-hidden">
         <div className="max-w-xs z-10">
@@ -105,8 +108,10 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+      </div>
 
-
+      {/* RIGHT STICKY COLUMN: BRONZE LEAGUE & DAILY QUESTS */}
+      <RightPanel />
 
       {/* SUPER DUOLINGO COMPARISON MODAL FROM VIDEO */}
       {showSuperModal && (

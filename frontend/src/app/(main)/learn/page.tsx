@@ -7,6 +7,7 @@ import GuidebookModal from "@/components/modals/GuidebookModal";
 import SectionsModal from "@/components/modals/SectionsModal";
 import LockedModal from "@/components/modals/LockedModal";
 import StartLessonModal from "@/components/modals/StartLessonModal";
+import RightPanel from "@/components/navigation/RightPanel";
 
 export default function LearnPage() {
   const [isGuidebookOpen, setIsGuidebookOpen] = useState(false);
@@ -22,7 +23,9 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="flex flex-col items-center select-none relative">
+    <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
+      {/* LEFT/CENTER COLUMN: LEARNING PATH */}
+      <div className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center select-none relative">
       {/* 1. Unit Header Banner */}
       <div className="w-full bg-[#58cc02] rounded-3xl p-5 text-white shadow-sm flex items-center justify-between mb-10 cursor-pointer group">
         <div onClick={() => setIsSectionsOpen(true)} className="flex-1">
@@ -187,6 +190,9 @@ export default function LearnPage() {
           </div>
         </div>
       </div>
+
+      {/* RIGHT STICKY COLUMN: BRONZE LEAGUE & DAILY QUESTS */}
+      <RightPanel />
 
       {/* Floating Blue Up Arrow */}
       <button

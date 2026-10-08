@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Target, Heart, Sparkles, User } from "lucide-react";
+import { Home, Trophy, Target, Sparkles, User, MoreHorizontal } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -11,19 +11,43 @@ export default function BottomNav() {
   if (pathname.startsWith("/lesson")) return null;
 
   const tabs = [
-    { href: "/learn", icon: Home, label: "Learn" },
-    { href: "/leaderboard", icon: Trophy, label: "Ranks" },
-    { href: "/quests", icon: Target, label: "Quests" },
-    { href: "/practice", icon: Heart, label: "Practice" },
-    { href: "/shop", icon: Sparkles, label: "Shop" },
-    { href: "/profile", icon: User, label: "Profile" },
+    { href: "/learn", type: "home", label: "Learn" },
+    { href: "/characters", type: "letters", label: "Letters" },
+    { href: "/leaderboard", type: "ranks", label: "Ranks" },
+    { href: "/quests", type: "quests", label: "Quests" },
+    { href: "/shop", type: "shop", label: "Shop" },
+    { href: "/profile", type: "profile", label: "Profile" },
+    { href: "/settings/account", type: "more", label: "More" },
   ];
 
+  const renderIcon = (type: string) => {
+    switch (type) {
+      case "home":
+        return <Home className="w-5 h-5" />;
+      case "letters":
+        return <span className="font-serif font-black text-base leading-none">क</span>;
+      case "ranks":
+        return <Trophy className="w-5 h-5" />;
+      case "quests":
+        return <Target className="w-5 h-5" />;
+      case "shop":
+        return <Sparkles className="w-5 h-5" />;
+      case "profile":
+        return <User className="w-5 h-5" />;
+      case "more":
+        return <MoreHorizontal className="w-5 h-5" />;
+      default:
+        return <Home className="w-5 h-5" />;
+    }
+  };
+
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#e5e5e5] px-2 py-2 flex items-center justify-around z-30 select-none">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#e5e5e5] px-1 py-1.5 flex items-center justify-around z-30 select-none">
       {tabs.map((tab) => {
-        const isActive = pathname === tab.href;
-        const Icon = tab.icon;
+        const isActive =
+          pathname === tab.href ||
+          (tab.href === "/characters" && pathname === "/letters") ||
+          (tab.href === "/settings/account" && pathname.startsWith("/settings"));
         return (
           <Link
             key={tab.href}
@@ -32,7 +56,10 @@ export default function BottomNav() {
               isActive ? "text-[#58cc02] scale-105" : "text-gray-400 hover:text-gray-600"
             }`}
           >
-            <Icon className="w-6 h-6" />
+            {renderIcon(tab.type)}
+            <span className="text-[10px] font-black uppercase tracking-tighter mt-0.5">
+              {tab.label}
+            </span>
           </Link>
         );
       })}
