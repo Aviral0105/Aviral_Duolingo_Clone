@@ -17,21 +17,44 @@ const FALLBACK_USER: User = {
 };
 
 const FALLBACK_PATH: PathResponse = {
-  course_title: "French",
-  course_flag: "🇫🇷",
+  course_title: "Hindi",
+  course_flag: "🇮🇳",
   units: [
     {
       id: 1,
       section_title: "SECTION 1, UNIT 1",
-      title: "Order at a café",
-      description: "Greet people, order food and drinks",
+      title: "Form basic sentences",
+      description: "Identify basic objects, people, and simple sentence structures in Hindi",
       order_index: 1,
       lessons: [
-        { id: 1, title: "Basics 1", icon: "star", order_index: 1, status: "available", crowns: 0 },
-        { id: 2, title: "Basics 2", icon: "star", order_index: 2, status: "locked", crowns: 0 },
-        { id: 3, title: "Video Call: Falstaff", icon: "camera", order_index: 3, status: "locked", crowns: 0 },
-        { id: 4, title: "Unit Milestone", icon: "chest", order_index: 4, status: "locked", crowns: 0 },
-        { id: 5, title: "Café Listening", icon: "headphones", order_index: 5, status: "locked", crowns: 0 },
+        { id: 1, title: "Basics 1", icon: "star", order_index: 1, status: "completed", crowns: 1 },
+        { id: 2, title: "Basics 2", icon: "star", order_index: 2, status: "available", crowns: 0 },
+        { id: 3, title: "Phrases 1", icon: "headphones", order_index: 3, status: "locked", crowns: 0 },
+        { id: 4, title: "Unit 1 Milestone", icon: "chest", order_index: 4, status: "locked", crowns: 0 },
+      ],
+    },
+    {
+      id: 2,
+      section_title: "SECTION 1, UNIT 2",
+      title: "Greet people & describe things",
+      description: "Learn everyday greetings, polite expressions, colors, and numbers",
+      order_index: 2,
+      lessons: [
+        { id: 5, title: "Greetings", icon: "star", order_index: 1, status: "locked", crowns: 0 },
+        { id: 6, title: "Questions", icon: "headphones", order_index: 2, status: "locked", crowns: 0 },
+        { id: 7, title: "Unit 2 Milestone", icon: "chest", order_index: 3, status: "locked", crowns: 0 },
+      ],
+    },
+    {
+      id: 3,
+      section_title: "SECTION 1, UNIT 3",
+      title: "Talk about family & food",
+      description: "Describe family members, daily meals, and favorite Indian drinks",
+      order_index: 3,
+      lessons: [
+        { id: 8, title: "Family 1", icon: "star", order_index: 1, status: "locked", crowns: 0 },
+        { id: 9, title: "Food & Drinks", icon: "camera", order_index: 2, status: "locked", crowns: 0 },
+        { id: 10, title: "Section 1 Trophy", icon: "chest", order_index: 3, status: "locked", crowns: 0 },
       ],
     },
   ],

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/path", tags=["Learning Path"])
 def get_learning_path(db: Session = Depends(get_db)):
     course = db.query(Course).first()
     if not course:
-        return {"course_title": "Spanish", "course_flag": "🇪🇸", "units": []}
+        return {"course_title": "Hindi", "course_flag": "🇮🇳", "units": []}
 
     units = db.query(Unit).filter(Unit.course_id == course.id).order_by(Unit.order_index).all()
     user_progress_map = {
