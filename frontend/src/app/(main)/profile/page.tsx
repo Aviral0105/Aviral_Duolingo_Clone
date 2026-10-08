@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Flame,
   Zap,
@@ -175,12 +176,12 @@ export default function ProfilePage() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xl font-black text-gray-800">Achievements</h2>
-            <button
-              onClick={() => showToast("Showing all 15 achievements")}
+            <Link
+              href="/profile/achievements"
               className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
             >
               VIEW ALL
-            </button>
+            </Link>
           </div>
 
           <div className="space-y-3">
