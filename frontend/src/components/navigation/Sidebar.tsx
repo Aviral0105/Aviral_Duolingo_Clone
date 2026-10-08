@@ -41,12 +41,6 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
       activeColor: "text-[#1cb0f6]",
     },
     {
-      label: "PRACTICE",
-      href: "/practice",
-      iconType: "practice",
-      activeColor: "text-[#1cb0f6]",
-    },
-    {
       label: "LEADERBOARDS",
       href: "/leaderboard",
       iconType: "shield",
@@ -82,8 +76,6 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
             क
           </span>
         );
-      case "practice":
-        return <span className="text-2xl">🏋️‍♂️</span>;
       case "shield":
         return <span className="text-2xl">🛡️</span>;
       case "chest":
@@ -111,7 +103,7 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
 
   return (
     <>
-      <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40">
+      <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40 overflow-visible">
         {/* Brand Logo */}
         <Link href="/learn" className="flex items-center gap-2 px-3 mb-6">
           <span className="text-3xl font-black text-[#58cc02] tracking-tighter hover:opacity-90 transition">
@@ -119,8 +111,8 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
           </span>
         </Link>
 
-        {/* Nav Links */}
-        <nav className="flex-1 space-y-1.5 relative overflow-y-auto pr-1">
+        {/* Nav Links without any scrollbar or slider */}
+        <nav className="flex-1 space-y-1.5 relative overflow-visible">
           {links.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -141,7 +133,7 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
             );
           })}
 
-          {/* MORE Button with Popover Menu */}
+          {/* MORE Button with Floating Dropdown */}
           <div className="relative pt-1" ref={moreRef}>
             <button
               onClick={() => setIsMoreOpen(!isMoreOpen)}
@@ -157,9 +149,9 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
               <span>MORE</span>
             </button>
 
-            {/* Floating MORE Popover Card (Matches authentic Duolingo web exactly) */}
+            {/* Floating Dropdown next to MORE (Matches authentic Duolingo screenshot 1:1) */}
             {isMoreOpen && (
-              <div className="absolute left-[calc(100%+12px)] bottom-0 w-[270px] bg-white border-2 border-[#e5e5e5] rounded-2xl p-2 shadow-[0_10px_25px_rgba(0,0,0,0.12)] z-50 animate-in fade-in zoom-in-95 duration-100 select-none">
+              <div className="absolute left-[calc(100%+8px)] top-0 w-[270px] bg-white border-2 border-[#e5e5e5] rounded-2xl p-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] z-50 animate-in fade-in zoom-in-95 duration-100 select-none">
                 {/* 1. Duolingo English Test */}
                 <a
                   href="https://englishtest.duolingo.com/"
@@ -240,6 +232,7 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
           </div>
         </nav>
       </aside>
+
 
       {/* Info Modals for Schools, English Test, and Help */}
       {modalType && (

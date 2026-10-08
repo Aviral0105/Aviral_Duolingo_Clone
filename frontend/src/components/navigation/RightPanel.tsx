@@ -91,25 +91,6 @@ export default function RightPanel() {
         </div>
       </div>
 
-      {/* 3. Practice Hub Card */}
-      <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-base font-black text-gray-800">Practice Hub</h3>
-          <span className="text-[10px] font-black uppercase bg-sky-50 text-[#1cb0f6] px-2 py-0.5 rounded-md">
-            +20 XP
-          </span>
-        </div>
-        <p className="text-xs font-bold text-gray-400 mb-3">
-          Sharpen your Hindi listening, review mistakes, and earn hearts!
-        </p>
-        <Link
-          href="/practice"
-          className="w-full py-2.5 rounded-2xl border-2 border-[#84d8ff] bg-[#ddf4ff] text-[#1899d6] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition"
-        >
-          <span>🏋️‍♂️</span>
-          <span>Start Practice</span>
-        </Link>
-      </div>
 
       {/* Footer Links */}
       <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-black text-gray-400 uppercase tracking-wider px-2">

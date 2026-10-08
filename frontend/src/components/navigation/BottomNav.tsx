@@ -13,7 +13,6 @@ export default function BottomNav() {
   const tabs = [
     { href: "/learn", type: "home", label: "Learn" },
     { href: "/characters", type: "letters", label: "Letters" },
-    { href: "/practice", type: "practice", label: "Practice" },
     { href: "/leaderboard", type: "ranks", label: "Ranks" },
     { href: "/quests", type: "quests", label: "Quests" },
     { href: "/shop", type: "shop", label: "Shop" },

@@ -40,15 +40,6 @@ export default function LearnPage() {
           <h1 className="text-xl sm:text-2xl font-black mt-0.5">Form basic sentences</h1>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            href="/practice"
-            onClick={(e) => e.stopPropagation()}
-            className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95"
-            title="Practice Hub"
-          >
-            <span>🏋️‍♂️</span>
-            <span className="hidden sm:inline">PRACTICE</span>
-          </Link>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -115,15 +106,14 @@ export default function LearnPage() {
           </button>
         </div>
 
-        {/* Node 3: Shifted Left (Practice Dumbbell Node) */}
+        {/* Node 3: Shifted Left (Locked Star) */}
         <div className="relative -translate-x-12">
-          <Link
-            href="/practice"
-            className="w-20 h-20 rounded-full btn-3d-blue flex items-center justify-center active:scale-95 transition shadow-lg group"
-            title="Practice Hub"
+          <button
+            onClick={() => setLockedModal({ open: true, title: "Phrases 1" })}
+            className="w-20 h-20 rounded-full btn-3d-gray flex items-center justify-center active:scale-95 transition"
           >
-            <span className="text-3xl group-hover:scale-110 transition-transform">🏋️‍♂️</span>
-          </Link>
+            <span className="text-3xl opacity-60">⭐</span>
+          </button>
         </div>
 
         {/* Mascot Duo sitting on the right */}

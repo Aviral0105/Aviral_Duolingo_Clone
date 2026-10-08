@@ -93,10 +93,28 @@ body {
 nextjs-portal,
 [data-nextjs-dev-tools-button],
 [data-nextjs-toast],
-next-route-announcer {
+next-route-announcer,
+div:has(> [data-nextjs-dev-tools-button]),
+div[class*="next-dev"],
+div[class*="dev-tools"] {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Prevent scrollbar sliders from appearing in sidebar */
+aside,
+aside nav {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+aside::-webkit-scrollbar,
+aside nav::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
