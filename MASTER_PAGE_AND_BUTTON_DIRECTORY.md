@@ -18,7 +18,7 @@
 | **Page 5** | Letters / Hindi Alphabet | `/characters` (`/letters`) | **46** | 42 Devanagari character cards with native audio synth & quiz. |
 | **Page 6** | Leaderboards League | `/leaderboard` | **17** | Bronze League table, user rank & 12-emoji status picker. |
 | **Page 7** | Quests & Daily Rewards | `/quests` | **5** | Purple Welcome banner, daily XP quests & Monthly challenge. |
-| **Page 8** | Shop & Super Duolingo | `/shop` | **11** | Hearts refills, freeze equip, referral offers & Super trial. |
+| **Page 8** | Shop & Super Duolingo | `/shop` | **6** | Hearts refills, freeze equip, and Super Duolingo trial. |
 | **Page 9** | Learner Profile | `/profile` | **10** | Avatar hero, stats matrix, Following/Followers hub & Add friends. |
 | **Page 10** | Settings & Account Preferences | `/settings/account` | **11** | Sound & animation toggles, profile inputs & logout. |
 | **Shell** | Persistent Left Sidebar | *(All Main Views)* | **14** | Nav pills, MORE popover menu (6 sub-actions), Super shortcut. |
@@ -132,16 +132,13 @@
 
 ---
 
-### Page 8: Shop & Super Duolingo (`/shop`) — 11 Buttons
+### Page 8: Shop & Super Duolingo (`/shop`) — 6 Buttons
 1. **START MY 1 MONTH FREE TRIAL**: White 3D button on purple -> Opens Super comparison sheet.
 2. **REFILL HEARTS (💎 350)**: Blue 3D button -> Deducts gems, restores hearts to 5 via backend API.
 3. **GET UNLIMITED HEARTS**: Purple 3D button -> Activates Super mode (unlimited hearts ∞).
 4. **EQUIP STREAK FREEZE (💎 200)**: Cyan button (`2/2 equipped`) -> Equips freeze protection.
-5. **FRIENDS CHEST**: Gift card -> Opens friend referral modal.
-6. **ADD WIDGET REWARD**: Phone widget card -> Triggers widget instruction modal.
-7. **FREE CHEST**: Gold chest button -> Awards daily gem gift.
-8. **Super Modal: START FREE TRIAL**: Purple 3D button -> Activates Super status.
-9. **Super Modal: ✕ Close**: Top-right close button.
+5. **Super Modal: START FREE TRIAL**: Purple 3D button -> Activates Super status.
+6. **Super Modal: ✕ Close**: Top-right close button.
 
 ---
 

@@ -106,74 +106,7 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* SECTION 3: SPECIAL OFFERS FROM VIDEO */}
-      <div className="mb-8">
-        <h2 className="text-base font-black text-gray-800 mb-3">Special Offers</h2>
-        <div className="space-y-3">
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <span className="text-3xl">📦</span>
-              <div>
-                <div className="text-[10px] font-black uppercase text-amber-500">NEW</div>
-                <h3 className="font-black text-sm text-gray-800">Friends Chest</h3>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                sounds.playVictory();
-                alert("Claimed 20 Gems from Friends Chest!");
-              }}
-              className="btn-3d-green px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shrink-0"
-            >
-              Claim
-            </button>
-          </div>
 
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <span className="text-3xl">📱</span>
-              <div>
-                <h3 className="font-black text-sm text-gray-800">Widget Reward</h3>
-              </div>
-            </div>
-            <button className="btn-3d-blue px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shrink-0">
-              Start
-            </button>
-          </div>
-
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between opacity-60">
-            <div className="flex items-center gap-3.5">
-              <span className="text-3xl">🌅</span>
-              <h3 className="font-black text-sm text-gray-700">Early Bird Chest</h3>
-            </div>
-            <span className="text-xs font-black text-gray-400 uppercase">Locked</span>
-          </div>
-
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between opacity-60">
-            <div className="flex items-center gap-3.5">
-              <span className="text-3xl">🌙</span>
-              <h3 className="font-black text-sm text-gray-700">Night Owl Chest</h3>
-            </div>
-            <span className="text-xs font-black text-gray-400 uppercase">Locked</span>
-          </div>
-
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <span className="text-3xl">🎁</span>
-              <h3 className="font-black text-sm text-gray-800">Free Chest</h3>
-            </div>
-            <button
-              onClick={() => {
-                sounds.playCorrect();
-                alert("Earned 5 free gems!");
-              }}
-              className="btn-3d-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shrink-0"
-            >
-              Watch Ad
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* SUPER DUOLINGO COMPARISON MODAL FROM VIDEO */}
       {showSuperModal && (
