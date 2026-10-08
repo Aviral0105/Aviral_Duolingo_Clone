@@ -1,6 +1,16 @@
 import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// NEXT_PUBLIC_* variables are inlined at BUILD time. On a deployed site you must set
+// NEXT_PUBLIC_API_URL to your public backend URL (e.g. https://my-api.onrender.com) and REDEPLOY,
+// otherwise the browser tries to call localhost:8000 and every request silently falls back to demo data.
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+
+if (typeof window !== "undefined" && window.location.hostname !== "localhost" && API_BASE_URL.includes("localhost")) {
+  console.error(
+    "[duolingo-clone] NEXT_PUBLIC_API_URL is not set for this deployment. API calls go to " +
+      API_BASE_URL + " and will fail. Set it to your deployed backend URL and redeploy the frontend."
+  );
+}
 
 // Fallback seed data if backend is offline during frontend dev
 const FALLBACK_USER: User = {
@@ -109,13 +119,13 @@ export async function fetchLesson(id: number): Promise<LessonDetail> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/lessons/${id}`, { cache: "no-store" });
     if (res.ok) return await res.json();
+    console.error(`[duolingo-clone] GET /api/lessons/${id} failed with HTTP ${res.status}`);
   } catch (e) {
-    console.warn("Backend not reachable, returning default exercises sequence");
+    console.error(`[duolingo-clone] Could not reach backend at ${API_BASE_URL} - showing offline demo lesson`, e);
   }
-
   // 5 Exercise Types Fallback (Matching user's Hindi 1 video recording exactly)
   return {
-    id: 1,
+    id,
     title: "Unit 1: Form basic sentences",
     xp_reward: 10,
     exercises: [
@@ -579,4 +589,3 @@ export async function fetchGuidebook(unitId: number = 1): Promise<GuidebookData>
     ],
   };
 }
-
