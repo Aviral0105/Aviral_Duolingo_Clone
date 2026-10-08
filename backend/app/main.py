@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .seed import seed_database
-from .routes import users, path, lessons, leaderboard, shop
+from .routes import users, path, lessons, leaderboard, shop, help, achievements
 
 # Initialize tables & seed database on startup
 Base.metadata.create_all(bind=engine)
@@ -17,7 +17,7 @@ app = FastAPI(
 # CORS configuration for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows local Next.js (port 3000) and deployed Vercel apps
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,6 +29,8 @@ app.include_router(path.router)
 app.include_router(lessons.router)
 app.include_router(leaderboard.router)
 app.include_router(shop.router)
+app.include_router(help.router)
+app.include_router(achievements.router)
 
 @app.get("/")
 def root():

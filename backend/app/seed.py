@@ -1,6 +1,46 @@
 from datetime import datetime
 from .database import SessionLocal, engine, Base
-from .models import User, Course, Unit, Lesson, Exercise, UserProgress, UserMistake, UserSetting
+from .models import User, Course, Unit, Lesson, Exercise, UserProgress, UserMistake, UserSetting, Achievement, UserFollow, SupportTicket
+
+def _ensure_supplementary_data(db):
+    # Fellow learners for search & follow
+    mock_users = [
+        {"id": 2, "username": "Priyanka M.", "handle": "@priyanka_m", "avatar": "👩🏽", "xp": 180},
+        {"id": 3, "username": "Nitheesh Kumar B", "handle": "@nitheesh_k", "avatar": "🧑🏾‍🦱", "xp": 220},
+        {"id": 4, "username": "Lucas Dupont", "handle": "@lucas_d", "avatar": "🧑🏼", "xp": 95},
+        {"id": 5, "username": "Seyit Musevi", "handle": "@seyit_m", "avatar": "👦🏻", "xp": 140},
+        {"id": 6, "username": "Sara Connor", "handle": "@sara_c", "avatar": "👩🏼", "xp": 75},
+    ]
+    for mu in mock_users:
+        existing = db.query(User).filter((User.id == mu["id"]) | (User.handle == mu["handle"])).first()
+        if not existing:
+            db.add(User(
+                id=mu["id"],
+                username=mu["username"],
+                handle=mu["handle"],
+                avatar=mu["avatar"],
+                xp=mu["xp"],
+                email=f"{mu['handle'][1:]}@example.com",
+                streak=2,
+                hearts=5,
+                gems=100
+            ))
+    
+    # Achievements catalog
+    if db.query(Achievement).count() == 0:
+        default_achievements = [
+            {"key": "wildfire", "title": "Wildfire", "description": "Reach a 3-day streak", "icon": "🔥", "target_value": 3},
+            {"key": "sage", "title": "Sage", "description": "Earn 100 XP", "icon": "⚡", "target_value": 100},
+            {"key": "champion", "title": "Champion", "description": "Advance to the next League", "icon": "🛡️", "target_value": 1},
+            {"key": "sharpshooter", "title": "Sharpshooter", "description": "Complete a lesson with 100% accuracy", "icon": "🎯", "target_value": 1},
+            {"key": "winner", "title": "Winner", "description": "Finish #1 on your leaderboard", "icon": "🏆", "target_value": 1},
+            {"key": "friendly", "title": "Friendly", "description": "Follow 3 fellow learners", "icon": "👥", "target_value": 3},
+            {"key": "weekend_warrior", "title": "Weekend Warrior", "description": "Complete a lesson on Saturday and Sunday", "icon": "⚔️", "target_value": 2},
+            {"key": "photogenic", "title": "Photogenic", "description": "Upload or customize your avatar", "icon": "📸", "target_value": 1},
+        ]
+        for ach in default_achievements:
+            db.add(Achievement(**ach))
+    db.commit()
 
 def seed_database(force: bool = False):
     Base.metadata.create_all(bind=engine)
@@ -14,6 +54,7 @@ def seed_database(force: bool = False):
         # Check if full database is already seeded (e.g. >= 80 exercises)
         total_exercises = db.query(Exercise).count()
         if total_exercises >= 80 and db.query(UserSetting).first():
+            _ensure_supplementary_data(db)
             db.close()
             return
         else:
@@ -606,6 +647,9 @@ def seed_database(force: bool = False):
     db.add(p1)
     db.add(p2)
     db.commit()
+
+    # 7. Ensure fellow learners and achievements are always populated
+    _ensure_supplementary_data(db)
 
     db.close()
     print("Database seeding completed successfully! Total exercises seeded:", len(all_exercises))

@@ -18,6 +18,7 @@ class PurchaseResponse(BaseModel):
 ITEM_PRICES = {
     "refill_hearts": 350,
     "freeze_streak": 200,
+    "streak_freeze": 200,
     "double_xp": 100,
     "super_trial": 0
 }
@@ -46,14 +47,15 @@ def purchase_item(payload: PurchaseRequest, db: Session = Depends(get_db)):
     if item_id == "refill_hearts":
         user.hearts = 5
         msg = "Hearts refilled to 5!"
-    elif item_id == "freeze_streak":
-        msg = "Streak Freeze equipped! Your streak is protected."
+    elif item_id in ("freeze_streak", "streak_freeze"):
+        user.streak_freezes = min(2, (user.streak_freezes or 0) + 1)
+        msg = f"Streak Freeze equipped! ({user.streak_freezes}/2 EQUIPPED)"
     elif item_id == "double_xp":
         msg = "2x XP Boost activated for 15 minutes!"
     elif item_id == "super_trial":
         user.is_super = True
         user.hearts = 999
-        msg = "Super Duolingo trial activated!"
+        msg = "Super Duolingo trial activated! Enjoy Unlimited Hearts."
     else:
         msg = "Item purchased successfully!"
 

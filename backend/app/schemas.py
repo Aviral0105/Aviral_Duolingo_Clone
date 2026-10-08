@@ -13,11 +13,20 @@ class UserBase(BaseModel):
     gems: int
     daily_goal_xp: int
     is_super: bool
+    email: Optional[str] = "aviral@example.com"
+    phone: Optional[str] = None
+    streak_freezes: Optional[int] = 2
+    invite_code: Optional[str] = "BDHTZTB5CW77A"
 
 class UserOut(UserBase):
     id: int
     class Config:
         from_attributes = True
+
+class UserProfileUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
 class HeartsActionResponse(BaseModel):
     hearts: int
@@ -32,7 +41,7 @@ class SimulateDayResponse(BaseModel):
 class ExerciseOut(BaseModel):
     id: int
     order_index: int
-    type: str  # MULTIPLE_CHOICE, WORD_BANK, MATCH_PAIRS, FILL_BLANK, TYPE_ANSWER
+    type: str
     category_tag: str
     prompt: str
     audio_text: Optional[str] = None
@@ -73,14 +82,13 @@ class MistakeActionResponse(BaseModel):
     resolved: bool
     message: str
 
-
 # ----------------- Learning Path Schemas -----------------
 class LessonNodeOut(BaseModel):
     id: int
     title: str
     icon: str
     order_index: int
-    status: str  # 'completed' | 'available' | 'locked'
+    status: str
     crowns: int
 
 class UnitOut(BaseModel):
@@ -142,3 +150,55 @@ class UserSettingsUpdate(BaseModel):
     speaking_exercises: Optional[bool] = None
     dark_mode: Optional[str] = None
 
+# ----------------- Support & Help Center Schemas -----------------
+class SupportTicketCreate(BaseModel):
+    name: str
+    email: str
+    category: str
+    message: str
+
+class SupportTicketOut(BaseModel):
+    ticket_code: str
+    status: str
+    message: str
+
+class FAQItemOut(BaseModel):
+    question: str
+    answer: str
+    category: str
+
+# ----------------- Social & Friends Schemas -----------------
+class UserSearchItem(BaseModel):
+    id: int
+    username: str
+    handle: str
+    avatar: str
+    is_following: bool
+
+class FollowActionResponse(BaseModel):
+    success: bool
+    target_user_id: int
+    is_following: bool
+    message: str
+
+class SocialStatsOut(BaseModel):
+    following_count: int
+    followers_count: int
+    following: List[UserSearchItem]
+    followers: List[UserSearchItem]
+
+class InviteLinkOut(BaseModel):
+    invite_code: str
+    invite_url: str
+
+# ----------------- Achievements Schemas -----------------
+class AchievementOut(BaseModel):
+    key: str
+    title: str
+    description: str
+    icon: str
+    level: int
+    max_level: int
+    current_value: int
+    target_value: int
+    unlocked: bool

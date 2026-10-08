@@ -342,3 +342,65 @@ export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
     ],
   };
 }
+
+export async function submitSupportFeedback(data: { name: string; email: string; category: string; message: string }) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/help/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Feedback backend not reachable, using offline ticket");
+  }
+  return {
+    ticket_code: `DUO-${Math.floor(10000 + Math.random() * 90000)}`,
+    status: "open",
+    message: "Thank you! Your feedback has been received.",
+  };
+}
+
+export async function fetchAchievements() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/achievements`, { cache: "no-store" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Achievements backend not reachable");
+  }
+  return null;
+}
+
+export async function searchUsers(q: string) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/search?q=${encodeURIComponent(q)}`, { cache: "no-store" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("User search backend not reachable");
+  }
+  return [];
+}
+
+export async function toggleFollowUser(targetId: number) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/follow/${targetId}`, { method: "POST" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Follow user backend not reachable");
+  }
+  return { success: true, target_user_id: targetId, is_following: true, message: "Updated follow status" };
+}
+
+export async function updateUserProfile(profile: { username?: string; email?: string; phone?: string }) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/profile`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profile),
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Failed to update profile on backend");
+  }
+}
+
