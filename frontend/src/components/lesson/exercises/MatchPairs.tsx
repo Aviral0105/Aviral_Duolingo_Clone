@@ -12,29 +12,34 @@ interface PairItem {
 interface MatchPairsProps {
   prompt: string;
   categoryTag: string;
-  pairs: { es: string; en: string }[];
+  pairs: any[];
   onAllMatched: () => void;
 }
 
-export default function MatchPairs({ prompt, categoryTag, pairs, onAllMatched }: MatchPairsProps) {
+export default function MatchPairs({ prompt, categoryTag, pairs = [], onAllMatched }: MatchPairsProps) {
   // Flatten and shuffle items
   const [items] = useState<PairItem[]>(() => {
     const list: PairItem[] = [];
-    pairs.forEach((p, idx) => {
-      list.push({ id: `fr-${idx}`, text: p.es, pairKey: `pair-${idx}` });
-      list.push({ id: `en-${idx}`, text: p.en, pairKey: `pair-${idx}` });
+    pairs.forEach((p: any, idx: number) => {
+      const targetText = p.hi || p.target || p.es || (p.en ? p.hi : Object.values(p)[0]) || "";
+      const englishText = p.en || p.english || Object.values(p)[1] || "";
+
+      list.push({ id: `target-${idx}`, text: String(targetText), pairKey: `pair-${idx}` });
+      list.push({ id: `en-${idx}`, text: String(englishText), pairKey: `pair-${idx}` });
     });
     return list.sort(() => Math.random() - 0.5);
   });
 
   const [selected, setSelected] = useState<PairItem | null>(null);
   const [matchedKeys, setMatchedKeys] = useState<string[]>([]);
+  const [wrongId, setWrongId] = useState<string | null>(null);
 
   const handleSelect = (item: PairItem) => {
     if (matchedKeys.includes(item.pairKey)) return;
 
     if (!selected) {
       setSelected(item);
+      setWrongId(null);
       return;
     }
 
@@ -49,13 +54,18 @@ export default function MatchPairs({ prompt, categoryTag, pairs, onAllMatched }:
       const nextMatched = [...matchedKeys, item.pairKey];
       setMatchedKeys(nextMatched);
       setSelected(null);
+      setWrongId(null);
       if (nextMatched.length === pairs.length) {
         onAllMatched();
       }
     } else {
       // Wrong Match
       sounds.playIncorrect();
-      setSelected(null);
+      setWrongId(item.id);
+      setTimeout(() => {
+        setSelected(null);
+        setWrongId(null);
+      }, 500);
     }
   };
 
@@ -81,6 +91,8 @@ export default function MatchPairs({ prompt, categoryTag, pairs, onAllMatched }:
               className={`p-4 rounded-2xl font-black text-base transition ${
                 isMatched
                   ? "opacity-30 border-2 border-gray-200 bg-gray-100 cursor-not-allowed"
+                  : wrongId === item.id
+                  ? "border-2 border-red-400 bg-red-50 text-red-600"
                   : isSelected
                   ? "btn-3d-white selected"
                   : "btn-3d-white"

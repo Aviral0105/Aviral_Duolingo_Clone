@@ -93,7 +93,11 @@ function LessonContent() {
   }
 
   const currentExercise = exerciseQueue[currentIndex];
-  const progressPercentage = Math.min(100, (currentIndex / exerciseQueue.length) * 100);
+  // Calculate live progress that advances dynamically the moment answer is verified correct
+  const progressPercentage = Math.min(
+    100,
+    ((currentIndex + (status === "correct" ? 1 : 0)) / exerciseQueue.length) * 100
+  );
 
   // Input selection detection
   let hasSelection = false;

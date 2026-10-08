@@ -31,11 +31,13 @@ export default function LessonHeader({
         </button>
 
         {/* Progress Bar */}
-        <div className="flex-1 bg-gray-200 h-4 rounded-full overflow-hidden">
+        <div className="flex-1 bg-gray-200 h-4 rounded-full overflow-hidden p-0.5">
           <div
-            className="bg-[#58cc02] h-full rounded-full transition-all duration-300"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
+            className="bg-[#58cc02] h-full rounded-full transition-all duration-500 ease-out relative shadow-sm"
+            style={{ width: `${Math.max(5, progressPercentage)}%` }}
+          >
+            <div className="absolute top-0.5 left-2 right-2 h-1 bg-white/30 rounded-full" />
+          </div>
         </div>
 
         {/* Hearts */}
