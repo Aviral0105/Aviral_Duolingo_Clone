@@ -28,9 +28,12 @@ export default function LearnPage() {
     open: false,
     title: "",
   });
-  const [showDuoBubble, setShowDuoBubble] = useState(false);
   const [claimedChests, setClaimedChests] = useState<number[]>([]);
   const [showChestModal, setShowChestModal] = useState(false);
+
+  // Active unit tracking for smooth pinned banner transitions
+  const [activeUnitId, setActiveUnitId] = useState<number>(1);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Load real-time path progress
   const loadProgress = useCallback(async () => {
@@ -45,7 +48,6 @@ export default function LearnPage() {
   useEffect(() => {
     loadProgress();
 
-    // Listen to real-time progress update events from lesson completions
     const handleProgressUpdate = () => {
       loadProgress();
     };
@@ -58,6 +60,30 @@ export default function LearnPage() {
       window.removeEventListener("focus", handleProgressUpdate);
     };
   }, [loadProgress]);
+
+  // Window scroll listener for sticky unit transitions and scroll-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 250);
+
+      if (!pathData?.units || pathData.units.length === 0) return;
+
+      for (const unit of pathData.units) {
+        const el = document.getElementById(`unit-${unit.id}`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // If the unit top is within upper viewing area
+          if (rect.top <= 260 && rect.bottom >= 180) {
+            setActiveUnitId(unit.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathData]);
 
   const handleNodeClick = (lesson: LessonNode, totalLessonsInUnit: number, prevLessonTitle?: string) => {
     if (lesson.status === "available" || lesson.status === "completed") {
@@ -85,6 +111,7 @@ export default function LearnPage() {
   };
 
   const scrollToTop = () => {
+    sounds.playTap();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -94,72 +121,107 @@ export default function LearnPage() {
     return offsets[idx % offsets.length];
   };
 
+  // Unit Theme Colors matching user recording:
+  // Unit 1: Green (#58cc02)
+  // Unit 2: Purple (#a855f7)
+  // Unit 3: Teal (#00cd9c)
+  // Unit 4+: Green (#58cc02)
+  const getUnitTheme = (index: number) => {
+    const themes = [
+      { bg: "bg-[#58cc02]", jumpBg: "bg-[#58cc02]", border: "border-[#46a302]", hex: "#58cc02" },
+      { bg: "bg-[#a855f7]", jumpBg: "bg-[#a855f7]", border: "border-[#9333ea]", hex: "#a855f7" },
+      { bg: "bg-[#00cd9c]", jumpBg: "bg-[#00cd9c]", border: "border-[#059669]", hex: "#00cd9c" },
+      { bg: "bg-[#58cc02]", jumpBg: "bg-[#58cc02]", border: "border-[#46a302]", hex: "#58cc02" },
+    ];
+    return themes[index % themes.length];
+  };
+
+  const activeUnitIndex = pathData?.units.findIndex((u) => u.id === activeUnitId) ?? 0;
+  const safeActiveIndex = activeUnitIndex >= 0 ? activeUnitIndex : 0;
+  const activeUnit = pathData?.units[safeActiveIndex] || pathData?.units[0];
+  const activeTheme = getUnitTheme(safeActiveIndex);
+
   return (
-    <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
+    <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12 relative">
       {/* LEFT/CENTER COLUMN: REAL-TIME LEARNING PATH */}
       <div className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center select-none relative">
+        {/* ======================================================== */}
+        {/* STICKY PINNED UNIT HEADER BANNER (Smoothly Transitions)  */}
+        {/* ======================================================== */}
+        {activeUnit && (
+          <div
+            className={`sticky top-2 z-20 w-full rounded-2xl p-4 text-white shadow-md flex items-center justify-between mb-8 transition-colors duration-500 ease-in-out cursor-pointer ${activeTheme.bg}`}
+          >
+            <div onClick={() => setIsSectionsOpen(true)} className="flex-1 min-w-0 pr-3">
+              <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
+                <span className="text-sm font-bold">←</span>
+                <span className="truncate">{activeUnit.section_title}</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black mt-0.5 tracking-tight truncate">
+                {activeUnit.title}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  sounds.playTap();
+                  setIsGuidebookOpen(true);
+                }}
+                className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>GUIDEBOOK</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* LEARNING PATH UNITS & S-CURVE NODES                      */}
+        {/* ======================================================== */}
         {pathData?.units.map((unit, unitIdx) => {
           const completedLessons = unit.lessons.filter((l) => l.status === "completed").length;
           const totalLessons = unit.lessons.length || 1;
-          const unitProgressPct = Math.round((completedLessons / totalLessons) * 100);
           const isUnitCompleted = completedLessons === totalLessons;
           const isUnitLocked = unit.lessons.every((l) => l.status === "locked");
+          const theme = getUnitTheme(unitIdx);
 
           return (
-            <div key={unit.id} id={`unit-${unit.id}`} className="w-full flex flex-col items-center mb-12">
-              {/* 1. Unit Header Banner */}
-              <div
-                className={`w-full rounded-2xl p-4 text-white shadow-sm flex flex-col mb-8 cursor-pointer group transition ${
-                  isUnitLocked
-                    ? "bg-gray-400 opacity-80"
-                    : "bg-[#58cc02] hover:brightness-105"
-                }`}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div onClick={() => setIsSectionsOpen(true)} className="flex-1">
-                    <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
-                      <span className="text-sm font-bold">←</span>
-                      <span>{unit.section_title}</span>
-                      {isUnitCompleted && (
-                        <span className="bg-white/20 px-2 py-0.5 rounded-md text-[10px] font-black uppercase">
-                          ✓ Complete
-                        </span>
-                      )}
-                    </div>
-                    <h1 className="text-xl sm:text-2xl font-black mt-0.5">{unit.title}</h1>
-                    <p className="text-xs font-bold opacity-80 mt-0.5 hidden sm:block">
-                      {unit.description}
-                    </p>
+            <div key={unit.id} id={`unit-${unit.id}`} className="w-full flex flex-col items-center mb-8">
+              {/* Unit Transition Boundary Divider (Matching Video frames 2 & 3) */}
+              {unitIdx > 0 && (
+                <div className="w-full flex flex-col items-center my-6">
+                  {/* Subtle centered divider with unit name */}
+                  <div className="w-full flex items-center gap-4 text-gray-400 font-black text-xs sm:text-sm uppercase tracking-wider my-4">
+                    <div className="flex-1 h-0.5 bg-gray-200" />
+                    <span className="text-gray-400">{unit.title}</span>
+                    <div className="flex-1 h-0.5 bg-gray-200" />
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  {/* "JUMP HERE?" fast-forward circular button */}
+                  <div
+                    onClick={() => {
+                      sounds.playTap();
+                      document.getElementById(`unit-${unit.id}`)?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="flex flex-col items-center mt-1 group cursor-pointer"
+                  >
+                    <div className="bg-white border-2 border-gray-200 px-3.5 py-1 rounded-full text-xs font-black text-[#58cc02] shadow-xs uppercase tracking-wider mb-2 flex items-center gap-1 group-hover:scale-105 transition">
+                      <span>JUMP HERE?</span>
+                    </div>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsGuidebookOpen(true);
-                      }}
-                      className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95"
+                      className={`w-14 h-14 rounded-full text-white shadow-lg flex items-center justify-center font-black text-xl hover:scale-105 active:scale-95 transition ${theme.jumpBg}`}
                     >
-                      <BookOpen className="w-4 h-4" />
-                      <span>GUIDEBOOK</span>
+                      ⏩
                     </button>
                   </div>
                 </div>
+              )}
 
-                {/* Live Dynamic Continuous Progress Bar */}
-                <div className="mt-3 w-full bg-black/20 rounded-full h-2.5 p-0.5 overflow-hidden">
-                  <div
-                    className="bg-white h-full rounded-full transition-all duration-700 ease-out"
-                    style={{ width: `${unitProgressPct}%` }}
-                  />
-                </div>
-                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider opacity-90 mt-1">
-                  <span>{completedLessons} of {totalLessons} Lessons Completed</span>
-                  <span>{unitProgressPct}%</span>
-                </div>
-              </div>
-
-              {/* 2. S-Curve Path Nodes for this Unit */}
-              <div className="flex flex-col items-center gap-7 w-full relative pb-8">
+              {/* S-Curve Path Nodes for this Unit */}
+              <div className="flex flex-col items-center gap-7 w-full relative pb-8 mt-2">
                 {unit.lessons.map((lesson, idx) => {
                   const prevLesson = idx > 0 ? unit.lessons[idx - 1] : undefined;
                   const offsetClass = getNodeOffset(idx);
@@ -219,54 +281,33 @@ export default function LearnPage() {
                           </svg>
                           <button
                             onClick={() => handleNodeClick(lesson, totalLessons)}
-                            className="relative w-20 h-20 rounded-full btn-3d-green flex items-center justify-center shadow-md active:scale-95 transition z-10"
-                            title={`Start ${lesson.title}`}
+                            className="relative w-20 h-20 rounded-full btn-3d-green flex items-center justify-center shadow-lg active:scale-95 transition z-10"
+                            title={`${lesson.title} (Available)`}
                           >
-                            <span className="text-3xl">⭐</span>
+                            <span className="text-3xl text-white font-black">★</span>
                           </button>
                         </div>
                       </div>
                     );
                   }
 
-                  // Locked Node
+                  // Locked Nodes
                   return (
-                    <div key={lesson.id} className={`relative ${offsetClass}`}>
+                    <div key={lesson.id} className={`relative flex flex-col items-center ${offsetClass}`}>
                       <button
                         onClick={() => handleNodeClick(lesson, totalLessons, prevLesson?.title)}
-                        className="w-20 h-20 rounded-full btn-3d-gray flex items-center justify-center active:scale-95 transition opacity-65"
-                        title={`Locked - ${lesson.title}`}
+                        className="w-18 h-18 rounded-full btn-3d-gray flex items-center justify-center shadow-xs active:scale-95 transition cursor-pointer"
+                        title={`${lesson.title} (Locked)`}
                       >
-                        <span className="text-3xl opacity-60">
-                          {lesson.icon === "headphones" ? "🎧" : lesson.icon === "camera" ? "📷" : "⭐"}
+                        <span className="text-2xl text-gray-400">
+                          {lesson.icon === "headphones" ? "🎧" : lesson.icon === "camera" ? "🏋️" : "★"}
                         </span>
                       </button>
                     </div>
                   );
                 })}
 
-                {/* Mascot Duo sitting beside path on Unit 1 */}
-                {unitIdx === 0 && (
-                  <div className="w-full flex justify-end pr-8 -my-2 relative">
-                    {showDuoBubble && (
-                      <div className="absolute -top-14 right-8 bg-white border-2 border-gray-200 rounded-2xl px-4 py-2 shadow-lg z-20 animate-bounce">
-                        <span className="text-xs font-black text-gray-800">
-                          Keep practicing Hindi to unlock Section 2! 🔥
-                        </span>
-                        <div className="w-2.5 h-2.5 bg-white border-b-2 border-r-2 border-gray-200 rotate-45 absolute -bottom-1.5 right-8" />
-                      </div>
-                    )}
-                    <div
-                      onClick={() => setShowDuoBubble(!showDuoBubble)}
-                      className="bg-white rounded-3xl p-3.5 flex flex-col items-center border-2 border-gray-200 cursor-pointer hover:shadow-md transition active:scale-95"
-                    >
-                      <span className="text-5xl">🦉</span>
-                      <span className="text-xs font-bold text-gray-400 mt-1">⭐⭐⭐</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Unit Milestone Treasure Chest */}
+                {/* Chest Milestone Node */}
                 <div className="relative mt-2">
                   <button
                     onClick={() => handleClaimChest(unit.id)}
@@ -287,14 +328,16 @@ export default function LearnPage() {
           );
         })}
 
-        {/* Scroll To Top Action */}
-        <button
-          onClick={scrollToTop}
-          className="my-6 p-3 rounded-full bg-white border-2 border-gray-200 hover:bg-gray-100 text-gray-400 hover:text-gray-600 shadow-sm transition active:scale-95"
-          title="Back to Top"
-        >
-          <ArrowUp className="w-5 h-5" />
-        </button>
+        {/* Floating Scroll To Top Action (matching bottom right icon in video) */}
+        {showScrollTop && (
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-6 sm:right-10 z-30 w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 text-[#1cb0f6] shadow-xl flex items-center justify-center font-black hover:bg-gray-50 active:scale-95 transition animate-fade-in"
+            title="Back to Top"
+          >
+            <ArrowUp className="w-6 h-6 stroke-[3]" />
+          </button>
+        )}
       </div>
 
       {/* RIGHT SIDEBAR STATS & DAILY GOALS */}
@@ -302,12 +345,7 @@ export default function LearnPage() {
 
       {/* Global Interactive Modals */}
       <GuidebookModal isOpen={isGuidebookOpen} onClose={() => setIsGuidebookOpen(false)} />
-      
-      <SectionsModal
-        isOpen={isSectionsOpen}
-        onClose={() => setIsSectionsOpen(false)}
-      />
-
+      <SectionsModal isOpen={isSectionsOpen} onClose={() => setIsSectionsOpen(false)} />
       <LockedModal
         isOpen={lockedModal.open}
         onClose={() => setLockedModal({ open: false, title: "" })}
