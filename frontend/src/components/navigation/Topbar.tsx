@@ -24,7 +24,7 @@ export default function Topbar({
         onClick={onOpenCourse}
         className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-100 transition active:scale-95"
       >
-        <span className="text-2xl">🇫🇷</span>
+        <span className="text-2xl">🇮🇳</span>
         <span className="font-black text-sm text-gray-700">5</span>
       </button>
 

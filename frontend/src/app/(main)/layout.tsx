@@ -16,13 +16,13 @@ import { User } from "@/lib/types";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>({
     id: 1,
-    username: "Aviral Jain",
-    handle: "@AVIRALJAIN213584",
-    avatar: "🧑",
-    xp: 265,
-    streak: 3,
-    hearts: 5,
-    gems: 126,
+    username: "AVIRAL JAIN",
+    handle: "@AVIRALJAIN51695",
+    avatar: "A",
+    xp: 15,
+    streak: 1,
+    hearts: 4,
+    gems: 505,
     daily_goal_xp: 10,
     is_super: false,
   });

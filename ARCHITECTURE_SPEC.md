@@ -107,9 +107,24 @@ This document serves as the single source of truth for all pages, routes, compon
 
 ---
 
-### Page 7: Quests (`/quests`)
-* Daily Quest card: `Earn 10 XP [10/10]` with treasure chest.
-* Monthly challenge card with badge.
+### Page 7: Quests & Daily Rewards (`/quests`)
+
+#### Center Column: Quests Feed
+| Element / Card | Exact Color & Styling | Details |
+|---|---|---|
+| **Welcome Banner** | Background: `#7c3aed` (Deep Violet)<br>Text: White, rounded-3xl | Mascot Duo raising gold chest with sparkles.<br>Title: **`Welcome!`**<br>Text: `Complete quests to earn rewards! Quests refresh every day.` |
+| **Section Header** | Title: `Daily Quests` (`#4b4b4b` bold 20px)<br>Timer: `⏱️ 2 HOURS` in orange (`#ff9600`) | Header row with clock icon and remaining reset time. |
+| **Active Quest Card: Earn 10 XP** | Background: `#ffffff`, Border: `2px solid #e5e5e5`, rounded-3xl<br>Left Icon: Yellow lightning bolt ⚡ (`#ffc800`) | Progress bar: Full gold fill (`#ffc800`) with centered text `10 / 10`.<br>Right side: Interactive treasure chest 📦. |
+| **Locked Quest Card** | Background: `#ffffff`, Border: `2px solid #e5e5e5`, rounded-3xl<br>Opacity: `70%`, Icon: Gray padlock 🔒 | Text: `More quests unlock soon` (`#afafaf` bold). |
+
+#### Right Column: Monthly Challenges Widget
+| Element / Button | Exact Color & Styling | Details |
+|---|---|---|
+| **Top Stats** | Persistent right bar | `🇮🇳 5` • `🔥 1` • `💎 505` • `❤️ 4` |
+| **Monthly Challenges Card** | Background: `#ffffff`, Border: `2px solid #e5e5e5`, rounded-3xl | Header: `Monthly challenges unlock soon!`<br>Subtitle: `Complete each month's challenge to earn exclusive badges`<br>Badge Illustration: Gold medal with lightning bolt 🪙✨. |
+| **"START A LESSON" Button** | Background: `#ffffff`<br>Border: `2px solid #e5e5e5`, bottom `4px solid #d4d4d4`<br>Text: `#1cb0f6` (Sky blue), uppercase bold | Full-width 3D rubber button navigating into active lesson. |
+| **Footer Links** | Gray text `#afafaf`, uppercase bold 10px | `ABOUT` • `BLOG` • `STORE` • `EFFICACY` • `CAREERS` • `INVESTORS` • `TERMS` • `PRIVACY` |
+
 
 ---
 
@@ -122,10 +137,50 @@ This document serves as the single source of truth for all pages, routes, compon
 ---
 
 ### Page 9: Learner Profile (`/profile`)
-* Avatar banner + avatar creator dialog.
-* Profile header: `AVIRAL JAIN`, `@AVIRALJAIN51695`, joined date, followers/following.
-* Statistics: 1 Day streak, Total XP, Current league, Top 3 finishes.
-* Achievements: Wildfire, Sage, Champion, Sharpshooter, Winner, Friendly.
+
+#### 1. Persistent Shell Components (Active Profile State)
+| Element / Button | Exact Color & Styling | Details / Behavior |
+|---|---|---|
+| **Left Sidebar: PROFILE Tab** | Background: `#ddf4ff` (Sky tint)<br>Border: `2px solid #84d8ff`<br>Text: `#1cb0f6` (Duolingo Cyan), uppercase bold | Active route indicator. Left icon displays circular user badge `'A'` with cyan dotted ring outline. |
+| **Topbar: Course Flag** | Badge with Indian flag 🇮🇳 and text `5` | Click opens Course Switcher modal (`+ Add a new course`, `+ Add section`). |
+| **Topbar: Streak Counter** | Icon: 🔥 (`#ff9600`), Text: `1` | Click opens October 2026 Streak calendar modal with freeze status. |
+| **Topbar: Gems Counter** | Icon: 💎 (`#1cb0f6`), Text: `505` | Click opens Shop modal with gem balance and refill options. |
+| **Topbar: Hearts Counter** | Icon: ❤️ (`#ff4b4b`), Text: `4` | Click opens Hearts & Energy modal (Refill for 350 gems / Unlimited Super trial). |
+
+#### 2. Center Column: Profile Identity, Stats & Achievements
+| Element / Button | Exact Color & Styling | Details / Behavior |
+|---|---|---|
+| **Avatar Banner Card** | Background: `#dff2fb` (Soft pastel sky blue), rounded-3xl, height ~240px | Hero container framing the user's avatar silhouette. |
+| **Avatar Silhouette & Plus** | Silhouette: `#a3d9f8` fill with `#1cb0f6` cyan dashed stroke.<br>Center badge: White circle with cyan `+` icon | Prompts user to customize avatar. Click opens Avatar Builder modal. |
+| **Pencil Edit Button** | Rounded-2xl square button, background `#f0f0f0` / hover white, border `2px solid #e5e5e5`, dark slate pencil icon ✏️ | Positioned at top-right corner of avatar box. Click opens Profile & Avatar Edit modal. |
+| **Display Name** | Text: `AVIRAL JAIN` (`#3c3c3c`, bold 24px) | Full user display name. |
+| **Username Handle** | Text: `AVIRALJAIN51695` (`#afafaf`, bold 14px) | Unique Duolingo account handle. |
+| **Account Creation Date** | Text: `Joined October 2026` (`#afafaf`, semibold 14px) | Profile join milestone. |
+| **Following Link** | Text: `0 Following` (`#1cb0f6`, bold 15px, hover underline) | Click switches right rail or opens modal to view followed accounts. |
+| **Followers Link** | Text: `0 Followers` (`#1cb0f6`, bold 15px, hover underline) | Click switches right rail or opens modal to view follower accounts. |
+| **Learning Flag Badge** | Indian Flag 🇮🇳 in subtle border pill | Positioned at right side across from profile name. |
+| **Statistics Header** | Text: `Statistics` (`#3c3c3c`, bold 20px) | Section header introducing the 2x2 stats matrix. |
+| **Stat Card 1: Day Streak** | White card, border `2px solid #e5e5e5`, rounded-2xl p-4.<br>Icon: 🔥 (`#ff9600`) | Main: `1` (`#3c3c3c` bold 20px)<br>Subtitle: `Day streak` (`#afafaf` bold 12px) |
+| **Stat Card 2: Total XP** | White card, border `2px solid #e5e5e5`, rounded-2xl p-4.<br>Icon: ⚡ (`#ffc800`) | Main: `15` (`#3c3c3c` bold 20px)<br>Subtitle: `Total XP` (`#afafaf` bold 12px) |
+| **Stat Card 3: Current League** | White card, border `2px solid #e5e5e5`, rounded-2xl p-4 relative.<br>Icon: 🛡️ (Bronze shield) | Main: `Bronze` (`#3c3c3c` bold 20px)<br>Subtitle: `Current league` (`#afafaf` bold 12px)<br>Badge: Top-right corner pill `WEEK 1` in orange (`#ff9600` bg, white bold text). |
+| **Stat Card 4: Top 3 Finishes** | White card, border `2px solid #e5e5e5`, rounded-2xl p-4.<br>Icon: 🏅 (Gray ribbon medal) | Main: `0` (`#3c3c3c` bold 20px)<br>Subtitle: `Top 3 finishes` (`#afafaf` bold 12px) |
+| **Achievements Header** | Text: `Achievements` (`#3c3c3c`, bold 20px) | Section header with `VIEW ALL` link on the right. |
+| **"VIEW ALL" Link** | Text: `VIEW ALL` (`#1cb0f6`, uppercase bold 12px, hover underline) | Click navigates/expands full 15+ Duolingo achievements list. |
+| **Achievement Cards** | White cards with custom tier badges and progress meters | 1. **Wildfire** (🔥 Streak milestones)<br>2. **Sage** (⚡ XP milestones)<br>3. **Scholar** (📚 Word vocabulary count)<br>4. **Champion** (👑 League advancement) |
+
+#### 3. Right Rail: Social Hub & Add Friends (Circled Reference)
+| Element / Button | Exact Color & Styling | Details / Behavior |
+|---|---|---|
+| **Top Card: Social Hub** | Background: `#ffffff`, Border: `2px solid #e5e5e5`, rounded-3xl overflow-hidden | Houses following/followers tabs and community illustration. |
+| **"FOLLOWING" Tab** | Active: Text `#1cb0f6`, font-black 13px uppercase, bottom border `2px solid #1cb0f6` | Default selected tab showing accounts you follow. |
+| **"FOLLOWERS" Tab** | Inactive: Text `#afafaf`, font-black 13px uppercase, bottom border transparent | Click toggles to followers view. |
+| **Character Ensemble Graphic** | Colorful cartoon illustration | Cast members celebrating together (Lily, Zari, Junior, Bea, Lin, Vikram, Oscar, Eddy, Lucy). |
+| **Social Value Proposition** | Text: `Learning is more fun and effective when you connect with others.` | Centered subtitle (`#777777`, font-medium 13px, leading-relaxed). |
+| **Bottom Card: Add Friends** | Background: `#ffffff`, Border: `2px solid #e5e5e5`, rounded-3xl p-5 | Friends discovery and referral widget. |
+| **Card Header** | Text: `Add friends` (`#3c3c3c`, bold 18px) | Widget header. |
+| **"Find friends" Row Button** | Left Icon: 🔍 Magnifying glass<br>Text: `Find friends` (`#4b4b4b`, bold 15px)<br>Right Icon: Chevron `>` (`#afafaf`) | Click opens friend search drawer with username, contact sync, and Facebook search. |
+| **"Invite friends" Row Button** | Left Icon: 📭 Green Duo envelope / referral gift<br>Text: `Invite friends` (`#4b4b4b`, bold 15px)<br>Right Icon: Chevron `>` (`#afafaf`) | Click copies referral link `duolingo.com/invite/AVIRALJAIN51695` to clipboard with animated toast notification. |
+| **Footer Links** | Gray text `#afafaf`, uppercase bold 10px flex-wrap gap-2 | `ABOUT` • `BLOG` • `STORE` • `EFFICACY` • `CAREERS` • `INVESTORS` • `TERMS` • `PRIVACY` |
 
 ---
 

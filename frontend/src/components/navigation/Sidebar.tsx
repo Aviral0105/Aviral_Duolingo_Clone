@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Target, Heart, Sparkles, User, Settings } from "lucide-react";
+import { Home, Trophy, Target, Sparkles, MoreHorizontal } from "lucide-react";
 
 interface SidebarProps {
   onOpenEnergy?: () => void;
@@ -13,13 +13,82 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   const pathname = usePathname();
 
   const links = [
-    { label: "LEARN", href: "/learn", icon: Home, color: "text-[#58cc02]" },
-    { label: "LEADERBOARDS", href: "/leaderboard", icon: Trophy, color: "text-[#ffc800]" },
-    { label: "QUESTS", href: "/quests", icon: Target, color: "text-[#ff4b4b]" },
-    { label: "PRACTICE", href: "/practice", icon: Heart, color: "text-[#1cb0f6]" },
-    { label: "SHOP", href: "/shop", icon: Sparkles, color: "text-[#a855f7]" },
-    { label: "PROFILE", href: "/profile", icon: User, color: "text-[#1cb0f6]" },
+    {
+      label: "LEARN",
+      href: "/learn",
+      iconType: "home",
+      activeColor: "text-[#58cc02]",
+    },
+    {
+      label: "LETTERS",
+      href: "/characters",
+      iconType: "letters",
+      activeColor: "text-[#1cb0f6]",
+    },
+    {
+      label: "LEADERBOARDS",
+      href: "/leaderboard",
+      iconType: "shield",
+      activeColor: "text-[#ffc800]",
+    },
+    {
+      label: "QUESTS",
+      href: "/quests",
+      iconType: "chest",
+      activeColor: "text-[#ff9600]",
+    },
+    {
+      label: "SHOP",
+      href: "/shop",
+      iconType: "shop",
+      activeColor: "text-[#ff4b4b]",
+    },
+    {
+      label: "PROFILE",
+      href: "/profile",
+      iconType: "profile",
+      activeColor: "text-[#1cb0f6]",
+    },
+    {
+      label: "MORE",
+      href: "/settings/account",
+      iconType: "more",
+      activeColor: "text-purple-500",
+    },
   ];
+
+  const renderIcon = (type: string, isActive: boolean) => {
+    switch (type) {
+      case "home":
+        return <span className="text-2xl">🏠</span>;
+      case "letters":
+        return (
+          <span className="w-7 h-7 flex items-center justify-center font-black text-xl text-[#1cb0f6] border-2 border-[#1cb0f6] rounded-lg">
+            क
+          </span>
+        );
+      case "shield":
+        return <span className="text-2xl">🛡️</span>;
+      case "chest":
+        return <span className="text-2xl">📦</span>;
+      case "shop":
+        return <span className="text-2xl">🏪</span>;
+      case "profile":
+        return (
+          <div className="w-7 h-7 rounded-full border-2 border-dashed border-[#1cb0f6] flex items-center justify-center font-black text-xs text-[#1cb0f6] bg-sky-50">
+            A
+          </div>
+        );
+      case "more":
+        return (
+          <div className="w-7 h-7 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-xs">
+            •••
+          </div>
+        );
+      default:
+        return <Home className="w-6 h-6" />;
+    }
+  };
 
   return (
     <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0">
@@ -31,10 +100,9 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
       </Link>
 
       {/* Nav Links */}
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-1.5">
         {links.map((link) => {
           const isActive = pathname === link.href;
-          const Icon = link.icon;
           return (
             <Link
               key={link.href}
@@ -45,7 +113,7 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
                   : "border-transparent text-gray-500 hover:bg-gray-100"
               }`}
             >
-              <Icon className={`w-6 h-6 ${isActive ? "text-[#1899d6]" : link.color}`} />
+              {renderIcon(link.iconType, isActive)}
               <span>{link.label}</span>
             </Link>
           );
