@@ -5,16 +5,45 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
-  Moon,
-  Sun,
-  Laptop,
   Eye,
   EyeOff,
   Pencil,
   ChevronDown,
+  Dumbbell,
+  Infinity,
+  Ban,
+  Trophy,
+  Heart,
 } from "lucide-react";
 import { fetchUserSettings, updateUserSettings, fetchUser } from "@/lib/api";
 import { sounds } from "@/lib/sounds";
+
+function ToggleSwitch({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        onChange();
+        sounds.playTap();
+      }}
+      className={`w-12 h-6.5 rounded-full p-1 transition-colors shrink-0 ${
+        checked ? "bg-[#1cb0f6]" : "bg-gray-300"
+      }`}
+    >
+      <div
+        className={`w-4.5 h-4.5 rounded-full bg-white shadow-xs transition-transform ${
+          checked ? "translate-x-5.5" : "translate-x-0"
+        }`}
+      />
+    </button>
+  );
+}
 
 function SettingsContent() {
   const router = useRouter();
@@ -34,7 +63,7 @@ function SettingsContent() {
     | "support"
   >(initialTab as any);
 
-  // User State (pre-filled exactly from User's Screenshots)
+  // Profile / Account State (Images 1 & 2)
   const [name, setName] = useState("AVIRAL JAIN");
   const [username, setUsername] = useState("AVIRALJAIN51695");
   const [email, setEmail] = useState("ajain10_be23@thapar.edu");
@@ -43,7 +72,14 @@ function SettingsContent() {
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
 
-  // Notifications State (Matching Image 3)
+  // Preferences State (Image 3)
+  const [soundEffects, setSoundEffects] = useState(true);
+  const [animations, setAnimations] = useState(true);
+  const [motivationalMessages, setMotivationalMessages] = useState(true);
+  const [listeningExercises, setListeningExercises] = useState(true);
+  const [darkMode, setDarkMode] = useState<"system" | "on" | "off">("system");
+
+  // Notifications State
   const [notifProduct, setNotifProduct] = useState(true);
   const [notifFollower, setNotifFollower] = useState(true);
   const [notifFriend, setNotifFriend] = useState(true);
@@ -53,21 +89,14 @@ function SettingsContent() {
   const [notifDailyReminder, setNotifDailyReminder] = useState(true);
   const [reminderTime, setReminderTime] = useState("5PM");
 
-  // Schools State (Matching Image 5)
+  // Privacy State (Image 1 from user)
+  const [publicProfile, setPublicProfile] = useState(true);
+  const [personalizedAds, setPersonalizedAds] = useState(true);
+  const [friendStreaks, setFriendStreaks] = useState(true);
+
+  // Duolingo for Schools State
   const [schoolCode, setSchoolCode] = useState("");
   const [schoolSuccess, setSchoolSuccess] = useState<string | null>(null);
-
-  // Preferences State
-  const [soundEffects, setSoundEffects] = useState(true);
-  const [animations, setAnimations] = useState(true);
-  const [motivationalMessages, setMotivationalMessages] = useState(true);
-  const [listeningExercises, setListeningExercises] = useState(true);
-  const [speakingExercises, setSpeakingExercises] = useState(true);
-  const [darkMode, setDarkMode] = useState<"system" | "on" | "off">("system");
-
-  // Privacy State
-  const [publicProfile, setPublicProfile] = useState(true);
-  const [leaderboards, setLeaderboards] = useState(true);
 
   // Modals & Feedback
   const [savedToast, setSavedToast] = useState<string | null>(null);
@@ -89,7 +118,6 @@ function SettingsContent() {
         if (settingsData.animations !== undefined) setAnimations(settingsData.animations);
         if (settingsData.motivational_messages !== undefined) setMotivationalMessages(settingsData.motivational_messages);
         if (settingsData.listening_exercises !== undefined) setListeningExercises(settingsData.listening_exercises);
-        if (settingsData.speaking_exercises !== undefined) setSpeakingExercises(settingsData.speaking_exercises);
         if (settingsData.dark_mode) setDarkMode(settingsData.dark_mode);
       }
 
@@ -139,7 +167,6 @@ function SettingsContent() {
       animations: animations,
       motivational_messages: motivationalMessages,
       listening_exercises: listeningExercises,
-      speaking_exercises: speakingExercises,
       dark_mode: darkMode,
     });
     setSavedToast("Changes saved successfully! ✨");
@@ -150,7 +177,8 @@ function SettingsContent() {
     sounds.playTap();
     const data = {
       user: { name, username, email },
-      settings: { soundEffects, animations, motivationalMessages, listeningExercises, speakingExercises, darkMode },
+      settings: { soundEffects, animations, motivationalMessages, listeningExercises, darkMode },
+      privacy: { publicProfile, personalizedAds, friendStreaks },
       notifications: { notifProduct, notifFollower, notifFriend, notifWeekly, notifPromotions, notifResearch, notifDailyReminder, reminderTime },
       course: "Hindi (हिन्दी)",
       streak: 3,
@@ -197,7 +225,7 @@ function SettingsContent() {
       {/* ======================================================== */}
       <div className="flex-1 w-full max-w-xl mx-auto space-y-6">
         {/* ====================================================== */}
-        {/* TAB: ACCOUNT / PROFILE (Images 1 & 2)                  */}
+        {/* TAB 1: PROFILE / ACCOUNT (Images 1 & 2 from user)      */}
         {/* ====================================================== */}
         {(activeTab === "account" || activeTab === "profile") && (
           <div className="space-y-6 animate-fade-in">
@@ -326,7 +354,235 @@ function SettingsContent() {
         )}
 
         {/* ====================================================== */}
-        {/* TAB: NOTIFICATIONS (Image 3)                           */}
+        {/* TAB 2: PREFERENCES (Image 3 from user)                 */}
+        {/* ====================================================== */}
+        {activeTab === "preferences" && (
+          <div className="space-y-8 animate-fade-in">
+            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+              Preferences
+            </h1>
+
+            {/* Lesson Experience Section matching Image 3 */}
+            <div className="space-y-4">
+              <h2 className="text-base font-black text-gray-800">Lesson experience</h2>
+
+              <div className="flex items-center justify-between py-1">
+                <span className="text-sm font-bold text-gray-800">Sound effects</span>
+                <ToggleSwitch
+                  checked={soundEffects}
+                  onChange={() => setSoundEffects(!soundEffects)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between py-1">
+                <span className="text-sm font-bold text-gray-800">Animations</span>
+                <ToggleSwitch
+                  checked={animations}
+                  onChange={() => setAnimations(!animations)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between py-1">
+                <span className="text-sm font-bold text-gray-800">Motivational messages</span>
+                <ToggleSwitch
+                  checked={motivationalMessages}
+                  onChange={() => setMotivationalMessages(!motivationalMessages)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between py-1">
+                <span className="text-sm font-bold text-gray-800">Listening exercises</span>
+                <ToggleSwitch
+                  checked={listeningExercises}
+                  onChange={() => setListeningExercises(!listeningExercises)}
+                />
+              </div>
+            </div>
+
+            {/* Appearance Section matching Image 3 */}
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <h2 className="text-base font-black text-gray-800">Appearance</h2>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-gray-700">Dark mode</label>
+                <div className="relative max-w-sm">
+                  <select
+                    value={darkMode}
+                    onChange={(e) => handleDarkModeChange(e.target.value as any)}
+                    className="w-full p-3.5 pr-10 rounded-2xl border-2 border-gray-200 text-xs font-black uppercase text-gray-800 bg-[#f7f7f7] outline-none appearance-none focus:border-[#1cb0f6] cursor-pointer"
+                  >
+                    <option value="system">System Default</option>
+                    <option value="on">On</option>
+                    <option value="off">Off</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ====================================================== */}
+        {/* TAB 3: PRIVACY SETTINGS (Image 1 from user)            */}
+        {/* ====================================================== */}
+        {activeTab === "privacy" && (
+          <div className="space-y-6 animate-fade-in">
+            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+              Privacy settings
+            </h1>
+
+            <div className="space-y-5">
+              {/* Make my profile public */}
+              <div className="flex items-start justify-between gap-6 py-2">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-gray-800">Make my profile public</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed font-normal">
+                    Allow others to find your profile and follow you. Allows you to follow others. Enrolls you in public leaderboards.
+                  </p>
+                </div>
+                <ToggleSwitch
+                  checked={publicProfile}
+                  onChange={() => setPublicProfile(!publicProfile)}
+                />
+              </div>
+
+              {/* Personalized ads */}
+              <div className="flex items-start justify-between gap-6 py-2">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-gray-800">Personalized ads</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed font-normal">
+                    Tracking and personalization for advertising
+                  </p>
+                </div>
+                <ToggleSwitch
+                  checked={personalizedAds}
+                  onChange={() => setPersonalizedAds(!personalizedAds)}
+                />
+              </div>
+
+              {/* Friend Streaks */}
+              <div className="flex items-center justify-between gap-6 py-2">
+                <h3 className="text-sm font-bold text-gray-800">Friend Streaks</h3>
+                <ToggleSwitch
+                  checked={friendStreaks}
+                  onChange={() => setFriendStreaks(!friendStreaks)}
+                />
+              </div>
+
+              {/* Save Changes button matching Image 1 */}
+              <div className="pt-4">
+                <button
+                  onClick={handleSave}
+                  className="py-3 px-6 rounded-2xl bg-gray-200 text-gray-400 font-black text-xs uppercase tracking-wider hover:bg-[#58cc02] hover:text-white transition active:scale-95 shadow-xs"
+                >
+                  SAVE CHANGES
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ====================================================== */}
+        {/* TAB 4: CHOOSE A PLAN (Subscription) (Images 2 & 4)      */}
+        {/* ====================================================== */}
+        {activeTab === "subscription" && (
+          <div className="space-y-8 animate-fade-in">
+            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+              Choose a plan
+            </h1>
+
+            {/* Glowing Super Banner matching Image 2 & 4 */}
+            <div className="rounded-3xl p-6 text-white relative overflow-hidden shadow-lg bg-gradient-to-r from-[#141539] via-[#1c1c5a] to-[#2b1055]">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  {/* Super Duo Mascot Avatar */}
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-400 via-indigo-500 to-pink-500 flex items-center justify-center text-3xl shadow-md shrink-0">
+                    🦉
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black leading-tight text-white">
+                    Get started with a 1 month free trial on Super
+                  </h2>
+                </div>
+                <span className="bg-gradient-to-r from-sky-400 via-indigo-300 to-pink-400 text-white font-black text-[11px] px-2.5 py-1 rounded-md italic uppercase tracking-wider shrink-0">
+                  SUPER
+                </span>
+              </div>
+
+              <button
+                onClick={() => {
+                  sounds.playVictory();
+                  setSavedToast("Super Duolingo free trial activated! 🌟");
+                  setTimeout(() => setSavedToast(null), 3000);
+                }}
+                className="w-full mt-6 py-3.5 rounded-2xl bg-white text-gray-900 font-black text-xs uppercase tracking-wider shadow-sm hover:bg-gray-100 active:scale-95 transition"
+              >
+                START MY FREE MONTH
+              </button>
+            </div>
+
+            {/* Benefits List matching Image 2 & 4 */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-black text-gray-800">
+                What you&apos;ll get with Super Duolingo
+              </h2>
+
+              <div className="bg-white border border-gray-200 rounded-3xl divide-y divide-gray-100 overflow-hidden shadow-xs">
+                {/* 1. Personalized Practice */}
+                <div className="flex items-center gap-4 p-5 hover:bg-gray-50/50 transition">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Dumbbell className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <span className="font-bold text-base text-gray-800">
+                    Personalized Practice
+                  </span>
+                </div>
+
+                {/* 2. Unlimited Hearts */}
+                <div className="flex items-center gap-4 p-5 hover:bg-gray-50/50 transition">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-400 to-cyan-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Infinity className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <span className="font-bold text-base text-gray-800">
+                    Unlimited Hearts
+                  </span>
+                </div>
+
+                {/* 3. No ads */}
+                <div className="flex items-center gap-4 p-5 hover:bg-gray-50/50 transition">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-400 to-sky-400 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Ban className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <span className="font-bold text-base text-gray-800">
+                    No ads
+                  </span>
+                </div>
+
+                {/* 4. Free entry to Legendary challenges */}
+                <div className="flex items-center gap-4 p-5 hover:bg-gray-50/50 transition">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Trophy className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <span className="font-bold text-base text-gray-800">
+                    Free entry to Legendary challenges
+                  </span>
+                </div>
+
+                {/* 5. Support our mission */}
+                <div className="flex items-center gap-4 p-5 hover:bg-gray-50/50 transition">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-400 to-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Heart className="w-6 h-6 stroke-[2.5] fill-white" />
+                  </div>
+                  <span className="font-bold text-base text-gray-800">
+                    Support our mission to keep education free for millions
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ====================================================== */}
+        {/* TAB 5: NOTIFICATIONS                                   */}
         {/* ====================================================== */}
         {activeTab === "notifications" && (
           <div className="space-y-8 animate-fade-in">
@@ -334,7 +590,6 @@ function SettingsContent() {
               Notifications
             </h1>
 
-            {/* General Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <h2 className="text-base font-black text-gray-800">General</h2>
@@ -367,7 +622,6 @@ function SettingsContent() {
               ))}
             </div>
 
-            {/* Daily Reminders Section */}
             <div className="space-y-4 pt-2">
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <h2 className="text-base font-black text-gray-800">Daily reminders</h2>
@@ -390,7 +644,6 @@ function SettingsContent() {
                 </button>
               </div>
 
-              {/* Time Dropdown matching Image 3 (5PM) */}
               <div className="relative pt-1 max-w-[200px]">
                 <select
                   value={reminderTime}
@@ -410,7 +663,7 @@ function SettingsContent() {
         )}
 
         {/* ====================================================== */}
-        {/* TAB: COURSES (Image 4)                                 */}
+        {/* TAB 6: COURSES                                         */}
         {/* ====================================================== */}
         {activeTab === "courses" && (
           <div className="space-y-6 animate-fade-in">
@@ -434,7 +687,7 @@ function SettingsContent() {
         )}
 
         {/* ====================================================== */}
-        {/* TAB: DUOLINGO FOR SCHOOLS (Image 5)                    */}
+        {/* TAB 7: DUOLINGO FOR SCHOOLS                            */}
         {/* ====================================================== */}
         {activeTab === "schools" && (
           <div className="space-y-6 animate-fade-in">
@@ -479,92 +732,14 @@ function SettingsContent() {
         )}
 
         {/* ====================================================== */}
-        {/* TAB: PREFERENCES (Dark Mode & Sound)                   */}
-        {/* ====================================================== */}
-        {activeTab === "preferences" && (
-          <div className="space-y-6 animate-fade-in">
-            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-              Preferences
-            </h1>
-
-            {/* Appearance Card */}
-            <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
-              <h2 className="text-base font-black text-gray-800">Appearance</h2>
-              <p className="text-xs font-bold text-gray-400">
-                Switch between light, dark, or system-matched interface theme.
-              </p>
-              <div className="grid grid-cols-3 gap-2.5 pt-1">
-                {[
-                  { id: "system", label: "System default", icon: <Laptop className="w-4 h-4" /> },
-                  { id: "off", label: "Off (Light)", icon: <Sun className="w-4 h-4" /> },
-                  { id: "on", label: "On (Dark)", icon: <Moon className="w-4 h-4" /> },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => handleDarkModeChange(m.id as any)}
-                    className={`py-3 px-3 rounded-2xl border-2 font-black text-xs flex flex-col items-center justify-center gap-1.5 transition active:scale-95 ${
-                      darkMode === m.id
-                        ? "border-[#1cb0f6] bg-[#ddf4ff] text-[#1899d6] shadow-xs"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {m.icon}
-                    <span>{m.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sound & Exercises */}
-            <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
-              <h2 className="text-base font-black text-gray-800">Sound & Audio</h2>
-              <div className="space-y-3.5 divide-y divide-gray-100">
-                <div className="flex items-center justify-between pt-1">
-                  <div>
-                    <h3 className="text-sm font-black text-gray-800">Sound effects</h3>
-                    <p className="text-xs font-bold text-gray-400">Play audio cues on correct answers and button clicks.</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const next = !soundEffects;
-                      setSoundEffects(next);
-                      if (next) sounds.playTap();
-                    }}
-                    className={`w-14 h-8 rounded-full p-1 transition-colors ${
-                      soundEffects ? "bg-[#58cc02]" : "bg-gray-300"
-                    }`}
-                  >
-                    <div className={`w-6 h-6 rounded-full bg-white transition-transform ${soundEffects ? "translate-x-6" : "translate-x-0"}`} />
-                  </button>
-                </div>
-                <div className="flex items-center justify-between pt-3">
-                  <div>
-                    <h3 className="text-sm font-black text-gray-800">Listening exercises</h3>
-                    <p className="text-xs font-bold text-gray-400">Include Hindi audio challenges in lessons.</p>
-                  </div>
-                  <button
-                    onClick={() => setListeningExercises(!listeningExercises)}
-                    className={`w-14 h-8 rounded-full p-1 transition-colors ${
-                      listeningExercises ? "bg-[#58cc02]" : "bg-gray-300"
-                    }`}
-                  >
-                    <div className={`w-6 h-6 rounded-full bg-white transition-transform ${listeningExercises ? "translate-x-6" : "translate-x-0"}`} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ====================================================== */}
-        {/* TAB: SOCIAL ACCOUNTS                                   */}
+        {/* TAB 8: SOCIAL ACCOUNTS                                 */}
         {/* ====================================================== */}
         {activeTab === "social" && (
           <div className="space-y-6 animate-fade-in">
             <h1 className="text-2xl font-black text-gray-800 tracking-tight">
               Social accounts
             </h1>
-            <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
+            <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between p-3 border-b border-gray-100">
                 <span className="font-bold text-sm text-gray-800">Google</span>
                 <span className="text-xs font-bold text-gray-400">Connected</span>
@@ -577,57 +752,6 @@ function SettingsContent() {
                 <span className="font-bold text-sm text-gray-800">Facebook</span>
                 <button className="text-xs font-black text-[#1cb0f6]">CONNECT</button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* ====================================================== */}
-        {/* TAB: PRIVACY SETTINGS                                  */}
-        {/* ====================================================== */}
-        {activeTab === "privacy" && (
-          <div className="space-y-6 animate-fade-in">
-            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-              Privacy settings
-            </h1>
-            <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-black text-gray-800">Public profile</h3>
-                  <p className="text-xs font-bold text-gray-400">Allow other learners to see your profile.</p>
-                </div>
-                <button
-                  onClick={() => setPublicProfile(!publicProfile)}
-                  className={`w-14 h-8 rounded-full p-1 transition-colors ${publicProfile ? "bg-[#58cc02]" : "bg-gray-300"}`}
-                >
-                  <div className={`w-6 h-6 rounded-full bg-white transition-transform ${publicProfile ? "translate-x-6" : "translate-x-0"}`} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ====================================================== */}
-        {/* TAB: CHOOSE A PLAN (Subscription)                      */}
-        {/* ====================================================== */}
-        {activeTab === "subscription" && (
-          <div className="space-y-6 animate-fade-in">
-            <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-              Subscription
-            </h1>
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-6 text-white shadow-md">
-              <span className="text-[10px] font-black uppercase bg-white/20 px-2.5 py-1 rounded-md">SUPER DUOLINGO</span>
-              <h2 className="text-2xl font-black mt-2">Unlimited Hearts & Personalized Practice</h2>
-              <p className="text-xs text-purple-100 font-bold mt-1 mb-4">Master Hindi faster with zero interruptions.</p>
-              <button
-                onClick={() => {
-                  sounds.playVictory();
-                  setSavedToast("Super Duolingo trial started! 🌟");
-                  setTimeout(() => setSavedToast(null), 3000);
-                }}
-                className="py-3 px-6 rounded-2xl bg-white text-purple-700 font-black text-xs uppercase tracking-wider shadow-sm hover:bg-purple-50 active:scale-95 transition"
-              >
-                Start 14-Day Free Trial
-              </button>
             </div>
           </div>
         )}
@@ -687,7 +811,7 @@ function SettingsContent() {
           </button>
         </div>
 
-        {/* CARD 3: SUPPORT */}
+        {/* CARD 3: SUPPORT (Connected to /help page) */}
         <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs space-y-2">
           <h3 className="font-black text-sm text-gray-700">Support</h3>
           <Link
