@@ -274,13 +274,132 @@ export default function ProfilePage() {
 
           {/* Tab Content Body */}
           <div className="p-6 text-center">
-            {/* Duolingo Friends Ensemble Illustration */}
-            <div className="py-2 mb-3 flex items-center justify-center text-5xl tracking-tight select-none">
-              <span className="hover:scale-110 transition inline-block">👧🏽</span>
-              <span className="hover:scale-110 transition inline-block -ml-2">👦🏼</span>
-              <span className="hover:scale-110 transition inline-block -ml-2 text-6xl">🦉</span>
-              <span className="hover:scale-110 transition inline-block -ml-2">🧔🏾</span>
-              <span className="hover:scale-110 transition inline-block -ml-2">👩🏻</span>
+            {/* Duolingo Friends Ensemble Vector Illustration (Matching Screenshot) */}
+            <div className="py-2 mb-2 flex items-center justify-center select-none">
+              <svg
+                viewBox="0 0 360 160"
+                className="w-full max-w-[290px] h-auto"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Background Shadow / Baseline */}
+                <ellipse cx="180" cy="148" rx="160" ry="8" fill="#f0f0f0" />
+
+                {/* 1. ZARI (Far Left - Pink Outfit & Hijab) */}
+                <g id="zari">
+                  <path d="M42 95 C35 110 32 135 32 145 L58 145 C58 135 55 110 48 95 Z" fill="#ff85c0" />
+                  <path d="M28 85 C28 115 56 115 56 85 C56 65 28 65 28 85 Z" fill="#f759ab" />
+                  <circle cx="42" cy="78" r="14" fill="#d48872" />
+                  <circle cx="38" cy="76" r="2" fill="#222" />
+                  <circle cx="46" cy="76" r="2" fill="#222" />
+                  <path d="M40 82 Q42 85 44 82" stroke="#222" strokeWidth="1.5" strokeLinecap="round" />
+                  {/* Hijab wrap */}
+                  <path d="M26 70 C26 55 58 55 58 70 C58 85 54 92 42 92 C30 92 26 85 26 70 Z" fill="#f759ab" />
+                </g>
+
+                {/* 2. LILY (Purple Hair & Lilac Hoodie) */}
+                <g id="lily">
+                  <path d="M72 100 C68 115 65 135 65 145 L88 145 C88 135 85 115 82 100 Z" fill="#9254de" />
+                  <rect x="68" y="90" width="18" height="25" rx="6" fill="#b37feb" />
+                  <circle cx="77" cy="74" r="13" fill="#ffd8bf" />
+                  {/* Purple Bob Hair */}
+                  <path d="M63 68 C63 52 91 52 91 68 C91 82 89 86 87 86 C85 80 83 74 77 74 C71 74 69 80 67 86 C65 86 63 82 63 68 Z" fill="#722ed1" />
+                  {/* Bored eyes */}
+                  <line x1="72" y1="74" x2="76" y2="74" stroke="#222" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="80" y1="74" x2="84" y2="74" stroke="#222" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="75" y1="80" x2="79" y2="80" stroke="#222" strokeWidth="1.5" />
+                </g>
+
+                {/* 3. JUNIOR (Small boy with spiky yellow hair & red hoodie) */}
+                <g id="junior">
+                  <rect x="98" y="105" width="22" height="40" rx="6" fill="#ff4d4f" />
+                  <circle cx="109" cy="88" r="13" fill="#ffe7ba" />
+                  {/* Big round excited eyes */}
+                  <circle cx="105" cy="87" r="3" fill="#222" />
+                  <circle cx="113" cy="87" r="3" fill="#222" />
+                  <circle cx="106" cy="86" r="1" fill="#fff" />
+                  <circle cx="114" cy="86" r="1" fill="#fff" />
+                  <path d="M106 94 Q109 97 112 94" stroke="#222" strokeWidth="1.5" fill="#ff4d4f" />
+                  {/* Spiky blonde hair */}
+                  <path d="M96 82 L100 70 L106 76 L112 68 L116 75 L122 72 L120 83 Z" fill="#faad14" />
+                </g>
+
+                {/* 4. BEA (Brown afro puffs, mustard top) */}
+                <g id="bea">
+                  {/* Afro hair */}
+                  <circle cx="132" cy="72" r="18" fill="#3f1e09" />
+                  <rect x="122" y="98" width="22" height="47" rx="6" fill="#fa8c16" />
+                  <circle cx="133" cy="84" r="12" fill="#874d00" />
+                  <circle cx="129" cy="83" r="2" fill="#222" />
+                  <circle cx="137" cy="83" r="2" fill="#222" />
+                  <path d="M130 90 Q133 93 136 90" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+                </g>
+
+                {/* 5. EDDY (Tall, athletic, orange/red track top, blonde hair) */}
+                <g id="eddy">
+                  <rect x="156" y="85" width="26" height="60" rx="8" fill="#f5222d" />
+                  <rect x="162" y="60" width="16" height="26" rx="8" fill="#ffbb96" />
+                  <circle cx="166" cy="68" r="2" fill="#222" />
+                  <circle cx="174" cy="68" r="2" fill="#222" />
+                  <path d="M167 75 Q170 77 173 75" stroke="#222" strokeWidth="1.5" strokeLinecap="round" />
+                  {/* Athletic blonde hair */}
+                  <path d="M158 60 C158 50 182 50 182 60 C182 64 178 63 170 63 C162 63 158 64 158 60 Z" fill="#faad14" />
+                </g>
+
+                {/* 6. DUO THE OWL (Peeking front & center) */}
+                <g id="duo-mascot">
+                  <ellipse cx="180" cy="130" rx="18" ry="16" fill="#58cc02" />
+                  {/* Big Owl Eyes */}
+                  <circle cx="173" cy="126" r="6" fill="#fff" />
+                  <circle cx="187" cy="126" r="6" fill="#fff" />
+                  <circle cx="174" cy="126" r="3" fill="#222" />
+                  <circle cx="186" cy="126" r="3" fill="#222" />
+                  {/* Orange Beak */}
+                  <polygon points="177,129 183,129 180,135" fill="#ff9600" />
+                  {/* Orange feet */}
+                  <ellipse cx="174" cy="145" rx="4" ry="2" fill="#ff9600" />
+                  <ellipse cx="186" cy="145" rx="4" ry="2" fill="#ff9600" />
+                </g>
+
+                {/* 7. VIKRAM (Teal shirt, mustache, stylish hair) */}
+                <g id="vikram">
+                  <rect x="195" y="90" width="28" height="55" rx="8" fill="#13c2c2" />
+                  <circle cx="209" cy="74" r="14" fill="#a06235" />
+                  {/* Black neat hair */}
+                  <path d="M195 72 C195 56 223 56 223 72 C223 68 217 64 209 64 C201 64 195 68 195 72 Z" fill="#1f1f1f" />
+                  <circle cx="204" cy="72" r="2" fill="#111" />
+                  <circle cx="214" cy="72" r="2" fill="#111" />
+                  {/* Big friendly mustache */}
+                  <path d="M201 79 C204 76 208 81 209 79 C210 81 214 76 217 79 C215 82 203 82 201 79 Z" fill="#1f1f1f" />
+                </g>
+
+                {/* 8. OSCAR (Turtleneck, artful mustache, glasses) */}
+                <g id="oscar">
+                  <rect x="232" y="85" width="28" height="60" rx="8" fill="#873800" />
+                  <circle cx="246" cy="66" r="14" fill="#ffd8bf" />
+                  <circle cx="242" cy="65" r="2" fill="#222" />
+                  <circle cx="250" cy="65" r="2" fill="#222" />
+                  {/* Thin artful mustache */}
+                  <path d="M239 72 Q246 70 253 72" stroke="#222" strokeWidth="2" strokeLinecap="round" />
+                  {/* Sleek black hair */}
+                  <path d="M232 64 C232 50 260 50 260 64 Z" fill="#262626" />
+                </g>
+
+                {/* 9. LUCY (Elderly lady, gray hair bun, spectacles, yellow cardigan) */}
+                <g id="lucy">
+                  {/* Gray Hair Bun */}
+                  <circle cx="282" cy="52" r="9" fill="#bfbfbf" />
+                  <rect x="268" y="88" width="28" height="57" rx="8" fill="#faad14" />
+                  <circle cx="282" cy="72" r="14" fill="#ffe7ba" />
+                  {/* Gray parted hair */}
+                  <path d="M268 70 C268 56 296 56 296 70 C296 66 288 62 282 62 C276 62 268 66 268 70 Z" fill="#bfbfbf" />
+                  {/* Glasses */}
+                  <circle cx="277" cy="71" r="4" stroke="#595959" strokeWidth="1.5" fill="none" />
+                  <circle cx="287" cy="71" r="4" stroke="#595959" strokeWidth="1.5" fill="none" />
+                  <line x1="281" y1="71" x2="283" y2="71" stroke="#595959" strokeWidth="1.5" />
+                  {/* Gentle smile */}
+                  <path d="M279 80 Q282 82 285 80" stroke="#222" strokeWidth="1.5" strokeLinecap="round" />
+                </g>
+              </svg>
             </div>
 
             {/* Motivational Text */}

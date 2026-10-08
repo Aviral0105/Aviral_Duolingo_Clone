@@ -64,7 +64,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         />
 
         <main className="flex-1 pb-20 md:pb-8 flex justify-center">
-          <div className="w-full max-w-2xl px-4 py-6">{children}</div>
+          <div className="w-full max-w-5xl px-4 py-6">{children}</div>
         </main>
 
         <BottomNav />
