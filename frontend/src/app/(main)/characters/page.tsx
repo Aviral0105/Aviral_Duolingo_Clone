@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Volume2, Sparkles, CheckCircle2, ChevronRight, Zap } from "lucide-react";
+import { Volume2, Sparkles, CheckCircle2, ChevronRight, Zap, Info, X } from "lucide-react";
 import RightPanel from "@/components/navigation/RightPanel";
+import { sounds } from "@/lib/sounds";
 
 interface Letter {
   char: string;
@@ -60,56 +61,115 @@ const HINDI_LETTERS: Letter[] = [
   { char: "ह", translit: "ha", type: "consonant", mastery: 3 },
 ];
 
+const COMBINATIONS = [
+  { char: "का", translit: "kaa" },
+  { char: "के", translit: "ke" },
+  { char: "की", translit: "kii" },
+  { char: "को", translit: "ko" },
+  { char: "कृ", translit: "kri" },
+  { char: "मा", translit: "maa" },
+  { char: "मी", translit: "mee" },
+  { char: "मु", translit: "mu" },
+  { char: "ला", translit: "laa" },
+  { char: "ले", translit: "le" },
+];
+
+const QUIZ_QUESTIONS = [
+  { char: "क", translit: "ka", options: ["क", "ख", "ग", "घ"] },
+  { char: "म", translit: "ma", options: ["न", "प", "म", "ब"] },
+  { char: "स", translit: "sa", options: ["स", "श", "ष", "ह"] },
+  { char: "अ", translit: "a", options: ["अ", "आ", "इ", "ई"] },
+  { char: "र", translit: "ra", options: ["य", "र", "ल", "व"] },
+];
+
 export default function CharactersPage() {
   const [filter, setFilter] = useState<"all" | "vowel" | "consonant">("all");
   const [activeChar, setActiveChar] = useState<string | null>(null);
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [quizIndex, setQuizIndex] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
+  const [showTipsModal, setShowTipsModal] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  const filteredLetters = HINDI_LETTERS.filter((l) =>
-    filter === "all" ? true : l.type === filter
-  );
-
-  const speakLetter = (letter: Letter) => {
+  const speakLetter = (letter: { char: string; translit: string }) => {
     setActiveChar(letter.char);
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(letter.char);
-      utterance.lang = "hi-IN";
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
+    sounds.speak(letter.char);
     setTimeout(() => setActiveChar(null), 800);
+  };
+
+  const filteredLetters = HINDI_LETTERS.filter((l) => {
+    if (filter === "all") return true;
+    return l.type === filter;
+  });
+
+  const currentQ = QUIZ_QUESTIONS[quizIndex];
+
+  const handleQuizAnswer = (selected: string) => {
+    if (selected === currentQ.char) {
+      sounds.playCorrect();
+      setFeedback("🎉 Correct!");
+      setQuizScore((prev) => prev + 1);
+      setTimeout(() => {
+        setFeedback(null);
+        if (quizIndex < QUIZ_QUESTIONS.length - 1) {
+          setQuizIndex((prev) => prev + 1);
+        } else {
+          sounds.playVictory();
+          alert(`Great job! You scored ${quizScore + 1}/${QUIZ_QUESTIONS.length} on Hindi Letters practice! (+10 XP)`);
+          setIsQuizModalOpen(false);
+          setQuizIndex(0);
+          setQuizScore(0);
+        }
+      }, 900);
+    } else {
+      sounds.playIncorrect();
+      setFeedback(`❌ Not quite! That was "${selected}"`);
+      setTimeout(() => setFeedback(null), 1200);
+    }
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
-      {/* CENTER FEED: LETTERS LEARNING ROADMAP */}
+      {/* CENTER FEED */}
       <div className="flex-1 w-full max-w-xl mx-auto space-y-6">
         {/* Hero Card */}
-        <div className="bg-[#1cb0f6] rounded-3xl text-white p-6 sm:p-7 shadow-xs relative overflow-hidden flex items-center justify-between">
-          <div className="max-w-xs z-10">
-            <h1 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight">
-              Let&apos;s learn Hindi!
-            </h1>
-            <p className="text-xs sm:text-sm font-bold text-sky-100 leading-relaxed mb-4">
-              Get to know the characters and sounds in Hindi. Tap any letter to hear its pronunciation.
+        <div className="bg-gradient-to-r from-sky-400 via-sky-500 to-blue-500 rounded-3xl p-6 text-white shadow-sm flex items-center justify-between">
+          <div className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-md">
+              Hindi Alphabet • देवनागरी
+            </span>
+            <h1 className="text-2xl font-black">Learn the letters</h1>
+            <p className="text-xs font-bold text-sky-100 max-w-xs">
+              Master Hindi vowels, consonants, and character sounds with interactive audio drills.
             </p>
-            <button
-              onClick={() => setIsQuizModalOpen(true)}
-              className="px-6 py-2.5 rounded-2xl bg-white text-[#1cb0f6] font-black uppercase text-xs tracking-wider border-b-4 border-sky-100 active:border-b-0 active:translate-y-1 transition hover:bg-sky-50 shadow-xs"
-            >
-              LEARN THE LETTERS
-            </button>
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setQuizIndex(0);
+                  setQuizScore(0);
+                  setIsQuizModalOpen(true);
+                }}
+                className="bg-white text-sky-600 px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider shadow-md hover:bg-sky-50 active:scale-95 transition flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-sky-500" />
+                <span>Practice (+15 XP)</span>
+              </button>
+              <button
+                onClick={() => setShowTipsModal(true)}
+                className="border-2 border-white/40 hover:bg-white/10 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider text-white transition flex items-center gap-1.5"
+              >
+                <Info className="w-4 h-4" />
+                <span>Tips</span>
+              </button>
+            </div>
           </div>
-
-          <div className="text-7xl sm:text-8xl shrink-0 select-none animate-bounce">
-            क✨
+          <div className="text-7xl font-serif text-white/90 select-none hidden sm:block">
+            क
           </div>
         </div>
 
-        {/* Filter Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b-2 border-gray-100 pb-3 overflow-x-auto">
+        {/* Filter Pills */}
+        <div className="flex gap-2 pb-1 overflow-x-auto">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition ${
@@ -156,7 +216,6 @@ export default function CharactersPage() {
                     : "border-gray-200 hover:border-[#1cb0f6]/50 hover:bg-gray-50/50"
                 }`}
               >
-                {/* Speaker indicator on top right */}
                 <div className="w-full flex justify-end">
                   <Volume2
                     className={`w-3.5 h-3.5 transition ${
@@ -166,18 +225,12 @@ export default function CharactersPage() {
                     }`}
                   />
                 </div>
-
-                {/* Main Character */}
                 <span className="text-3xl sm:text-4xl font-black text-gray-800 my-1 font-serif group-hover:scale-110 transition">
                   {l.char}
                 </span>
-
-                {/* Transliteration */}
                 <span className="text-xs font-bold text-gray-500 mb-2">
                   {l.translit}
                 </span>
-
-                {/* 3-Bar Mastery Level */}
                 <div className="flex gap-1 w-full justify-center">
                   {[1, 2, 3].map((bar) => (
                     <div
@@ -192,17 +245,42 @@ export default function CharactersPage() {
             );
           })}
         </div>
+
+        {/* Combinations Section (from video 135s) */}
+        <div className="pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-black text-gray-800">Combinations (मात्राएँ व युक्तियाँ)</h2>
+            <span className="text-xs font-black text-[#1cb0f6]">10 Combos</span>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+            {COMBINATIONS.map((c) => (
+              <div
+                key={c.char}
+                onClick={() => speakLetter(c)}
+                className="bg-white border-2 border-gray-200 hover:border-[#1cb0f6] rounded-2xl p-3 text-center cursor-pointer transition active:scale-95 shadow-xs"
+              >
+                <div className="text-2xl font-black text-gray-800 font-serif">{c.char}</div>
+                <div className="text-xs font-bold text-gray-400 mt-1">{c.translit}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* RIGHT STICKY COLUMN: BRONZE LEAGUE & DAILY QUESTS */}
+      {/* RIGHT STICKY COLUMN */}
       <RightPanel />
 
       {/* Interactive Letters Practice Quiz Modal */}
-      {isQuizModalOpen && (
+      {isQuizModalOpen && currentQ && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-gray-200 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-gray-200 animate-scale-up">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-gray-800">Letters Practice</h3>
+              <div>
+                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                  Question {quizIndex + 1} of {QUIZ_QUESTIONS.length}
+                </span>
+                <h3 className="text-xl font-black text-gray-800">Letters Practice</h3>
+              </div>
               <button
                 onClick={() => setIsQuizModalOpen(false)}
                 className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 font-black"
@@ -212,41 +290,41 @@ export default function CharactersPage() {
             </div>
 
             <p className="text-xs font-bold text-gray-500 mb-4">
-              Tap the speaker and match the sound with the correct Devanagari character:
+              Tap the speaker to hear the letter, then pick the correct Devanagari character:
             </p>
 
             <div className="bg-[#ddf4ff] rounded-2xl p-6 flex flex-col items-center justify-center mb-5">
               <button
-                onClick={() => {
-                  const utterance = new SpeechSynthesisUtterance("क");
-                  utterance.lang = "hi-IN";
-                  window.speechSynthesis?.speak(utterance);
-                }}
+                onClick={() => sounds.speak(currentQ.char)}
                 className="w-16 h-16 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center text-2xl shadow-md hover:scale-105 active:scale-95 transition"
               >
                 🔊
               </button>
               <span className="text-xs font-bold text-sky-700 mt-2">
-                Tap to hear &quot;ka&quot;
+                Tap to hear &quot;{currentQ.translit}&quot;
               </span>
             </div>
 
+            {feedback && (
+              <div
+                className={`p-2.5 rounded-xl font-black text-xs text-center mb-3 animate-fade-in ${
+                  feedback.startsWith("🎉")
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {feedback}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3 mb-5">
-              {["क", "ख", "ग", "घ"].map((c, i) => (
+              {currentQ.options.map((opt) => (
                 <button
-                  key={c}
-                  onClick={() => {
-                    if (c === "क") {
-                      alert("🎉 Correct! That is the letter 'ka' (क)");
-                      setQuizScore((prev) => prev + 1);
-                      setIsQuizModalOpen(false);
-                    } else {
-                      alert("❌ Not quite! That is '" + (i === 1 ? "kha" : i === 2 ? "ga" : "gha") + "'");
-                    }
-                  }}
+                  key={opt}
+                  onClick={() => handleQuizAnswer(opt)}
                   className="py-4 rounded-2xl border-2 border-gray-200 hover:border-[#1cb0f6] bg-white font-serif font-black text-2xl text-gray-800 active:scale-95 transition"
                 >
-                  {c}
+                  {opt}
                 </button>
               ))}
             </div>
@@ -256,6 +334,40 @@ export default function CharactersPage() {
               className="w-full py-3 rounded-2xl border-2 border-gray-200 text-gray-500 font-black uppercase text-xs hover:bg-gray-50 transition"
             >
               Exit Practice
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tips Modal */}
+      {showTipsModal && (
+        <div
+          onClick={() => setShowTipsModal(false)}
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border-2 border-gray-200 relative animate-scale-up"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-gray-200 mb-4">
+              <h3 className="text-xl font-black text-gray-800">Hindi Alphabet Tips</h3>
+              <button onClick={() => setShowTipsModal(false)} className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs font-bold text-gray-600">
+              <p>
+                <b>Devanagari</b> is written left-to-right with a horizontal hanging line at the top called the <i>Shirorekha</i>.
+              </p>
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-sky-900">
+                💡 Every consonant has an inherent vowel sound <b>&quot;a&quot;</b> unless modified with a matra (मात्रा).
+              </div>
+            </div>
+            <button
+              onClick={() => setShowTipsModal(false)}
+              className="mt-6 w-full py-3 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-wider btn-3d-blue"
+            >
+              Understood
             </button>
           </div>
         </div>

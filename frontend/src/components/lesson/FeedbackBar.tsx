@@ -23,7 +23,12 @@ export default function FeedbackBar({
   onContinue,
 }: FeedbackBarProps) {
   const [showReportModal, setShowReportModal] = useState(false);
-  const [reportSubmitted, setReportSubmitted] = useState(false);
+  const [feedbackNote, setFeedbackNote] = useState<string | null>(null);
+
+  const handleDifficultyFeedback = (type: "easy" | "hard") => {
+    setFeedbackNote(type === "easy" ? "Noted: Lesson will adapt harder! 👍" : "Noted: Lesson will provide extra practice! 💡");
+    setTimeout(() => setFeedbackNote(null), 2500);
+  };
 
   return (
     <>
@@ -41,11 +46,17 @@ export default function FeedbackBar({
                 )}
                 {/* Sub feedback pills from video */}
                 <div className="flex items-center gap-3 mt-2 text-[11px] font-black text-green-700">
-                  <button className="flex items-center gap-1 hover:opacity-80 active:scale-95 transition">
+                  <button
+                    onClick={() => handleDifficultyFeedback("easy")}
+                    className="flex items-center gap-1 hover:opacity-80 active:scale-95 transition"
+                  >
                     <ThumbsUp className="w-3.5 h-3.5" />
                     <span>TOO EASY</span>
                   </button>
-                  <button className="flex items-center gap-1 hover:opacity-80 active:scale-95 transition">
+                  <button
+                    onClick={() => handleDifficultyFeedback("hard")}
+                    className="flex items-center gap-1 hover:opacity-80 active:scale-95 transition"
+                  >
                     <ThumbsDown className="w-3.5 h-3.5" />
                     <span>TOO DIFFICULT</span>
                   </button>
@@ -56,6 +67,11 @@ export default function FeedbackBar({
                     <Flag className="w-3.5 h-3.5" />
                     <span>REPORT</span>
                   </button>
+                  {feedbackNote && (
+                    <span className="text-[10px] bg-white/70 px-2 py-0.5 rounded-md font-bold text-green-800 animate-fade-in">
+                      {feedbackNote}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

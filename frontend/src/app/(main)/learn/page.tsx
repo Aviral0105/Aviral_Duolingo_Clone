@@ -17,6 +17,9 @@ export default function LearnPage() {
     title: "",
   });
   const [isStartOpen, setIsStartOpen] = useState(false);
+  const [showDuoBubble, setShowDuoBubble] = useState(false);
+  const [showChestModal, setShowChestModal] = useState(false);
+  const [chestClaimed, setChestClaimed] = useState(false);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -111,9 +114,17 @@ export default function LearnPage() {
         </div>
 
         {/* Mascot Duo sitting on the right */}
-        <div className="w-full flex justify-end pr-10 -my-2">
+        <div className="w-full flex justify-end pr-10 -my-2 relative">
+          {showDuoBubble && (
+            <div className="absolute -top-14 right-8 bg-white border-2 border-gray-200 rounded-2xl px-4 py-2 shadow-lg z-20 animate-bounce">
+              <span className="text-xs font-black text-gray-800">
+                Keep practicing Hindi to unlock Section 2! 🔥
+              </span>
+              <div className="w-2.5 h-2.5 bg-white border-b-2 border-r-2 border-gray-200 rotate-45 absolute -bottom-1.5 right-8" />
+            </div>
+          )}
           <div
-            onClick={() => alert('Duo: "Keep up the momentum to unlock Section 2!"')}
+            onClick={() => setShowDuoBubble(!showDuoBubble)}
             className="bg-white rounded-3xl p-3.5 flex flex-col items-center border-2 border-gray-200 cursor-pointer hover:shadow-md transition active:scale-95"
           >
             <span className="text-5xl">🦉</span>
@@ -124,17 +135,19 @@ export default function LearnPage() {
         {/* Node 4: Milestone Treasure Chest */}
         <div className="relative">
           <button
-            onClick={() => setLockedModal({ open: true, title: "Unit Milestone Chest" })}
-            className="w-20 h-20 rounded-3xl btn-3d-gray flex items-center justify-center active:scale-95 transition"
+            onClick={() => setShowChestModal(true)}
+            className={`w-20 h-20 rounded-3xl flex items-center justify-center active:scale-95 transition ${
+              chestClaimed ? "btn-3d-gray opacity-60" : "btn-3d-yellow animate-pulse"
+            }`}
           >
-            <span className="text-3xl">📦</span>
+            <span className="text-3xl">{chestClaimed ? "🪙" : "📦"}</span>
           </button>
         </div>
 
         {/* Node 5: Shifted Right (Audio Headphones) */}
         <div className="relative translate-x-10">
           <button
-            onClick={() => setLockedModal({ open: true, title: "Café Listening Practice" })}
+            onClick={() => setLockedModal({ open: true, title: "Hindi Listening Practice" })}
             className="w-20 h-20 rounded-full btn-3d-gray flex items-center justify-center active:scale-95 transition"
           >
             <span className="text-3xl opacity-60">🎧</span>
@@ -217,9 +230,41 @@ export default function LearnPage() {
         isOpen={isStartOpen}
         onClose={() => setIsStartOpen(false)}
         lessonId={1}
-        title="Basics 1"
+        title="Form basic sentences"
         xpReward={10}
       />
+
+      {/* Milestone Chest Modal */}
+      {showChestModal && (
+        <div
+          onClick={() => setShowChestModal(false)}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border-2 border-gray-200 text-center relative animate-scale-up"
+          >
+            <span className="text-7xl block mb-3 animate-bounce">📦✨</span>
+            <h2 className="text-2xl font-black text-gray-800 mb-1">Milestone Chest!</h2>
+            <p className="text-xs font-bold text-gray-500 mb-6">
+              You reached a major checkpoint in Unit 1!
+            </p>
+            <div className="p-4 bg-amber-50 rounded-2xl border-2 border-amber-300 font-black text-lg text-amber-900 mb-6 flex items-center justify-center gap-2">
+              <span>💎</span>
+              <span>+15 Gems</span>
+            </div>
+            <button
+              onClick={() => {
+                setChestClaimed(true);
+                setShowChestModal(false);
+              }}
+              className="w-full py-3.5 rounded-2xl bg-[#58cc02] border-b-4 border-[#46a302] text-white font-black text-sm uppercase tracking-wider btn-3d-green"
+            >
+              Claim Reward
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

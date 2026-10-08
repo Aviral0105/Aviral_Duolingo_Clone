@@ -56,20 +56,20 @@ export default function LessonHeader({
             <span className="text-6xl">🦉😢</span>
             <h3 className="text-xl font-black text-gray-800 mt-3">Wait, don&apos;t go!</h3>
             <p className="text-xs font-bold text-gray-500 mt-1 mb-6">
-              You will lose all progress in this lesson if you quit now.
+              You&apos;ll lose your progress if you quit now.
             </p>
             <div className="space-y-3">
               <button
                 onClick={() => setShowExitDialog(false)}
                 className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider btn-3d-blue"
               >
-                Keep Learning
+                Keep learning
               </button>
               <button
                 onClick={onQuitLesson}
-                className="w-full py-3 rounded-2xl font-black text-xs uppercase tracking-wider text-red-500 hover:bg-red-50"
+                className="w-full py-3 rounded-2xl font-black text-xs uppercase tracking-wider text-red-500 hover:bg-red-50 transition"
               >
-                Quit Lesson
+                End session
               </button>
             </div>
           </div>

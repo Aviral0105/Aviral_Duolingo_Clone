@@ -8,10 +8,10 @@ import {
   Settings,
   HelpCircle,
   GraduationCap,
-  Headphones,
-  BookOpen,
-  LogOut,
   Sparkles,
+  ExternalLink,
+  LogOut,
+  X,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -22,6 +22,7 @@ interface SidebarProps {
 export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   const pathname = usePathname();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [modalType, setModalType] = useState<"help" | "schools" | "det" | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
 
   // Close more menu when clicking outside
@@ -46,6 +47,12 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
       label: "LETTERS",
       href: "/characters",
       iconType: "letters",
+      activeColor: "text-[#1cb0f6]",
+    },
+    {
+      label: "PRACTICE",
+      href: "/practice",
+      iconType: "practice",
       activeColor: "text-[#1cb0f6]",
     },
     {
@@ -84,6 +91,8 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
             क
           </span>
         );
+      case "practice":
+        return <span className="text-2xl">🏋️‍♂️</span>;
       case "shield":
         return <span className="text-2xl">🛡️</span>;
       case "chest":
@@ -110,141 +119,190 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   const isSettingsActive = pathname.startsWith("/settings");
 
   return (
-    <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40">
-      {/* Brand Logo */}
-      <Link href="/learn" className="flex items-center gap-2 px-3 mb-8">
-        <span className="text-3xl font-black text-[#58cc02] tracking-tighter hover:opacity-90 transition">
-          duolingo
-        </span>
-      </Link>
+    <>
+      <aside className="hidden md:flex flex-col w-64 border-r-2 border-[#e5e5e5] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0 z-40">
+        {/* Brand Logo */}
+        <Link href="/learn" className="flex items-center gap-2 px-3 mb-6">
+          <span className="text-3xl font-black text-[#58cc02] tracking-tighter hover:opacity-90 transition">
+            duolingo
+          </span>
+        </Link>
 
-      {/* Nav Links */}
-      <nav className="flex-1 space-y-1.5 relative">
-        {links.map((link) => {
-          const isActive =
-            pathname === link.href ||
-            (link.href === "/characters" && pathname === "/letters");
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
-                isActive
-                  ? "border-[#84d8ff] bg-[#ddf4ff] text-[#1899d6]"
+        {/* Nav Links */}
+        <nav className="flex-1 space-y-1.5 relative overflow-y-auto pr-1">
+          {links.map((link) => {
+            const isActive =
+              pathname === link.href ||
+              (link.href === "/characters" && pathname === "/letters");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
+                  isActive
+                    ? "border-[#84d8ff] bg-[#ddf4ff] text-[#1899d6]"
+                    : "border-transparent text-gray-500 hover:bg-gray-100"
+                }`}
+              >
+                {renderIcon(link.iconType, isActive)}
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
+
+          {/* MORE Button with Popover Menu */}
+          <div className="relative pt-1" ref={moreRef}>
+            <button
+              onClick={() => setIsMoreOpen(!isMoreOpen)}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
+                isSettingsActive || isMoreOpen
+                  ? "border-purple-300 bg-purple-50 text-purple-700"
                   : "border-transparent text-gray-500 hover:bg-gray-100"
               }`}
             >
-              {renderIcon(link.iconType, isActive)}
-              <span>{link.label}</span>
-            </Link>
-          );
-        })}
+              {renderIcon("more", isSettingsActive)}
+              <span>MORE</span>
+            </button>
 
-        {/* MORE Button with Popover Menu */}
-        <div className="relative" ref={moreRef}>
-          <button
-            onClick={() => setIsMoreOpen(!isMoreOpen)}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition border-2 ${
-              isSettingsActive || isMoreOpen
-                ? "border-purple-300 bg-purple-50 text-purple-700"
-                : "border-transparent text-gray-500 hover:bg-gray-100"
-            }`}
-          >
-            {renderIcon("more", isSettingsActive)}
-            <span>MORE</span>
-          </button>
+            {/* Floating MORE Popover Card */}
+            {isMoreOpen && (
+              <div className="absolute left-full bottom-0 ml-3 w-64 bg-white border-2 border-gray-200 rounded-3xl p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="space-y-1 text-gray-700 font-black text-xs uppercase tracking-wider">
+                  <Link
+                    href="/settings/account"
+                    onClick={() => setIsMoreOpen(false)}
+                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition"
+                  >
+                    <Settings className="w-5 h-5 text-gray-500" />
+                    <span>Settings</span>
+                  </Link>
 
-          {/* Floating MORE Popover Card */}
-          {isMoreOpen && (
-            <div className="absolute left-full bottom-0 ml-3 w-56 bg-white border-2 border-gray-200 rounded-3xl p-2.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="space-y-1 text-gray-700 font-black text-xs uppercase tracking-wider">
-                <Link
-                  href="/settings/account"
-                  onClick={() => setIsMoreOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition"
-                >
-                  <Settings className="w-5 h-5 text-gray-500" />
-                  <span>Settings</span>
-                </Link>
+                  <button
+                    onClick={() => {
+                      setModalType("schools");
+                      setIsMoreOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                  >
+                    <GraduationCap className="w-5 h-5 text-sky-500" />
+                    <span>Schools</span>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    alert("Duolingo for Schools: Free teacher tools for classrooms!");
-                    setIsMoreOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                >
-                  <GraduationCap className="w-5 h-5 text-sky-500" />
-                  <span>Schools</span>
-                </button>
+                  <button
+                    onClick={() => {
+                      setModalType("det");
+                      setIsMoreOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                  >
+                    <ExternalLink className="w-5 h-5 text-amber-500" />
+                    <span>Duolingo English Test</span>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    alert("Duolingo Podcasts: Fascinating stories in easy-to-understand audio!");
-                    setIsMoreOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                >
-                  <Headphones className="w-5 h-5 text-amber-500" />
-                  <span>Podcast</span>
-                </button>
+                  <button
+                    onClick={() => {
+                      setModalType("help");
+                      setIsMoreOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
+                  >
+                    <HelpCircle className="w-5 h-5 text-indigo-500" />
+                    <span>Help</span>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    alert("Duolingo Dictionary: Search Hindi translations and grammatical tips!");
-                    setIsMoreOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                >
-                  <BookOpen className="w-5 h-5 text-emerald-500" />
-                  <span>Dictionary</span>
-                </button>
+                  <Link
+                    href="/welcome"
+                    onClick={() => setIsMoreOpen(false)}
+                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 text-[#58cc02] transition"
+                  >
+                    <Sparkles className="w-5 h-5 text-[#58cc02]" />
+                    <span>Welcome / Home</span>
+                  </Link>
 
-                <button
-                  onClick={() => {
-                    alert("Help Center: FAQs, account recovery, and bug reporting.");
-                    setIsMoreOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition text-left"
-                >
-                  <HelpCircle className="w-5 h-5 text-indigo-500" />
-                  <span>Help</span>
-                </button>
+                  <div className="border-t border-gray-100 my-1" />
 
-                <Link
-                  href="/welcome"
-                  onClick={() => setIsMoreOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 text-[#58cc02] transition"
-                >
-                  <Sparkles className="w-5 h-5 text-[#58cc02]" />
-                  <span>Welcome / Home</span>
-                </Link>
-
-                <div className="border-t border-gray-100 my-1" />
-
-                <Link
-                  href="/welcome"
-                  onClick={() => setIsMoreOpen(false)}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 transition text-left"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>Log out</span>
-                </Link>
+                  <Link
+                    href="/welcome"
+                    onClick={() => setIsMoreOpen(false)}
+                    className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 transition text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>Log out</span>
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </nav>
+            )}
+          </div>
+        </nav>
+      </aside>
 
-      {/* Quick Action Buttons */}
-      <div className="pt-4 border-t border-gray-200 space-y-2">
-        <button
-          onClick={onOpenShop}
-          className="w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-50 border-2 border-purple-200 hover:bg-purple-100 transition"
+      {/* Info Modals for Schools, English Test, and Help */}
+      {modalType && (
+        <div
+          onClick={() => setModalType(null)}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in"
         >
-          ✨ Super Duolingo
-        </button>
-      </div>
-    </aside>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border-2 border-gray-200 relative animate-scale-up"
+          >
+            <button
+              onClick={() => setModalType(null)}
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 p-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {modalType === "schools" && (
+              <div className="text-center">
+                <span className="text-5xl">🏫</span>
+                <h3 className="text-xl font-black text-gray-800 mt-3 mb-2">Duolingo for Schools</h3>
+                <p className="text-xs text-gray-500 font-bold mb-6">
+                  Free teacher dashboard to assign Hindi lessons, track classroom progress, and gamify homework.
+                </p>
+                <button
+                  onClick={() => setModalType(null)}
+                  className="w-full py-3.5 rounded-2xl bg-[#58cc02] text-white font-black text-xs uppercase tracking-wider btn-3d-green"
+                >
+                  Got It
+                </button>
+              </div>
+            )}
+
+            {modalType === "det" && (
+              <div className="text-center">
+                <span className="text-5xl">🎓</span>
+                <h3 className="text-xl font-black text-gray-800 mt-3 mb-2">Duolingo English Test</h3>
+                <p className="text-xs text-gray-500 font-bold mb-6">
+                  An accurate, convenient, and fast online English proficiency assessment accepted by 4,000+ universities worldwide.
+                </p>
+                <button
+                  onClick={() => setModalType(null)}
+                  className="w-full py-3.5 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-wider btn-3d-blue"
+                >
+                  Learn More
+                </button>
+              </div>
+            )}
+
+            {modalType === "help" && (
+              <div className="text-center">
+                <span className="text-5xl">❓</span>
+                <h3 className="text-xl font-black text-gray-800 mt-3 mb-2">Duolingo Help Center</h3>
+                <p className="text-xs text-gray-500 font-bold mb-6">
+                  Need help with Hindi 1 lessons, streak freezes, or leaderboards? Visit our community forum or support docs.
+                </p>
+                <button
+                  onClick={() => setModalType(null)}
+                  className="w-full py-3.5 rounded-2xl bg-[#58cc02] text-white font-black text-xs uppercase tracking-wider btn-3d-green"
+                >
+                  Close Help
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
