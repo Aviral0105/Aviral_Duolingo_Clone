@@ -15,7 +15,7 @@ interface MultipleChoiceProps {
   categoryTag?: string;
   audioText?: string;
   speechBubbleText?: string;
-  options: Option[];
+  options: (Option | string | any)[];
   selectedId: string | null;
   onSelect: (id: string, text: string) => void;
 }
@@ -29,12 +29,23 @@ export default function MultipleChoice({
   selectedId,
   onSelect,
 }: MultipleChoiceProps) {
+  const normalizedOptions: Option[] = (options || []).map((opt: any, idx: number) => {
+    if (typeof opt === "string") {
+      return { id: `opt-${idx}`, text: opt, icon: undefined };
+    }
+    return {
+      id: opt?.id || `opt-${idx}`,
+      text: opt?.text || opt?.title || String(opt || ""),
+      icon: opt?.icon,
+    };
+  });
+
   // Keyboard shortcut listener for 1, 2, 3, 4
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const num = parseInt(e.key, 10);
-      if (!isNaN(num) && num >= 1 && num <= options.length) {
-        const opt = options[num - 1];
+      if (!isNaN(num) && num >= 1 && num <= normalizedOptions.length) {
+        const opt = normalizedOptions[num - 1];
         if (opt) {
           onSelect(opt.id, opt.text);
           if (opt.text) sounds.speak(opt.text, 0.9);
@@ -43,9 +54,9 @@ export default function MultipleChoice({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [options, onSelect]);
+  }, [normalizedOptions, onSelect]);
 
-  const hasIcons = options.some((o) => Boolean(o.icon));
+  const hasIcons = normalizedOptions.some((o) => Boolean(o.icon));
 
   return (
     <div className="flex flex-col flex-1 max-w-xl mx-auto w-full select-none justify-center">
@@ -127,7 +138,7 @@ export default function MultipleChoice({
       {hasIcons ? (
         /* Image / Card Grid matching Duolingo Frame 8s (3 side by side) */
         <div className="grid grid-cols-3 gap-3 sm:gap-4 my-auto">
-          {options.map((opt, idx) => {
+          {normalizedOptions.map((opt, idx) => {
             const isSelected = selectedId === opt.id;
             return (
               <button
@@ -164,7 +175,7 @@ export default function MultipleChoice({
       ) : (
         /* Wide Pill Buttons matching Duolingo Review Frame 50s */
         <div className="flex flex-col gap-3 my-auto">
-          {options.map((opt, idx) => {
+          {normalizedOptions.map((opt, idx) => {
             const isSelected = selectedId === opt.id;
             return (
               <button

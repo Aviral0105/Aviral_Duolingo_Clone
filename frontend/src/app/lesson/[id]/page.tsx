@@ -117,10 +117,19 @@ function LessonContent() {
     (completedExerciseIds.size / totalLessonExercises) * 100
   );
 
+  // Helper to normalize answers for whitespace and punctuation tolerance
+  const normalizeText = (text: string) => {
+    return (text || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[।.,!?;:"'()]/g, "")
+      .replace(/\s+/g, " ");
+  };
+
   // Input selection detection
   let hasSelection = false;
   if (currentExercise.type === "MULTIPLE_CHOICE") hasSelection = selectedOptionId !== null;
-  else if (currentExercise.type === "WORD_BANK") hasSelection = selectedWords.length > 0;
+  else if (currentExercise.type === "WORD_BANK") hasSelection = selectedWords.length > 0 || typedAnswer.trim().length > 0;
   else if (currentExercise.type === "MATCH_PAIRS") hasSelection = pairsMatched;
   else if (currentExercise.type === "FILL_BLANK") hasSelection = selectedBlank !== null;
   else if (currentExercise.type === "TYPE_ANSWER") hasSelection = typedAnswer.trim().length > 0;
@@ -130,17 +139,20 @@ function LessonContent() {
     let isCorrect = false;
 
     if (currentExercise.type === "MULTIPLE_CHOICE") {
-      const opt = currentExercise.content.options.find((o: any) => o.id === selectedOptionId);
-      isCorrect = opt?.text?.toLowerCase() === currentExercise.correct_answer.toLowerCase();
+      const opt = currentExercise.content.options.find((o: any) =>
+        typeof o === "string" ? o === selectedOptionId : o.id === selectedOptionId
+      );
+      const chosenText = typeof opt === "string" ? opt : opt?.text || opt?.id;
+      isCorrect = normalizeText(chosenText) === normalizeText(currentExercise.correct_answer);
     } else if (currentExercise.type === "WORD_BANK") {
-      const assembled = selectedWords.join(" ");
-      isCorrect = assembled.toLowerCase() === currentExercise.correct_answer.toLowerCase();
+      const assembled = typedAnswer.trim() ? typedAnswer.trim() : selectedWords.join(" ");
+      isCorrect = normalizeText(assembled) === normalizeText(currentExercise.correct_answer);
     } else if (currentExercise.type === "MATCH_PAIRS") {
       isCorrect = pairsMatched;
     } else if (currentExercise.type === "FILL_BLANK") {
-      isCorrect = selectedBlank?.toLowerCase() === currentExercise.correct_answer.toLowerCase();
+      isCorrect = normalizeText(selectedBlank || "") === normalizeText(currentExercise.correct_answer);
     } else if (currentExercise.type === "TYPE_ANSWER") {
-      isCorrect = typedAnswer.trim().toLowerCase() === currentExercise.correct_answer.toLowerCase();
+      isCorrect = normalizeText(typedAnswer) === normalizeText(currentExercise.correct_answer);
     }
 
     if (isCorrect) {
@@ -403,10 +415,16 @@ function LessonContent() {
           <WordBank
             prompt={currentExercise.prompt}
             categoryTag={currentExercise.category_tag}
-            sentenceToTranslate={currentExercise.content.sentence_to_translate}
+            sentenceToTranslate={
+              currentExercise.content.sentence_to_translate ||
+              currentExercise.content.original_phrase ||
+              ""
+            }
             audioText={currentExercise.audio_text}
             selectedWords={selectedWords}
             availableWords={availableWords}
+            typedAnswer={typedAnswer}
+            onTypedChange={(val) => setTypedAnswer(val)}
             onAddWord={(word, idx) => {
               setSelectedWords([...selectedWords, word]);
               setAvailableWords(availableWords.filter((_, i) => i !== idx));
@@ -422,8 +440,17 @@ function LessonContent() {
           <MatchPairs
             prompt={currentExercise.prompt}
             categoryTag={currentExercise.category_tag}
-            pairs={currentExercise.content.pairs}
-            onAllMatched={() => setPairsMatched(true)}
+            pairs={currentExercise.content.pairs || []}
+            onAllMatched={() => {
+              setPairsMatched(true);
+              // Auto-advance with success chime after a short delay for great UX
+              setTimeout(() => {
+                setStatus("correct");
+                sounds.playCorrect();
+                setPraiseText(PRAISE_LIST[Math.floor(Math.random() * PRAISE_LIST.length)]);
+                setCompletedExerciseIds((prev) => new Set(prev).add(currentExercise.id));
+              }, 400);
+            }}
           />
         )}
 
@@ -432,9 +459,9 @@ function LessonContent() {
             prompt={currentExercise.prompt}
             categoryTag={currentExercise.category_tag}
             audioText={currentExercise.audio_text}
-            prefix={currentExercise.content.prefix}
-            suffix={currentExercise.content.suffix}
-            options={currentExercise.content.options}
+            prefix={currentExercise.content.prefix || ""}
+            suffix={currentExercise.content.suffix || ""}
+            options={currentExercise.content.options || []}
             selectedWord={selectedBlank}
             onSelect={(w) => setSelectedBlank(w)}
           />
@@ -444,12 +471,23 @@ function LessonContent() {
           <TypeAnswer
             prompt={currentExercise.prompt}
             categoryTag={currentExercise.category_tag}
-            sentenceToTranslate={currentExercise.content.sentence_to_translate}
+            sentenceToTranslate={
+              currentExercise.content.sentence_to_translate ||
+              currentExercise.content.original_phrase ||
+              currentExercise.prompt ||
+              ""
+            }
             audioText={currentExercise.audio_text}
             hint={currentExercise.content.hint}
             typedValue={typedAnswer}
             onChange={(val) => setTypedAnswer(val)}
-            onSubmit={handleCheck}
+            onSubmit={() => {
+              if (status === "idle") {
+                if (typedAnswer.trim().length > 0) handleCheck();
+              } else {
+                handleContinue();
+              }
+            }}
           />
         )}
       </main>

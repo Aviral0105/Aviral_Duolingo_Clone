@@ -11,6 +11,8 @@ interface WordBankProps {
   audioText?: string;
   availableWords: string[];
   selectedWords: string[];
+  typedAnswer?: string;
+  onTypedChange?: (val: string) => void;
   onAddWord: (word: string, index: number) => void;
   onRemoveWord: (word: string, index: number) => void;
 }
@@ -22,11 +24,13 @@ export default function WordBank({
   audioText,
   availableWords,
   selectedWords,
+  typedAnswer = "",
+  onTypedChange,
   onAddWord,
   onRemoveWord,
 }: WordBankProps) {
   const [useKeyboard, setUseKeyboard] = useState(false);
-  const [typedInput, setTypedInput] = useState("");
+
 
   return (
     <div className="flex flex-col h-full select-none max-w-xl mx-auto w-full">
@@ -68,8 +72,8 @@ export default function WordBank({
         <div className="my-6">
           <input
             type="text"
-            value={typedInput}
-            onChange={(e) => setTypedInput(e.target.value)}
+            value={typedAnswer}
+            onChange={(e) => onTypedChange?.(e.target.value)}
             placeholder="Type your translation here..."
             className="w-full p-4 rounded-2xl border-2 border-gray-300 focus:border-[#1cb0f6] outline-none font-bold text-base text-gray-800"
           />

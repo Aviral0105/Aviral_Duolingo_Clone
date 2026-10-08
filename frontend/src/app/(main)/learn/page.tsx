@@ -24,9 +24,10 @@ export default function LearnPage() {
   } | null>(null);
   const [isGuidebookOpen, setIsGuidebookOpen] = useState(false);
   const [isSectionsOpen, setIsSectionsOpen] = useState(false);
-  const [lockedModal, setLockedModal] = useState<{ open: boolean; title: string }>({
+  const [lockedModal, setLockedModal] = useState<{ open: boolean; title: string; lessonId?: number }>({
     open: false,
     title: "",
+    lessonId: 1,
   });
   const [claimedChests, setClaimedChests] = useState<number[]>([]);
   const [showChestModal, setShowChestModal] = useState(false);
@@ -98,6 +99,7 @@ export default function LearnPage() {
       setLockedModal({
         open: true,
         title: prevLessonTitle ? `Complete "${prevLessonTitle}" to unlock this!` : "Complete earlier lessons to unlock this!",
+        lessonId: lesson.id,
       });
     }
   };
@@ -257,7 +259,10 @@ export default function LearnPage() {
                     return (
                       <div key={lesson.id} className={`relative flex flex-col items-center ${offsetClass}`}>
                         {/* Bouncing START Tooltip */}
-                        <div className="absolute -top-10 bg-[#58cc02] text-white text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md uppercase tracking-wider animate-bounce z-20">
+                        <div
+                          onClick={() => handleNodeClick(lesson, totalLessons)}
+                          className="absolute -top-10 bg-[#58cc02] text-white text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md uppercase tracking-wider animate-bounce z-20 cursor-pointer hover:scale-105 active:scale-95 transition"
+                        >
                           Start
                           <div className="w-2 h-2 bg-[#58cc02] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
                         </div>
@@ -348,8 +353,9 @@ export default function LearnPage() {
       <SectionsModal isOpen={isSectionsOpen} onClose={() => setIsSectionsOpen(false)} />
       <LockedModal
         isOpen={lockedModal.open}
-        onClose={() => setLockedModal({ open: false, title: "" })}
+        onClose={() => setLockedModal({ open: false, title: "", lessonId: 1 })}
         lessonTitle={lockedModal.title}
+        lessonId={lockedModal.lessonId || 1}
       />
 
       {selectedLesson && (
