@@ -29,6 +29,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   const [isCourseOpen, setIsCourseOpen] = useState(false);
   const [isStreakOpen, setIsStreakOpen] = useState(false);
+  const [streakTab, setStreakTab] = useState<"personal" | "friends">("personal");
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isEnergyOpen, setIsEnergyOpen] = useState(false);
 
@@ -67,7 +68,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <Topbar
           user={user}
           onOpenCourse={() => setIsCourseOpen(true)}
-          onOpenStreak={() => setIsStreakOpen(true)}
+          onOpenStreak={(tab = "personal") => {
+            setStreakTab(tab);
+            setIsStreakOpen(true);
+          }}
           onOpenShop={() => setIsShopOpen(true)}
           onOpenEnergy={() => setIsEnergyOpen(true)}
         />
@@ -85,6 +89,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         isOpen={isStreakOpen}
         onClose={() => setIsStreakOpen(false)}
         streak={user.streak}
+        initialTab={streakTab}
       />
       <ShopModal
         isOpen={isShopOpen}

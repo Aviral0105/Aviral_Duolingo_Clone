@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X, Lock, Users, ChevronLeft, ChevronRight, UserPlus, Check } from "lucide-react";
 import { sounds } from "@/lib/sounds";
@@ -18,6 +19,7 @@ export default function StreakModal({
   streak,
   initialTab = "personal",
 }: StreakModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [tab, setTab] = useState<"personal" | "friends">(initialTab);
 
   // Real Dynamic Calendar State (initialized with stable date, hydrated in useEffect)
@@ -26,6 +28,7 @@ export default function StreakModal({
   const [selectedDayInfo, setSelectedDayInfo] = useState<string | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     const now = new Date();
     setToday(now);
     setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
@@ -38,7 +41,17 @@ export default function StreakModal({
     }
   }, [isOpen, initialTab]);
 
-  if (!isOpen) return null;
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !mounted) return null;
 
   // Real calendar calculations
   const year = viewDate.getFullYear();
@@ -84,14 +97,14 @@ export default function StreakModal({
     setTimeout(() => setSelectedDayInfo(null), 3000);
   };
 
-  return (
+  return createPortal(
     <div
       onClick={onClose}
-      className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in"
+      className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-3 sm:p-4 animate-fade-in"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200 max-h-[90vh] flex flex-col animate-scale-up"
+        className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200 max-h-[88vh] flex flex-col animate-scale-up"
       >
         {/* Header Tabs with Left Close Button */}
         <div className="relative border-b-2 border-gray-100 flex items-center justify-between px-4 pt-3 pb-0 shrink-0">
@@ -335,6 +348,7 @@ export default function StreakModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
