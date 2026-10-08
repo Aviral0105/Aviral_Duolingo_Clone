@@ -10,6 +10,8 @@ interface StartLessonModalProps {
   lessonId: number;
   title: string;
   xpReward: number;
+  orderIndex?: number;
+  totalLessons?: number;
 }
 
 export default function StartLessonModal({
@@ -18,6 +20,8 @@ export default function StartLessonModal({
   lessonId,
   title,
   xpReward,
+  orderIndex = 1,
+  totalLessons = 4,
 }: StartLessonModalProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -42,7 +46,7 @@ export default function StartLessonModal({
         <div className="flex items-start justify-between mb-3">
           <div>
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">
-              Lesson 1 of 5
+              Lesson {orderIndex} of {totalLessons}
             </span>
             <h3 className="text-2xl font-black text-gray-800">{title}</h3>
           </div>

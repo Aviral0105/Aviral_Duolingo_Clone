@@ -15,7 +15,13 @@ import { sounds } from "@/lib/sounds";
 
 export default function LearnPage() {
   const [pathData, setPathData] = useState<PathResponse | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<{ id: number; title: string; xp: number } | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<{
+    id: number;
+    title: string;
+    xp: number;
+    orderIndex?: number;
+    totalLessons?: number;
+  } | null>(null);
   const [isGuidebookOpen, setIsGuidebookOpen] = useState(false);
   const [isSectionsOpen, setIsSectionsOpen] = useState(false);
   const [lockedModal, setLockedModal] = useState<{ open: boolean; title: string }>({
@@ -53,12 +59,14 @@ export default function LearnPage() {
     };
   }, [loadProgress]);
 
-  const handleNodeClick = (lesson: LessonNode, prevLessonTitle?: string) => {
+  const handleNodeClick = (lesson: LessonNode, totalLessonsInUnit: number, prevLessonTitle?: string) => {
     if (lesson.status === "available" || lesson.status === "completed") {
       setSelectedLesson({
         id: lesson.id,
         title: lesson.title,
         xp: 10,
+        orderIndex: lesson.order_index,
+        totalLessons: totalLessonsInUnit,
       });
     } else {
       setLockedModal({
@@ -91,45 +99,62 @@ export default function LearnPage() {
       {/* LEFT/CENTER COLUMN: REAL-TIME LEARNING PATH */}
       <div className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center select-none relative">
         {pathData?.units.map((unit, unitIdx) => {
-          const isUnitCompleted = unit.lessons.every((l) => l.status === "completed");
+          const completedLessons = unit.lessons.filter((l) => l.status === "completed").length;
+          const totalLessons = unit.lessons.length || 1;
+          const unitProgressPct = Math.round((completedLessons / totalLessons) * 100);
+          const isUnitCompleted = completedLessons === totalLessons;
           const isUnitLocked = unit.lessons.every((l) => l.status === "locked");
 
           return (
             <div key={unit.id} id={`unit-${unit.id}`} className="w-full flex flex-col items-center mb-12">
               {/* 1. Unit Header Banner */}
               <div
-                className={`w-full rounded-2xl p-4 text-white shadow-sm flex items-center justify-between mb-8 cursor-pointer group transition ${
+                className={`w-full rounded-2xl p-4 text-white shadow-sm flex flex-col mb-8 cursor-pointer group transition ${
                   isUnitLocked
                     ? "bg-gray-400 opacity-80"
                     : "bg-[#58cc02] hover:brightness-105"
                 }`}
               >
-                <div onClick={() => setIsSectionsOpen(true)} className="flex-1">
-                  <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
-                    <span className="text-sm font-bold">←</span>
-                    <span>{unit.section_title}</span>
-                    {isUnitCompleted && (
-                      <span className="bg-white/20 px-2 py-0.5 rounded-md text-[10px] font-black uppercase">
-                        ✓ Complete
-                      </span>
-                    )}
+                <div className="flex items-center justify-between w-full">
+                  <div onClick={() => setIsSectionsOpen(true)} className="flex-1">
+                    <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
+                      <span className="text-sm font-bold">←</span>
+                      <span>{unit.section_title}</span>
+                      {isUnitCompleted && (
+                        <span className="bg-white/20 px-2 py-0.5 rounded-md text-[10px] font-black uppercase">
+                          ✓ Complete
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-black mt-0.5">{unit.title}</h1>
+                    <p className="text-xs font-bold opacity-80 mt-0.5 hidden sm:block">
+                      {unit.description}
+                    </p>
                   </div>
-                  <h1 className="text-xl sm:text-2xl font-black mt-0.5">{unit.title}</h1>
-                  <p className="text-xs font-bold opacity-80 mt-0.5 hidden sm:block">
-                    {unit.description}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsGuidebookOpen(true);
+                      }}
+                      className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>GUIDEBOOK</span>
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsGuidebookOpen(true);
-                    }}
-                    className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    <span>GUIDEBOOK</span>
-                  </button>
+
+                {/* Live Dynamic Continuous Progress Bar */}
+                <div className="mt-3 w-full bg-black/20 rounded-full h-2.5 p-0.5 overflow-hidden">
+                  <div
+                    className="bg-white h-full rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${unitProgressPct}%` }}
+                  />
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider opacity-90 mt-1">
+                  <span>{completedLessons} of {totalLessons} Lessons Completed</span>
+                  <span>{unitProgressPct}%</span>
                 </div>
               </div>
 
@@ -148,7 +173,7 @@ export default function LearnPage() {
                             <circle cx="50" cy="50" r="44" fill="none" stroke="#58cc02" strokeWidth="7" />
                           </svg>
                           <button
-                            onClick={() => handleNodeClick(lesson)}
+                            onClick={() => handleNodeClick(lesson, totalLessons)}
                             className="relative w-20 h-20 rounded-full btn-3d-green flex items-center justify-center shadow-md active:scale-95 transition z-10"
                             title={`${lesson.title} (Completed)`}
                           >
@@ -163,6 +188,10 @@ export default function LearnPage() {
                   }
 
                   if (lesson.status === "available") {
+                    const circumference = 276.46;
+                    const activeRatio = completedLessons / totalLessons;
+                    const dynamicDashOffset = circumference * (1 - activeRatio);
+
                     return (
                       <div key={lesson.id} className={`relative flex flex-col items-center ${offsetClass}`}>
                         {/* Bouncing START Tooltip */}
@@ -171,7 +200,7 @@ export default function LearnPage() {
                           <div className="w-2 h-2 bg-[#58cc02] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
                         </div>
 
-                        {/* Active Node with Animated Progress Ring */}
+                        {/* Active Node with Animated Continuous Progress Ring */}
                         <div className="relative w-28 h-28 flex items-center justify-center">
                           <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
                             <circle cx="50" cy="50" r="44" fill="none" stroke="#e5e5e5" strokeWidth="7" />
@@ -183,13 +212,13 @@ export default function LearnPage() {
                               stroke="#58cc02"
                               strokeWidth="7"
                               strokeDasharray="276.46"
-                              strokeDashoffset="110.58"
+                              strokeDashoffset={dynamicDashOffset.toFixed(2)}
                               strokeLinecap="round"
-                              className="transition-all duration-500"
+                              className="transition-all duration-700 ease-out"
                             />
                           </svg>
                           <button
-                            onClick={() => handleNodeClick(lesson)}
+                            onClick={() => handleNodeClick(lesson, totalLessons)}
                             className="relative w-20 h-20 rounded-full btn-3d-green flex items-center justify-center shadow-md active:scale-95 transition z-10"
                             title={`Start ${lesson.title}`}
                           >
@@ -204,7 +233,7 @@ export default function LearnPage() {
                   return (
                     <div key={lesson.id} className={`relative ${offsetClass}`}>
                       <button
-                        onClick={() => handleNodeClick(lesson, prevLesson?.title)}
+                        onClick={() => handleNodeClick(lesson, totalLessons, prevLesson?.title)}
                         className="w-20 h-20 rounded-full btn-3d-gray flex items-center justify-center active:scale-95 transition opacity-65"
                         title={`Locked - ${lesson.title}`}
                       >
@@ -292,6 +321,8 @@ export default function LearnPage() {
           lessonId={selectedLesson.id}
           title={selectedLesson.title}
           xpReward={selectedLesson.xp}
+          orderIndex={selectedLesson.orderIndex}
+          totalLessons={selectedLesson.totalLessons}
         />
       )}
 

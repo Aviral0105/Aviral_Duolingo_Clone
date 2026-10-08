@@ -56,14 +56,19 @@ def test_polymorphic_exercise_payloads():
 
 def test_mistake_recording_and_resolution():
     """Test full remediation pipeline: logging mistake and marking resolved."""
+    # Fetch first exercise in lesson 2
+    res_l2 = client.get("/api/lessons/2")
+    assert res_l2.status_code == 200
+    ex_id = res_l2.json()["exercises"][0]["id"]
+
     # 1. Log mistake
-    res_m = client.post("/api/lessons/2/record-mistake", json={"exercise_id": 7})
+    res_m = client.post("/api/lessons/2/record-mistake", json={"exercise_id": ex_id})
     assert res_m.status_code == 200
     m_data = res_m.json()
     assert m_data["resolved"] is False
 
     # 2. Resolve mistake in review loop
-    res_r = client.post("/api/lessons/2/resolve-mistake", json={"exercise_id": 7})
+    res_r = client.post("/api/lessons/2/resolve-mistake", json={"exercise_id": ex_id})
     assert res_r.status_code == 200
     r_data = res_r.json()
     assert r_data["resolved"] is True

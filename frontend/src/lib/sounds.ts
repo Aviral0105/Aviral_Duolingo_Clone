@@ -34,6 +34,24 @@ class SoundManager {
     osc.stop(now + 0.4);
   }
 
+  // Subtle click/tap sound for buttons and selections
+  playTap() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+    osc.frequency.setValueAtTime(440.0, now);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
   // Low error buzz / thud
   playIncorrect() {
     const ctx = this.getContext();
@@ -110,13 +128,17 @@ class SoundManager {
         }
       }
 
-      utter.onerror = (e) => {
-        console.warn("SpeechSynthesis error:", e);
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+
+      utter.onerror = () => {
+        // Silently ignore browser voice synthesis cancel or network events
       };
 
       window.speechSynthesis.speak(utter);
-    } catch (err) {
-      console.warn("Speech playback error:", err);
+    } catch {
+      // Graceful fallback if SpeechSynthesis is blocked or unsupported
     }
   }
 }

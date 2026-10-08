@@ -60,6 +60,18 @@ function LessonContent() {
 
   useEffect(() => {
     async function loadData() {
+      setIsFinished(false);
+      setCurrentIndex(0);
+      setMissedExercises([]);
+      setIsReviewPhase(false);
+      setShowReviewIntro(false);
+      setShowEncouragement(false);
+      setIsOutOfHearts(false);
+      setCompletedExerciseIds(new Set());
+      setMistakesCount(0);
+      setConsecutiveStreak(0);
+      setStatus("idle");
+
       const [lData, uData] = await Promise.all([fetchLesson(lessonId), fetchUser()]);
       setLesson(lData);
       setUser(uData);
@@ -202,7 +214,28 @@ function LessonContent() {
 
     // If no missed exercises remaining, the lesson is fully complete!
     await completeLesson(lessonId, hearts, mistakesCount);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("duo_progress_updated"));
+    }
     setIsFinished(true);
+  };
+
+  const handleRestartLesson = () => {
+    setIsFinished(false);
+    setCurrentIndex(0);
+    setMissedExercises([]);
+    setIsReviewPhase(false);
+    setShowReviewIntro(false);
+    setShowEncouragement(false);
+    setIsOutOfHearts(false);
+    setCompletedExerciseIds(new Set());
+    setMistakesCount(0);
+    setConsecutiveStreak(0);
+    setStatus("idle");
+    if (lesson && lesson.exercises.length > 0) {
+      setExerciseQueue(lesson.exercises);
+      initExercise(lesson.exercises[0]);
+    }
   };
 
   // Start Review Handler (when user clicks Continue on review intro screen)
@@ -230,6 +263,7 @@ function LessonContent() {
         xpEarned={lesson.xp_reward + 4}
         streak={user.streak}
         accuracy={Math.max(65, accuracy)}
+        onRestart={handleRestartLesson}
       />
     );
   }
