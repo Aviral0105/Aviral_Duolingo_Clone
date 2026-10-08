@@ -73,7 +73,7 @@ export default function LearnPage() {
         if (el) {
           const rect = el.getBoundingClientRect();
           // If the unit top is within upper viewing area
-          if (rect.top <= 260 && rect.bottom >= 180) {
+          if (rect.top <= 200 && rect.bottom >= 100) {
             setActiveUnitId(unit.id);
             break;
           }
@@ -149,31 +149,33 @@ export default function LearnPage() {
         {/* STICKY PINNED UNIT HEADER BANNER (Smoothly Transitions)  */}
         {/* ======================================================== */}
         {activeUnit && (
-          <div
-            className={`sticky top-2 z-20 w-full rounded-2xl p-4 text-white shadow-md flex items-center justify-between mb-8 transition-colors duration-500 ease-in-out cursor-pointer ${activeTheme.bg}`}
-          >
-            <div onClick={() => setIsSectionsOpen(true)} className="flex-1 min-w-0 pr-3">
-              <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
-                <span className="text-sm font-bold">←</span>
-                <span className="truncate">{activeUnit.section_title}</span>
+          <div className="sticky top-0 z-20 w-full pt-1 pb-3 bg-[#f7f7f7] mb-6">
+            <div
+              className={`w-full rounded-2xl p-4 text-white shadow-md flex items-center justify-between transition-colors duration-500 ease-in-out cursor-pointer ${activeTheme.bg}`}
+            >
+              <div onClick={() => setIsSectionsOpen(true)} className="flex-1 min-w-0 pr-3">
+                <div className="text-[11px] uppercase font-black tracking-wider opacity-90 flex items-center gap-1.5">
+                  <span className="text-sm font-bold">←</span>
+                  <span className="truncate">{activeUnit.section_title}</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black mt-0.5 tracking-tight truncate">
+                  {activeUnit.title}
+                </h1>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black mt-0.5 tracking-tight truncate">
-                {activeUnit.title}
-              </h1>
-            </div>
 
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  sounds.playTap();
-                  setIsGuidebookOpen(true);
-                }}
-                className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95 shadow-xs"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>GUIDEBOOK</span>
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    sounds.playTap();
+                    setIsGuidebookOpen(true);
+                  }}
+                  className="border-2 border-white/40 hover:bg-white/10 px-3.5 py-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>GUIDEBOOK</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

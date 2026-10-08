@@ -56,7 +56,7 @@ export default function Topbar({
   };
 
   return (
-    <header className="sticky top-0 bg-white/95 backdrop-blur-xs border-b-2 border-[#e5e5e5] px-4 py-2.5 flex items-center justify-between md:justify-end z-40 select-none">
+    <header className="w-full bg-white border-b-2 border-[#e5e5e5] px-4 py-2.5 flex items-center justify-between md:justify-end z-30 select-none">
       {/* Mobile-only Duolingo Logo linking to /learn */}
       <Link
         href="/learn"
