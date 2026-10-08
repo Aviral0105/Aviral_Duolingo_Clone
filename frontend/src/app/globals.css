@@ -88,3 +88,15 @@ body {
 .animate-slide-up {
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Hide Next.js dev indicator toolbar and overlay */
+nextjs-portal,
+[data-nextjs-dev-tools-button],
+[data-nextjs-toast],
+next-route-announcer {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
