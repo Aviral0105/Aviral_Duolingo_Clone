@@ -254,6 +254,27 @@ function LessonContent() {
     setIsOutOfHearts(false);
   };
 
+  // Authentic Duolingo Keyboard Navigation: Enter to Check, Enter to Continue
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        if (showReviewIntro) {
+          e.preventDefault();
+          handleStartReview();
+        } else if (status === "idle" && hasSelection) {
+          e.preventDefault();
+          handleCheck();
+        } else if (status === "correct" || status === "incorrect") {
+          e.preventDefault();
+          handleContinue();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [status, hasSelection, showReviewIntro, currentIndex, exerciseQueue, missedExercises]);
+
   if (isFinished) {
     const accuracy = Math.round(
       (lesson.exercises.length / (lesson.exercises.length + mistakesCount)) * 100

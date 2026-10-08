@@ -79,9 +79,10 @@ export default function FeedbackBar({
 
             <button
               onClick={onContinue}
-              className="w-full sm:w-44 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green shrink-0"
+              className="w-full sm:w-48 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-green shrink-0 flex items-center justify-center gap-2"
             >
-              Continue
+              <span>Continue</span>
+              <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] bg-black/15 text-white rounded font-black tracking-normal">↵ ENTER</kbd>
             </button>
           </div>
         </footer>
@@ -120,9 +121,10 @@ export default function FeedbackBar({
 
             <button
               onClick={onContinue}
-              className="w-full sm:w-44 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-red shrink-0"
+              className="w-full sm:w-48 py-4 rounded-2xl font-black text-sm uppercase tracking-wider btn-3d-red shrink-0 flex items-center justify-center gap-2"
             >
-              Continue
+              <span>Continue</span>
+              <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] bg-black/15 text-white rounded font-black tracking-normal">↵ ENTER</kbd>
             </button>
           </div>
         </footer>
@@ -140,11 +142,14 @@ export default function FeedbackBar({
             <button
               onClick={onCheck}
               disabled={!hasSelection}
-              className={`w-40 sm:w-44 py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition ${
+              className={`w-40 sm:w-48 py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition shrink-0 flex items-center justify-center gap-2 ${
                 hasSelection ? "btn-3d-green" : "btn-3d-gray"
               }`}
             >
-              Check
+              <span>Check</span>
+              {hasSelection && (
+                <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] bg-black/15 text-white rounded font-black tracking-normal">↵ ENTER</kbd>
+              )}
             </button>
           </div>
         </footer>
