@@ -596,26 +596,6 @@ export default function ProfilePage() {
           {/* RIGHT-HAND COLUMN: SOCIAL & FRIENDS HUB                  */}
           {/* ======================================================== */}
           <div className="w-full lg:w-80 shrink-0 space-y-5">
-            {/* Top Stats Bar */}
-            <div className="flex items-center justify-between px-2 py-1 select-none">
-              <div className="flex items-center gap-1.5" title="Course Section 5">
-                <span className="text-2xl">🇮🇳</span>
-                <span className="font-black text-sm text-gray-700">5</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[#ff9600]" title="Streak">
-                <span className="text-xl">🔥</span>
-                <span className="font-black text-sm">{user?.streak ?? 0}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[#1cb0f6]" title="Gems">
-                <span className="text-xl">💎</span>
-                <span className="font-black text-sm">{user?.gems ?? 100}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[#ff4b4b]" title="Hearts">
-                <span className="text-xl">❤️</span>
-                <span className="font-black text-sm">{user?.hearts ?? 5}</span>
-              </div>
-            </div>
-
             {/* Social Hub Card (FOLLOWING / FOLLOWERS Tabs) */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl overflow-hidden shadow-xs">
               <div className="grid grid-cols-2 border-b-2 border-gray-100">
