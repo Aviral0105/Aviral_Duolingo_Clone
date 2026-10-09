@@ -110,32 +110,10 @@ function LessonContent() {
     }
   };
 
-  if (!lesson || !user || exerciseQueue.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <span className="text-6xl animate-bounce">🦉</span>
-          <p className="font-black text-gray-500 mt-3 text-sm">Loading lesson...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const currentExercise = exerciseQueue[currentIndex] || exerciseQueue[0];
-
-  if (!currentExercise) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <span className="text-6xl animate-bounce">🦉</span>
-          <p className="font-black text-gray-500 mt-3 text-sm">Loading exercises...</p>
-        </div>
-      </div>
-    );
-  }
+  const currentExercise = exerciseQueue[currentIndex] || exerciseQueue[0] || null;
 
   // Dynamic live progress: tracks unique original exercises completed
-  const totalLessonExercises = lesson.exercises.length || 1;
+  const totalLessonExercises = lesson?.exercises?.length || 1;
   const progressPercentage = Math.min(
     100,
     (completedExerciseIds.size / totalLessonExercises) * 100
@@ -152,11 +130,13 @@ function LessonContent() {
 
   // Input selection detection
   let hasSelection = false;
-  if (currentExercise.type === "MULTIPLE_CHOICE") hasSelection = selectedOptionId !== null;
-  else if (currentExercise.type === "WORD_BANK") hasSelection = selectedWords.length > 0 || typedAnswer.trim().length > 0;
-  else if (currentExercise.type === "MATCH_PAIRS") hasSelection = pairsMatched;
-  else if (currentExercise.type === "FILL_BLANK") hasSelection = selectedBlank !== null;
-  else if (currentExercise.type === "TYPE_ANSWER") hasSelection = typedAnswer.trim().length > 0;
+  if (currentExercise) {
+    if (currentExercise.type === "MULTIPLE_CHOICE") hasSelection = selectedOptionId !== null;
+    else if (currentExercise.type === "WORD_BANK") hasSelection = selectedWords.length > 0 || typedAnswer.trim().length > 0;
+    else if (currentExercise.type === "MATCH_PAIRS") hasSelection = pairsMatched;
+    else if (currentExercise.type === "FILL_BLANK") hasSelection = selectedBlank !== null;
+    else if (currentExercise.type === "TYPE_ANSWER") hasSelection = typedAnswer.trim().length > 0;
+  }
 
   // Check Answer Handler
   const handleCheck = () => {
@@ -216,7 +196,7 @@ function LessonContent() {
         return prev;
       });
 
-      if (!user.is_super) {
+      if (!user?.is_super) {
         const nextHearts = Math.max(0, hearts - 1);
         setHearts(nextHearts);
         if (nextHearts === 0) {
@@ -306,6 +286,28 @@ function LessonContent() {
       }
     }
   };
+
+  if (!lesson || !user || exerciseQueue.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <span className="text-6xl animate-bounce">🦉</span>
+          <p className="font-black text-gray-500 mt-3 text-sm">Loading lesson...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentExercise) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <span className="text-6xl animate-bounce">🦉</span>
+          <p className="font-black text-gray-500 mt-3 text-sm">Loading exercises...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isFinished) {
     const accuracy = Math.round(
