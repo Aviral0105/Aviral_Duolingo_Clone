@@ -205,7 +205,9 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
         is_review=False,
         multiplier=active_multiplier
     )
-
+    # Authentic streak engine with freeze protection
+    streak_info = process_streak_activity(user, db)
+    
     # Award XP and log atomic entry to XPLedger
     award_xp(
         db=db,
@@ -218,8 +220,7 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
         description=f"Completed '{lesson.title}' (Mistakes: {payload.mistakes_count})"
     )
 
-    # Authentic streak engine with freeze protection
-    streak_info = process_streak_activity(user, db)
+
 
     # Gems Economy: Award gems for accuracy & progress
     gems_earned = 0
