@@ -6,6 +6,7 @@ import { Info, X, Shield, ChevronUp } from "lucide-react";
 import { fetchLeaderboard, setLeaderboardStatus, switchLeague, fetchUser } from "@/lib/api";
 import { LeaderboardResponse, User } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
+import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
 
 const EMOJI_OPTIONS = [
   // Row 1
@@ -27,7 +28,7 @@ const EMOJI_OPTIONS = [
 export default function LeaderboardPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
-  const [selectedTier, setSelectedTier] = useState<number>(1);
+  const [selectedTier, setSelectedTier] = useState<number>(3);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
 
@@ -316,21 +317,8 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Footer Links (matching screenshots 1 & 2) */}
-        <div className="text-center text-[10px] font-black text-gray-400 uppercase tracking-widest space-y-2 select-none">
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-            <span className="hover:text-gray-600 cursor-pointer">ABOUT</span>
-            <span className="hover:text-gray-600 cursor-pointer">BLOG</span>
-            <span className="hover:text-gray-600 cursor-pointer">STORE</span>
-            <span className="hover:text-gray-600 cursor-pointer">EFFICACY</span>
-            <span className="hover:text-gray-600 cursor-pointer">CAREERS</span>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-            <span className="hover:text-gray-600 cursor-pointer">INVESTORS</span>
-            <span className="hover:text-gray-600 cursor-pointer">TERMS</span>
-            <span className="hover:text-gray-600 cursor-pointer">PRIVACY</span>
-          </div>
-        </div>
+        {/* Footer Links (attaching official Duolingo external URLs) */}
+        <DuolingoFooterLinks className="pt-2" />
       </div>
 
       {/* Info Modal */}

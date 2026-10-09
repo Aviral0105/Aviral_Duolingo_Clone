@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Course, Unit, Lesson, UserProgress
@@ -7,15 +8,19 @@ from ..schemas import PathResponse, UnitOut, LessonNodeOut
 router = APIRouter(prefix="/api/path", tags=["Learning Path"])
 
 @router.get("", response_model=PathResponse)
-def get_learning_path(db: Session = Depends(get_db)):
+def get_learning_path(
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
     course = db.query(Course).first()
     if not course:
         return {"course_title": "Hindi", "course_flag": "🇮🇳", "units": []}
 
+    target_id = user_id or 1
     units = db.query(Unit).filter(Unit.course_id == course.id).order_by(Unit.order_index).all()
     user_progress_map = {
         up.lesson_id: up 
-        for up in db.query(UserProgress).filter(UserProgress.user_id == 1).all()
+        for up in db.query(UserProgress).filter(UserProgress.user_id == target_id).all()
     }
 
     units_out = []

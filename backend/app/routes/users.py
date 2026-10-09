@@ -6,6 +6,8 @@ from ..database import get_db
 from ..models import User, UserSetting, UserFollow
 from ..schemas import (
     UserOut,
+    UserRegisterRequest,
+    UserResetResponse,
     HeartsActionResponse,
     SimulateDayResponse,
     UserSettingsOut,
@@ -22,17 +24,113 @@ from ..services.gamification_engine import check_heart_regeneration, refill_user
 
 router = APIRouter(prefix="/api/user", tags=["User"])
 
+def _get_target_user(db: Session, user_id: Optional[int] = None) -> User:
+    if user_id:
+        u = db.query(User).filter(User.id == user_id).first()
+        if u:
+            return u
+    u = db.query(User).filter(User.id == 1).first()
+    if not u:
+        u = db.query(User).first()
+    return u
+
 @router.get("", response_model=UserOut)
-def get_current_user(db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == 1).first()
+def get_current_user(user_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    user = _get_target_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     check_heart_regeneration(user, db)
     return user
 
+@router.get("/all", response_model=List[UserOut])
+def get_all_users(db: Session = Depends(get_db)):
+    """Returns all user accounts stored in the SQLite database."""
+    return db.query(User).order_by(User.id).all()
+
+@router.post("/register", response_model=UserOut)
+def register_new_user(payload: UserRegisterRequest, db: Session = Depends(get_db)):
+    """
+    Creates a brand-new user with fresh zero statistics:
+    0 XP, 0 Streak, 5 Hearts, 100 Gems, Gold League.
+    """
+    clean_username = payload.username.strip()
+    if not clean_username:
+        raise HTTPException(status_code=400, detail="Username cannot be empty")
+
+    base_handle = "@" + "".join(e for e in clean_username.lower() if e.isalnum())
+    handle = base_handle or "@learner"
+    counter = 1
+    while db.query(User).filter(User.handle == handle).first():
+        counter += 1
+        handle = f"{base_handle}{counter}"
+
+    new_user = User(
+        username=clean_username,
+        handle=handle,
+        email=payload.email.strip() if payload.email else f"{handle[1:]}@example.com",
+        avatar=payload.avatar or "🧑",
+        xp=0,
+        streak=0,
+        hearts=5,
+        gems=100,
+        daily_goal_xp=payload.daily_goal_xp or 10,
+        current_league=payload.current_league or "Gold League",
+        is_super=False,
+        streak_freezes=0,
+        last_active_date=datetime.utcnow(),
+        created_at=datetime.utcnow()
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    # Initialize user settings
+    settings = UserSetting(user_id=new_user.id)
+    db.add(settings)
+    db.commit()
+
+    return new_user
+
+@router.post("/reset", response_model=UserResetResponse)
+def reset_user_progress(
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    target_id = user_id or 1
+    user = db.query(User).filter(User.id == target_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    from ..models import UserProgress, UserMistake, XPLedger
+    db.query(UserProgress).filter(UserProgress.user_id == user.id).delete()
+    db.query(UserMistake).filter(UserMistake.user_id == user.id).delete()
+    db.query(XPLedger).filter(XPLedger.user_id == user.id).delete()
+
+    user.xp = 0
+    user.streak = 0
+    user.hearts = 5
+    user.gems = 100
+    user.streak_freezes = 0
+    user.double_xp_until = None
+    user.current_league = "Gold League"
+    user.last_active_date = datetime.utcnow()
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "success": True,
+        "user": user,
+        "message": f"User {user.username} (ID: {user.id}) progress reset to 0 XP and fresh starting state!"
+    }
+
 @router.patch("/profile", response_model=UserOut)
-def update_user_profile(payload: UserProfileUpdate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == 1).first()
+def update_user_profile(
+    payload: UserProfileUpdate,
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    user = _get_target_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

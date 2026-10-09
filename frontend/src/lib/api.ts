@@ -70,9 +70,28 @@ const FALLBACK_PATH: PathResponse = {
   ],
 };
 
-export async function fetchUser(): Promise<User> {
+export function getActiveUserId(): number {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("duo_active_user_id");
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+  }
+  return 1;
+}
+
+export function setActiveUserId(id: number) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("duo_active_user_id", id.toString());
+    window.dispatchEvent(new Event("duo_progress_updated"));
+  }
+}
+
+export async function fetchUser(userId?: number): Promise<User> {
+  const targetId = userId || getActiveUserId();
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/api/user?user_id=${targetId}`, { cache: "no-store" });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn("Backend not reachable, using local user fallback");
@@ -80,9 +99,83 @@ export async function fetchUser(): Promise<User> {
   return FALLBACK_USER;
 }
 
-export async function fetchPath(): Promise<PathResponse> {
+export async function fetchAllUsers(): Promise<User[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/path`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/api/user/all`, { cache: "no-store" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Backend not reachable for all users");
+  }
+  return [FALLBACK_USER];
+}
+
+export async function registerNewUser(data: {
+  username: string;
+  handle?: string;
+  email?: string;
+  avatar?: string;
+  daily_goal_xp?: number;
+  current_league?: string;
+}): Promise<User> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      const newUser = await res.json();
+      setActiveUserId(newUser.id);
+      return newUser;
+    }
+    const err = await res.json();
+    throw new Error(err.detail || "Registration failed");
+  } catch (e: any) {
+    console.warn("Backend registration failed, using local user fallback:", e.message);
+    const mockUser: User = {
+      id: Date.now(),
+      username: data.username,
+      handle: data.handle || `@${data.username.toLowerCase().replace(/\s+/g, "")}`,
+      avatar: data.avatar || "🧑",
+      xp: 0,
+      streak: 0,
+      hearts: 5,
+      gems: 100,
+      daily_goal_xp: data.daily_goal_xp || 10,
+      is_super: false,
+    };
+    setActiveUserId(mockUser.id);
+    return mockUser;
+  }
+}
+
+export async function resetUserProgress(userId?: number) {
+  const targetId = userId || getActiveUserId();
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/reset?user_id=${targetId}`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("duo_completed_lessons");
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn("Reset failed on backend");
+  }
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("duo_completed_lessons");
+    window.dispatchEvent(new Event("duo_progress_updated"));
+  }
+  return { success: true, message: "Progress reset to 0!" };
+}
+
+export async function fetchPath(): Promise<PathResponse> {
+  const activeId = getActiveUserId();
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/path?user_id=${activeId}`, { cache: "no-store" });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn("Backend not reachable, using local path fallback");

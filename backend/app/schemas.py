@@ -29,6 +29,19 @@ class UserProfileUpdate(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
 
+class UserRegisterRequest(BaseModel):
+    username: str
+    handle: Optional[str] = None
+    email: Optional[str] = None
+    avatar: Optional[str] = "🧑"
+    daily_goal_xp: Optional[int] = 10
+    current_league: Optional[str] = "Gold League"
+
+class UserResetResponse(BaseModel):
+    success: bool
+    user: UserOut
+    message: str
+
 class HeartsActionResponse(BaseModel):
     hearts: int
     xp: int

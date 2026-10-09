@@ -104,16 +104,28 @@ COMPETITORS_BY_TIER = {
         {"username": "Seyit Musevi", "avatar": "👦🏻", "xp": 60, "status_emoji": None},
     ],
     3: [
-        {"username": "Kavita Rao", "avatar": "👩🏽", "xp": 450, "status_emoji": "🏆"},
-        {"username": "Felix Brandt", "avatar": "🧑🏼", "xp": 410, "status_emoji": "🔥"},
-        {"username": "Hassan Al-Sayed", "avatar": "👨🏽", "xp": 380, "status_emoji": "💪"},
-        {"username": "Mei Ling", "avatar": "👩🏻", "xp": 350, "status_emoji": "💯"},
-        {"username": "Oliver Ward", "avatar": "👱🏻", "xp": 310, "status_emoji": None},
-        {"username": "Deepak Verma", "avatar": "🧑🏾", "xp": 270, "status_emoji": "🇮🇳"},
-        {"username": "Lucia Morales", "avatar": "👩🏻", "xp": 240, "status_emoji": None},
-        {"username": "Molik", "avatar": "🕶️", "xp": 210, "status_emoji": "💪"},
-        {"username": "SHAUN ALLEN", "avatar": "👨🏼", "xp": 180, "status_emoji": None},
-        {"username": "Thrive", "avatar": "🧢", "xp": 150, "status_emoji": None},
+        {"username": "Kavita Rao", "avatar": "👩🏽", "xp": 490, "status_emoji": "🏆"},
+        {"username": "Felix Brandt", "avatar": "🧑🏼", "xp": 465, "status_emoji": "🔥"},
+        {"username": "Hassan Al-Sayed", "avatar": "👨🏽", "xp": 430, "status_emoji": "💪"},
+        {"username": "Mei Ling", "avatar": "👩🏻", "xp": 395, "status_emoji": "💯"},
+        {"username": "Oliver Ward", "avatar": "👱🏻", "xp": 370, "status_emoji": "👀"},
+        {"username": "Deepak Verma", "avatar": "🧑🏾", "xp": 345, "status_emoji": "🇮🇳"},
+        {"username": "Lucia Morales", "avatar": "👩🏻", "xp": 320, "status_emoji": "✨"},
+        {"username": "Molik", "avatar": "🕶️", "xp": 305, "status_emoji": "💪"},
+        {"username": "SHAUN ALLEN", "avatar": "👨🏼", "xp": 290, "status_emoji": "🍿"},
+        {"username": "Thrive", "avatar": "🧢", "xp": 275, "status_emoji": "🎉"},
+        {"username": "Elena Rostova", "avatar": "👱🏻‍♀️", "xp": 260, "status_emoji": "👑"},
+        # Promotion zone divider (top 11)
+        {"username": "Kenji Sato", "avatar": "👨🏻", "xp": 240, "status_emoji": None},
+        {"username": "Fatima Al-Zahra", "avatar": "🧕🏽", "xp": 225, "status_emoji": "🇮🇳"},
+        {"username": "Arjun Sharma", "avatar": "🧑🏾", "xp": 210, "status_emoji": None},
+        {"username": "Chloe Dubois", "avatar": "👩🏼", "xp": 195, "status_emoji": None},
+        {"username": "Nitheesh Kumar B", "avatar": "🧑🏾‍🦱", "xp": 180, "status_emoji": None},
+        {"username": "Seyit Musevi", "avatar": "👦🏻", "xp": 160, "status_emoji": None},
+        {"username": "Quang Quy Hà", "avatar": "🐻", "xp": 145, "status_emoji": None},
+        {"username": "Priyanka M.", "avatar": "👩🏽", "xp": 130, "status_emoji": None},
+        {"username": "Lucas Dupont", "avatar": "🧑🏼", "xp": 115, "status_emoji": None},
+        {"username": "Sara Connor", "avatar": "👩🏼", "xp": 95, "status_emoji": None},
     ],
     4: [
         {"username": "Rohan Gupta", "avatar": "👨🏾", "xp": 680, "status_emoji": "👑"},
@@ -150,24 +162,43 @@ def _ensure_leagues_in_db(db: Session):
 @router.get("", response_model=LeaderboardResponse)
 def get_leaderboard(
     tier: Optional[int] = Query(None, description="League tier 1 to 5"),
+    user_id: Optional[int] = Query(None),
     db: Session = Depends(get_db)
 ):
     _ensure_leagues_in_db(db)
-    user = db.query(User).filter(User.id == 1).first()
+    target_id = user_id or 1
+    user = db.query(User).filter(User.id == target_id).first()
+    if not user:
+        user = db.query(User).first()
 
-    # Determine which league to view
+    # Determine which league to view: default to user's league or Gold League (tier 3)
     all_leagues = db.query(League).order_by(League.tier).all()
-    selected_tier = tier or 1
+    user_league_name = (user.current_league if user and user.current_league else "Gold League")
+    matched_league = next((l for l in all_leagues if l.name.lower() == user_league_name.lower()), None)
+    default_tier = matched_league.tier if matched_league else 3
 
-    current_league_obj = next((l for l in all_leagues if l.tier == selected_tier), all_leagues[0])
+    selected_tier = tier if tier is not None else default_tier
+    current_league_obj = next((l for l in all_leagues if l.tier == selected_tier), all_leagues[2] if len(all_leagues) >= 3 else all_leagues[0])
 
     user_xp = user.xp if user else 48
     user_name = user.username if user else "Aviral Jain"
     user_avatar = user.avatar if user else "🧑"
     user_status = user.status_emoji if user else None
 
-    # Base competitors for this tier
-    pool = COMPETITORS_BY_TIER.get(selected_tier, COMPETITORS_BY_TIER[1]).copy()
+    # Base competitors for this tier with random variation
+    import random
+    rng = random.Random(selected_tier * 1000 + 42)
+    base_pool = COMPETITORS_BY_TIER.get(selected_tier, COMPETITORS_BY_TIER[3])
+    pool = []
+    for comp in base_pool:
+        jitter = rng.randint(-8, 14)
+        pool.append({
+            "username": comp["username"],
+            "avatar": comp["avatar"],
+            "xp": max(5, comp["xp"] + jitter),
+            "status_emoji": comp.get("status_emoji"),
+            "is_current_user": False,
+        })
 
     # Add current user with live XP and status emoji
     pool.append({

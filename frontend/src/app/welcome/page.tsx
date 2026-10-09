@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ArrowLeft, Check, Sparkles, Bell } from "lucide-react";
 import { sounds } from "@/lib/sounds";
+import { fetchAllUsers, registerNewUser, resetUserProgress, setActiveUserId } from "@/lib/api";
+import { User } from "@/lib/types";
+import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
 
 interface CourseCard {
   id: string;
@@ -57,6 +60,7 @@ const STEPS = [
   "placement",
   "motivation1",
   "motivation2",
+  "createProfile",
   "loading"
 ] as const;
 
@@ -77,15 +81,71 @@ export default function WelcomePage() {
   const [placementOption, setPlacementOption] = useState<"scratch" | "level">("scratch");
   const [carouselIndex, setCarouselIndex] = useState(0);
 
-  // Auto transition for the final loading screen
+  // New Profile / Account Switcher State
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [newHandle, setNewHandle] = useState("");
+  const [newAvatar, setNewAvatar] = useState("🧑");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auto transition for the final loading screen -> directly into learning dashboard
   useEffect(() => {
     if (currentStep === "loading") {
       const timer = setTimeout(() => {
-        router.push("/lesson/1");
+        router.push("/learn");
       }, 1800);
       return () => clearTimeout(timer);
     }
   }, [currentStep, router]);
+
+  const loadAllUsers = async () => {
+    try {
+      const users = await fetchAllUsers();
+      setAllUsers(users);
+    } catch {}
+  };
+
+  const handleOpenAccountModal = async () => {
+    sounds.playTap();
+    await loadAllUsers();
+    setShowAccountModal(true);
+  };
+
+  const handleSelectUser = (userId: number) => {
+    sounds.playTap();
+    setActiveUserId(userId);
+    setShowAccountModal(false);
+    router.push("/learn");
+  };
+
+  const handleResetUser = async (userId: number) => {
+    sounds.playTap();
+    await resetUserProgress(userId);
+    await loadAllUsers();
+  };
+
+  const handleRegisterSubmit = async () => {
+    if (!newUsername.trim()) return;
+    try {
+      setIsSubmitting(true);
+      sounds.playVictory();
+      const dailyMinutes = parseInt(selectedGoal, 10) || 10;
+      await registerNewUser({
+        username: newUsername.trim(),
+        handle: newHandle.trim() || undefined,
+        avatar: newAvatar,
+        daily_goal_xp: dailyMinutes,
+        current_league: "Gold League",
+      });
+      // Move to loading step
+      setStepIndex(STEPS.indexOf("loading"));
+    } catch (e) {
+      console.error("Registration error:", e);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleNext = () => {
     sounds.playTap();
@@ -219,17 +279,17 @@ export default function WelcomePage() {
                 >
                   Get Started
                 </button>
-                <Link
-                  href="/learn"
+                <button
+                  onClick={handleOpenAccountModal}
                   className="w-full py-3.5 px-6 rounded-2xl bg-white border-2 border-[#e5e5e5] border-b-4 text-[#1cb0f6] font-black text-sm uppercase tracking-wider hover:bg-gray-50 active:border-b-2 active:translate-y-0.5 shadow-sm text-center transition"
                 >
                   I Already Have An Account
-                </Link>
+                </button>
               </div>
             </div>
           </main>
 
-          <footer className="w-full border-t border-gray-200 py-4 px-6">
+          <footer className="w-full border-t border-gray-200 py-4 px-6 space-y-4">
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <button
                 onClick={() => setCarouselIndex((prev) => Math.max(0, prev - 1))}
@@ -266,6 +326,9 @@ export default function WelcomePage() {
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Official Duolingo External Links */}
+            <DuolingoFooterLinks className="pt-3 border-t border-gray-100" />
           </footer>
         </div>
       )}
@@ -663,17 +726,186 @@ export default function WelcomePage() {
       )}
 
       {/* ============================================================ */}
-      {/* 13. LOADING SCREEN (transitions into Lesson 1)              */}
+      {/* 13. CREATE PROFILE (Fresh user creation with 0 stats)       */}
+      {/* ============================================================ */}
+      {currentStep === "createProfile" && (
+        <div className="flex-1 flex flex-col justify-between">
+          {renderHeader()}
+          <main className="w-full max-w-md mx-auto px-6 py-6 flex-1 flex flex-col items-center">
+            {renderDuoSpeech("Create your profile to start learning!")}
+
+            <div className="w-full bg-white border-2 border-gray-200 rounded-3xl p-6 shadow-sm space-y-4">
+              {/* Avatar Selector */}
+              <div>
+                <label className="text-xs font-black uppercase text-gray-500 mb-2 block">
+                  Choose your avatar
+                </label>
+                <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1">
+                  {["🧑", "👦🏻", "👧🏽", "👩🏽", "🧔🏻", "🧕🏽", "🦉"].map((av) => (
+                    <button
+                      key={av}
+                      type="button"
+                      onClick={() => setNewAvatar(av)}
+                      className={`w-11 h-11 rounded-2xl border-2 text-2xl flex items-center justify-center transition active:scale-95 ${
+                        newAvatar === av
+                          ? "border-[#58cc02] bg-emerald-50 ring-2 ring-[#58cc02]/30 scale-105"
+                          : "border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      {av}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Name Input */}
+              <div>
+                <label className="text-xs font-black uppercase text-gray-500 mb-1.5 block">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  placeholder="e.g. Aarav Sharma"
+                  className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-[#58cc02] focus:outline-none font-bold text-sm text-gray-800"
+                />
+              </div>
+
+              {/* Username / Handle Input */}
+              <div>
+                <label className="text-xs font-black uppercase text-gray-500 mb-1.5 block">
+                  Username (optional)
+                </label>
+                <input
+                  type="text"
+                  value={newHandle}
+                  onChange={(e) => setNewHandle(e.target.value)}
+                  placeholder="e.g. @aarav123"
+                  className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-[#58cc02] focus:outline-none font-bold text-sm text-gray-800"
+                />
+              </div>
+
+              {/* Initial Tier & Stats Summary */}
+              <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-1">
+                <div className="flex items-center justify-between text-xs font-black text-amber-900">
+                  <span>Starting League:</span>
+                  <span>Gold League 🥇 (Tier 3)</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-amber-700">
+                  <span>Starting Stats:</span>
+                  <span>0 XP · 0 Streak · 5 Hearts · 100 Gems</span>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={handleRegisterSubmit}
+                disabled={!newUsername.trim() || isSubmitting}
+                className="w-full py-4 rounded-2xl bg-[#58cc02] border-b-4 border-[#46a302] text-white font-black text-sm uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "Creating Profile..." : "CREATE PROFILE"}
+              </button>
+            </div>
+          </main>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 14. LOADING SCREEN (transitions into Lesson Dashboard)       */}
       {/* ============================================================ */}
       {currentStep === "loading" && (
         <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6 text-center">
           <span className="text-8xl animate-bounce mb-6">🦉</span>
           <h2 className="text-2xl font-black text-gray-800 tracking-wider uppercase mb-2">
-            Loading...
+            Setting Up Your Course...
           </h2>
           <p className="text-sm font-bold text-gray-400 max-w-sm">
             Protip: Repeat each sentence in a lesson out loud!
           </p>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* MODAL: ACCOUNT SWITCHER / WELCOME BACK (Inspect all IDs)    */}
+      {/* ============================================================ */}
+      {showAccountModal && (
+        <div
+          onClick={() => setShowAccountModal(false)}
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-7 shadow-2xl border-2 border-gray-200 relative animate-scale-up max-h-[90vh] overflow-y-auto space-y-5"
+          >
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 className="text-xl font-black text-gray-800">Welcome Back!</h3>
+                <p className="text-xs font-bold text-gray-400">
+                  Select an account from the database ({allUsers.length} total IDs)
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAccountModal(false)}
+                className="text-gray-400 hover:text-gray-600 p-1 font-black text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* List of registered accounts */}
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              {allUsers.map((u) => (
+                <div
+                  key={u.id}
+                  className="p-3.5 rounded-2xl border-2 border-gray-200 hover:border-[#1cb0f6] bg-gray-50/50 flex items-center justify-between gap-3 transition"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-3xl shrink-0">{u.avatar || "🧑"}</span>
+                    <div className="truncate">
+                      <div className="font-black text-sm text-gray-800 truncate flex items-center gap-1.5">
+                        <span>{u.username}</span>
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+                          ID: {u.id}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-400 font-bold mt-0.5">
+                        {u.handle} · {u.xp} XP · {u.streak}🔥 · {u.gems}💎
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => handleSelectUser(u.id)}
+                      className="px-3.5 py-2 rounded-xl bg-[#58cc02] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:scale-95 transition"
+                    >
+                      Login
+                    </button>
+                    <button
+                      onClick={() => handleResetUser(u.id)}
+                      title="Reset progress to 0 XP"
+                      className="px-2.5 py-2 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 text-xs font-black transition"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Action buttons */}
+            <div className="pt-2 border-t flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setShowAccountModal(false);
+                  setStepIndex(STEPS.indexOf("createProfile"));
+                }}
+                className="w-full py-3.5 rounded-2xl border-2 border-[#58cc02] text-[#58cc02] hover:bg-emerald-50 text-xs font-black uppercase tracking-wider transition"
+              >
+                + Create Another Fresh ID
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
