@@ -107,7 +107,17 @@ function LessonContent() {
 
     if (ex.type === "WORD_BANK") {
       setSelectedWords([]);
-      setAvailableWords([...(ex.content?.word_pool || [])]);
+      const pool = [...(ex.content?.word_pool || [])];
+      // Fisher-Yates shuffle to guarantee scattered, non-linear words
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const original = ex.content?.word_pool || [];
+      if (pool.length >= 3 && pool[0] === original[0] && pool[1] === original[1]) {
+        pool.reverse();
+      }
+      setAvailableWords(pool);
     }
   };
 

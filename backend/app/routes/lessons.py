@@ -1,6 +1,7 @@
+import random
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
 from ..database import get_db
 from ..models import User, Lesson, Exercise, UserProgress, Unit, UserMistake
 from ..schemas import (
@@ -21,11 +22,32 @@ def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Lesson not found")
 
     exercises = db.query(Exercise).filter(Exercise.lesson_id == lesson_id).order_by(Exercise.order_index).all()
+    
+    # Non-linear word scattering: jumble word bank pools
+    exercise_items = []
+    for ex in exercises:
+        ex_content = dict(ex.content) if isinstance(ex.content, dict) else ex.content
+        if ex.type == "WORD_BANK" and isinstance(ex_content, dict) and "word_pool" in ex_content:
+            pool = list(ex_content["word_pool"])
+            random.shuffle(pool)
+            ex_content["word_pool"] = pool
+
+        exercise_items.append({
+            "id": ex.id,
+            "order_index": ex.order_index,
+            "type": ex.type,
+            "category_tag": ex.category_tag,
+            "prompt": ex.prompt,
+            "audio_text": ex.audio_text,
+            "content": ex_content,
+            "correct_answer": ex.correct_answer
+        })
+
     return {
         "id": lesson.id,
         "title": lesson.title,
         "xp_reward": lesson.xp_reward,
-        "exercises": exercises
+        "exercises": exercise_items
     }
 
 @router.post("/{lesson_id}/record-mistake", response_model=MistakeActionResponse)
