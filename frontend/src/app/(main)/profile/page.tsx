@@ -48,9 +48,14 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    fetchUser()
-      .then(setUser)
-      .catch(() => {});
+    const loadUser = () => {
+      fetchUser()
+        .then(setUser)
+        .catch(() => {});
+    };
+    loadUser();
+    window.addEventListener("duo_progress_updated", loadUser);
+    return () => window.removeEventListener("duo_progress_updated", loadUser);
   }, []);
 
   const showToast = (msg: string) => {
@@ -327,7 +332,7 @@ export default function ProfilePage() {
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
                   <span className="text-3xl shrink-0">🔥</span>
                   <div>
-                    <div className="text-xl font-black text-gray-800">{user?.streak ?? 2}</div>
+                    <div className="text-xl font-black text-gray-800">{user?.streak ?? 3}</div>
                     <div className="text-xs font-bold text-gray-400">Day streak</div>
                   </div>
                 </div>
@@ -338,7 +343,7 @@ export default function ProfilePage() {
                     <Zap className="w-6 h-6 text-[#ffc800] fill-[#ffc800]" />
                   </div>
                   <div>
-                    <div className="text-xl font-black text-gray-800">{user?.xp ?? 48}</div>
+                    <div className="text-xl font-black text-gray-800">{user?.xp ?? 265}</div>
                     <div className="text-xs font-bold text-gray-400">Total XP</div>
                   </div>
                 </div>
@@ -356,7 +361,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <div className="text-xl font-black text-gray-800 group-hover:text-[#1cb0f6] transition">
-                      Bronze
+                      {(user?.xp ?? 0) >= 300 ? "Silver" : "Bronze"}
                     </div>
                     <div className="text-xs font-bold text-gray-400">Current league</div>
                   </div>

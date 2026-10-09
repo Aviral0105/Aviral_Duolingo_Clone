@@ -19,18 +19,20 @@ interface Achievement {
 }
 
 export default function AchievementsPage() {
-  const [streak, setStreak] = useState(2);
-  const [xp, setXp] = useState(48);
+  const [streak, setStreak] = useState(3);
+  const [xp, setXp] = useState(265);
 
   useEffect(() => {
     async function load() {
       const u = await fetchUser();
       if (u) {
-        if (u.streak !== undefined) setStreak(u.streak || 2);
-        if (u.xp !== undefined) setXp(u.xp || 48);
+        if (u.streak !== undefined) setStreak(u.streak);
+        if (u.xp !== undefined) setXp(u.xp);
       }
     }
     load();
+    window.addEventListener("duo_progress_updated", load);
+    return () => window.removeEventListener("duo_progress_updated", load);
   }, []);
 
   const achievements: Achievement[] = [

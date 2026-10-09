@@ -367,15 +367,33 @@ export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
   } catch (e) {
     console.warn("Backend not reachable, using local leaderboard fallback");
   }
+
+  let userXp = 265;
+  let userName = "Aviral Jain";
+  try {
+    const u = await fetchUser();
+    if (u?.xp !== undefined) userXp = u.xp;
+    if (u?.username) userName = u.username;
+  } catch {}
+
+  const seeded = [
+    { username: "Nitheesh Kumar B", avatar: "🧑🏾‍🦱", xp: 45, is_current_user: false },
+    { username: userName, avatar: "🧑", xp: userXp, is_current_user: true },
+    { username: "Seyit Musevi", avatar: "👦🏻", xp: 10, is_current_user: false },
+    { username: "Priyanka M.", avatar: "👩🏽", xp: 8, is_current_user: false },
+    { username: "Lucas Dupont", avatar: "🧑🏼", xp: 5, is_current_user: false },
+  ].sort((a, b) => b.xp - a.xp);
+
   return {
-    league_name: "Silver League",
+    league_name: userXp >= 300 ? "Silver League" : "Bronze League",
     time_remaining: "2 DAYS",
-    entries: [
-      { rank: 1, username: "Elena_G", avatar: "👧", xp: 410, is_current_user: false },
-      { rank: 2, username: "Aviral Jain (You)", avatar: "🧑", xp: 265, is_current_user: true },
-      { rank: 3, username: "Carlos99", avatar: "🧔", xp: 220, is_current_user: false },
-      { rank: 4, username: "Sophie_Paris", avatar: "👩", xp: 180, is_current_user: false },
-    ],
+    entries: seeded.map((item, idx) => ({
+      rank: idx + 1,
+      username: item.username,
+      avatar: item.avatar,
+      xp: item.xp,
+      is_current_user: item.is_current_user,
+    })),
   };
 }
 

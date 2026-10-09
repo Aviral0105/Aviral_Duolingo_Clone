@@ -9,17 +9,17 @@ router = APIRouter(prefix="/api/leaderboard", tags=["Leaderboard"])
 @router.get("", response_model=LeaderboardResponse)
 def get_leaderboard(db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == 1).first()
-    user_xp = user.xp if user else 265
+    user_xp = user.xp if user else 34
+    user_name = user.username if user else "AVIRAL JAIN"
+    user_avatar = user.avatar if user else "🧑"
 
-    # Seeded learners for Silver League
+    # Learners in user's league
     seeded_players = [
-        {"username": "Elena_G", "avatar": "👧", "xp": 410, "is_current_user": False},
-        {"username": "Marco_Dev", "avatar": "👨‍💻", "xp": 340, "is_current_user": False},
-        {"username": "Aviral Jain", "avatar": "🧑", "xp": user_xp, "is_current_user": True},
-        {"username": "Carlos99", "avatar": "🧔", "xp": 220, "is_current_user": False},
-        {"username": "Sophie_Paris", "avatar": "👩", "xp": 180, "is_current_user": False},
-        {"username": "Kenji_Tokyo", "avatar": "🥷", "xp": 140, "is_current_user": False},
-        {"username": "Maria_L", "avatar": "👩‍🦰", "xp": 95, "is_current_user": False},
+        {"username": "Nitheesh Kumar B", "avatar": "🧑🏾‍🦱", "xp": 45, "is_current_user": False},
+        {"username": user_name, "avatar": user_avatar, "xp": user_xp, "is_current_user": True},
+        {"username": "Seyit Musevi", "avatar": "👦🏻", "xp": 10, "is_current_user": False},
+        {"username": "Priyanka M.", "avatar": "👩🏽", "xp": 8, "is_current_user": False},
+        {"username": "Lucas Dupont", "avatar": "🧑🏼", "xp": 5, "is_current_user": False},
     ]
 
     # Sort descending by XP
@@ -36,8 +36,10 @@ def get_leaderboard(db: Session = Depends(get_db)):
         for idx, p in enumerate(sorted_players)
     ]
 
+    league = "Silver League" if user_xp >= 300 else "Bronze League"
+
     return {
-        "league_name": "Silver League",
+        "league_name": league,
         "time_remaining": "2 DAYS",
         "entries": entries
     }

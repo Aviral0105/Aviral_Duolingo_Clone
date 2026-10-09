@@ -1,9 +1,45 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Sparkles, Zap } from "lucide-react";
+import { fetchUser, fetchXPSummary, fetchLeaderboard } from "@/lib/api";
+import { User, LeaderboardResponse } from "@/lib/types";
 
 export default function RightPanel() {
+  const [user, setUser] = useState<User | null>(null);
+  const [xpSummary, setXpSummary] = useState<any>(null);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardResponse | null>(null);
+
+  const loadData = useCallback(async () => {
+    try {
+      const [u, xp, lb] = await Promise.all([
+        fetchUser(),
+        fetchXPSummary(),
+        fetchLeaderboard(),
+      ]);
+      if (u) setUser(u);
+      if (xp) setXpSummary(xp);
+      if (lb) setLeaderboard(lb);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    window.addEventListener("duo_progress_updated", loadData);
+    return () => window.removeEventListener("duo_progress_updated", loadData);
+  }, [loadData]);
+
+  const weeklyXp = xpSummary?.weekly_xp ?? user?.xp ?? 34;
+  const todayXp = xpSummary?.today_xp ?? Math.min(user?.xp ?? 0, 10);
+  const dailyGoal = user?.daily_goal_xp ?? 10;
+  const questProgress = Math.min(dailyGoal, todayXp);
+  const questPct = Math.min(100, Math.round((questProgress / dailyGoal) * 100));
+
+  const userEntry = leaderboard?.entries?.find((e) => e.is_current_user);
+  const currentRank = userEntry?.rank ?? 2;
+  const leagueName = leaderboard?.league_name ?? (weeklyXp >= 300 ? "Silver League" : "Bronze League");
+
   return (
     <div className="w-full lg:w-80 shrink-0 space-y-5 select-none">
       {/* Super Duolingo Promo Card */}
@@ -28,7 +64,7 @@ export default function RightPanel() {
       {/* 1. Bronze League Card */}
       <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-black text-gray-800">Bronze League</h3>
+          <h3 className="text-base font-black text-gray-800">{leagueName}</h3>
           <Link
             href="/leaderboard"
             className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
@@ -45,10 +81,10 @@ export default function RightPanel() {
           <div className="flex-1 min-w-0">
             <div className="font-black text-base text-gray-800">
               You&apos;re ranked{" "}
-              <span className="text-[#58cc02] font-black">#11</span>
+              <span className="text-[#58cc02] font-black">#{currentRank}</span>
             </div>
             <p className="text-xs font-bold text-gray-400 mt-0.5 leading-snug">
-              You&apos;ve earned 34 XP this week so far
+              You&apos;ve earned {weeklyXp} XP this week so far
             </p>
           </div>
         </div>
@@ -73,20 +109,20 @@ export default function RightPanel() {
 
           <div className="flex-1 min-w-0">
             <div className="text-sm font-black text-gray-800 mb-1.5">
-              Earn 10 XP
+              Earn {dailyGoal} XP
             </div>
             <div className="relative w-full bg-gray-200 h-6 rounded-full overflow-hidden flex items-center">
               <div
                 className="bg-[#ffc800] h-full rounded-full transition-all flex items-center justify-center font-black text-xs text-amber-900"
-                style={{ width: "100%" }}
+                style={{ width: `${Math.max(12, questPct)}%` }}
               >
-                10 / 10
+                {questProgress} / {dailyGoal}
               </div>
             </div>
           </div>
 
           <span className="text-3xl shrink-0 cursor-pointer active:scale-95 transition" title="Chest">
-            📦
+            {questPct >= 100 ? "🎁" : "📦"}
           </span>
         </div>
       </div>

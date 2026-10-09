@@ -1,14 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Lock, Zap, Clock, Sparkles, X, Gift, Users } from "lucide-react";
 import { sounds } from "@/lib/sounds";
+import { fetchUser, fetchXPSummary } from "@/lib/api";
+import { User } from "@/lib/types";
 
 export default function QuestsPage() {
   const [activeTab, setActiveTab] = useState<"quests" | "badges">("quests");
   const [questClaimed, setQuestClaimed] = useState(false);
   const [showChestModal, setShowChestModal] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [xpSummary, setXpSummary] = useState<any>(null);
+
+  const loadData = useCallback(async () => {
+    try {
+      const [u, xp] = await Promise.all([fetchUser(), fetchXPSummary()]);
+      if (u) setUser(u);
+      if (xp) setXpSummary(xp);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    window.addEventListener("duo_progress_updated", loadData);
+    return () => window.removeEventListener("duo_progress_updated", loadData);
+  }, [loadData]);
+
+  const dailyGoal = user?.daily_goal_xp ?? 10;
+  const todayXp = xpSummary?.today_xp ?? Math.min(user?.xp ?? 0, 10);
+  const questProgress = Math.min(dailyGoal, todayXp);
+  const questPct = Math.min(100, Math.round((questProgress / dailyGoal) * 100));
+  const isCompleted = questProgress >= dailyGoal;
 
   const handleClaimReward = () => {
     sounds.playVictory();
@@ -68,20 +92,20 @@ export default function QuestsPage() {
               </div>
             </div>
 
-            {/* Quest 1: Active Completed Quest (Earn 10 XP) */}
+            {/* Quest 1: Active Completed Quest (Earn XP) */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
                 <Zap className="w-7 h-7 text-[#ffc800] fill-[#ffc800]" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="font-black text-base text-gray-800 mb-2">Earn 10 XP</h3>
+                <h3 className="font-black text-base text-gray-800 mb-2">Earn {dailyGoal} XP</h3>
                 <div className="relative w-full bg-gray-200 h-6 rounded-full overflow-hidden flex items-center">
                   <div
                     className="bg-[#ffc800] h-full rounded-full transition-all flex items-center justify-center font-black text-xs text-amber-900"
-                    style={{ width: "100%" }}
+                    style={{ width: `${Math.max(12, questPct)}%` }}
                   >
-                    10 / 10
+                    {questProgress} / {dailyGoal}
                   </div>
                 </div>
               </div>
@@ -89,14 +113,22 @@ export default function QuestsPage() {
               {/* Clickable Treasure Chest */}
               <button
                 onClick={() => {
-                  if (!questClaimed) setShowChestModal(true);
+                  if (isCompleted && !questClaimed) setShowChestModal(true);
                 }}
                 className={`text-4xl shrink-0 p-2 rounded-2xl transition active:scale-90 ${
                   questClaimed
                     ? "opacity-50 cursor-default"
-                    : "animate-pulse hover:scale-110 cursor-pointer"
+                    : isCompleted
+                    ? "animate-pulse hover:scale-110 cursor-pointer"
+                    : "opacity-40 cursor-not-allowed"
                 }`}
-                title={questClaimed ? "Reward claimed" : "Click to claim reward!"}
+                title={
+                  questClaimed
+                    ? "Reward claimed"
+                    : isCompleted
+                    ? "Click to claim reward!"
+                    : "Complete quest to unlock reward"
+                }
               >
                 {questClaimed ? "🪙" : "🎁"}
               </button>

@@ -1,59 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Lock, Info, X, Shield, ArrowRight } from "lucide-react";
+import { fetchLeaderboard } from "@/lib/api";
+import { LeaderboardResponse } from "@/lib/types";
 
 export default function LeaderboardPage() {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>("😊");
   const [isLocked, setIsLocked] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(null);
+
+  const loadLeaderboard = useCallback(async () => {
+    try {
+      const data = await fetchLeaderboard();
+      if (data) setLeaderboardData(data);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    loadLeaderboard();
+    window.addEventListener("duo_progress_updated", loadLeaderboard);
+    return () => window.removeEventListener("duo_progress_updated", loadLeaderboard);
+  }, [loadLeaderboard]);
 
   const emojis = [
     "😎", "🎊", "💪", "👀", "🍿", "🇮🇳",
     "😠", "💯", "💩", "🏆", "⛏️", "😾"
   ];
 
-  const rankings = [
-    {
-      rank: 1,
-      name: "Nitheesh Kumar B",
-      xp: "45 XP",
-      avatar: "🧑🏾‍🦱",
-      isUser: false,
-      ribbonColor: "bg-amber-400 text-amber-900 border-amber-500",
-    },
-    {
-      rank: 2,
-      name: "AVIRAL JAIN",
-      xp: "34 XP",
-      avatar: "A",
-      isUser: true,
-      ribbonColor: "bg-slate-300 text-slate-800 border-slate-400",
-    },
-    {
-      rank: 3,
-      name: "Seyit Musevi",
-      xp: "10 XP",
-      avatar: "👦🏻",
-      isUser: false,
-      ribbonColor: "bg-amber-700 text-amber-100 border-amber-800",
-    },
-    {
-      rank: 4,
-      name: "Priyanka M.",
-      xp: "8 XP",
-      avatar: "👩🏽",
-      isUser: false,
-    },
-    {
-      rank: 5,
-      name: "Lucas Dupont",
-      xp: "5 XP",
-      avatar: "🧑🏼",
-      isUser: false,
-    },
-  ];
+  const rankings = (leaderboardData?.entries || []).map((entry) => ({
+    rank: entry.rank,
+    name: entry.username,
+    xp: `${entry.xp} XP`,
+    avatar: entry.avatar,
+    isUser: entry.is_current_user,
+    ribbonColor:
+      entry.rank === 1
+        ? "bg-amber-400 text-amber-900 border-amber-500"
+        : entry.rank === 2
+        ? "bg-slate-300 text-slate-800 border-slate-400"
+        : entry.rank === 3
+        ? "bg-amber-700 text-amber-100 border-amber-800"
+        : undefined,
+  }));
+
+  const leagueTitle = leaderboardData?.league_name || "Bronze League";
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
@@ -76,7 +69,7 @@ export default function LeaderboardPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-black text-gray-800">Bronze League</h1>
+          <h1 className="text-2xl font-black text-gray-800">{leagueTitle}</h1>
           <div className="flex items-center justify-center gap-2 mt-1">
             <p className="text-xs font-bold text-gray-400">
               Top 20 advance to the Silver League
