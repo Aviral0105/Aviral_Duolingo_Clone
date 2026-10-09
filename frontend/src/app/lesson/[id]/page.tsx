@@ -333,6 +333,7 @@ function LessonContent() {
         xpEarned={completedResult?.xp_earned ?? (lesson.xp_reward + 4)}
         streak={completedResult?.streak ?? user.streak}
         accuracy={Math.max(65, accuracy)}
+        gemsEarned={completedResult?.gems_earned ?? (mistakesCount === 0 ? 15 : 10)}
         onRestart={handleRestartLesson}
       />
     );

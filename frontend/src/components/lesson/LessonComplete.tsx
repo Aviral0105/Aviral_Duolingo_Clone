@@ -9,10 +9,11 @@ interface LessonCompleteProps {
   xpEarned: number;
   streak: number;
   accuracy: number;
+  gemsEarned?: number;
   onRestart?: () => void;
 }
 
-export default function LessonComplete({ xpEarned, streak, accuracy, onRestart }: LessonCompleteProps) {
+export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned, onRestart }: LessonCompleteProps) {
   useEffect(() => {
     sounds.playVictory();
 
@@ -86,6 +87,22 @@ export default function LessonComplete({ xpEarned, streak, accuracy, onRestart }
             Active
           </span>
         </div>
+
+        {/* Gems Earned Card */}
+        {gemsEarned !== undefined && gemsEarned > 0 && (
+          <div className="w-full mt-3 border-2 border-sky-200 bg-sky-50/40 rounded-3xl p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">💎</span>
+              <div className="text-left">
+                <div className="text-sm font-black text-gray-800">+{gemsEarned} Gems Earned!</div>
+                <div className="text-xs text-gray-500 font-bold">Reward for lesson completion & accuracy</div>
+              </div>
+            </div>
+            <span className="text-xs font-black text-[#1cb0f6] uppercase bg-sky-100 px-3 py-1 rounded-xl">
+              Bonus
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Bottom Footer Actions (Review Lesson + Continue matching Duolingo Frame 56s) */}

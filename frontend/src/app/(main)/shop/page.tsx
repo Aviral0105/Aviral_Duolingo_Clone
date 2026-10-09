@@ -10,7 +10,6 @@ import { User } from "@/lib/types";
 export default function ShopPage() {
   const [user, setUser] = useState<User | null>(null);
   const [heartsCount, setHeartsCount] = useState(5);
-  const [freezeEquipped, setFreezeEquipped] = useState(true);
   const [xpBoostActive, setXpBoostActive] = useState(false);
   const [showSuperModal, setShowSuperModal] = useState(false);
   const [showFamilyModal, setShowFamilyModal] = useState(false);
@@ -21,6 +20,12 @@ export default function ShopPage() {
       .then((u) => {
         setUser(u);
         setHeartsCount(u.hearts);
+        if (u.double_xp_until) {
+          const expiresAt = new Date(u.double_xp_until).getTime();
+          setXpBoostActive(expiresAt > Date.now());
+        } else {
+          setXpBoostActive(false);
+        }
       })
       .catch(() => {});
   };
@@ -37,18 +42,29 @@ export default function ShopPage() {
   };
 
   const handleRefillHearts = async () => {
-    if (heartsCount >= 5) {
+    if (heartsCount >= 5 && !user?.is_super) {
       showToast("Hearts are already full!");
       return;
     }
     try {
-      const res = await refillHearts();
+      const res = await purchaseShopItem("refill_hearts");
       sounds.playCorrect();
-      setHeartsCount(res.hearts);
-      showToast(`❤️ Hearts refilled to ${res.hearts}!`);
+      setHeartsCount(res.hearts ?? 5);
+      showToast(`❤️ Hearts refilled to 5! (Remaining: ${res.new_gems} Gems)`);
       window.dispatchEvent(new Event("duo_progress_updated"));
     } catch (e: any) {
       showToast(e.message || "Failed to refill hearts");
+    }
+  };
+
+  const handleBuyFreeze = async () => {
+    try {
+      const res = await purchaseShopItem("streak_freeze");
+      sounds.playVictory();
+      showToast(`🧊 Streak Freeze equipped! (${res.streak_freezes ?? 2}/2)`);
+      window.dispatchEvent(new Event("duo_progress_updated"));
+    } catch (e: any) {
+      showToast(e.message || "Failed to equip Streak Freeze");
     }
   };
 
@@ -64,13 +80,20 @@ export default function ShopPage() {
     }
   };
 
-  const handleActivateSuper = () => {
-    sounds.playVictory();
-    setShowSuperModal(false);
-    setShowFamilyModal(false);
-    setHeartsCount(5);
-    showToast("✨ Super Duolingo Free Trial activated! Enjoy Unlimited Hearts!");
+  const handleActivateSuper = async () => {
+    try {
+      await purchaseShopItem("super_trial");
+      sounds.playVictory();
+      setShowSuperModal(false);
+      setShowFamilyModal(false);
+      showToast("✨ Super Duolingo Free Trial activated! Enjoy Unlimited Hearts!");
+      window.dispatchEvent(new Event("duo_progress_updated"));
+    } catch (e: any) {
+      showToast(e.message || "Failed to activate trial");
+    }
   };
+
+  const streakFreezes = user?.streak_freezes ?? 2;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
@@ -138,7 +161,7 @@ export default function ShopPage() {
                 </div>
               </div>
               <div className="shrink-0">
-                {heartsCount >= 5 ? (
+                {heartsCount >= 5 || user?.is_super ? (
                   <span className="px-6 py-2.5 rounded-2xl bg-gray-100 border-2 border-gray-200 text-xs font-black uppercase tracking-wider text-gray-400 select-none block">
                     FULL
                   </span>
@@ -163,17 +186,23 @@ export default function ShopPage() {
                 <div className="min-w-0">
                   <h3 className="font-black text-base text-gray-800">Unlimited Hearts</h3>
                   <p className="text-xs text-gray-400 font-bold leading-relaxed">
-                    Never run out of hearts with Super!
+                    {user?.is_super ? "Active with Super Duolingo" : "Never run out of hearts with Super!"}
                   </p>
                 </div>
               </div>
               <div className="shrink-0">
-                <button
-                  onClick={() => setShowSuperModal(true)}
-                  className="px-5 py-2.5 rounded-2xl bg-white border-2 border-gray-200 border-b-4 text-[#a855f7] hover:bg-purple-50 active:border-b-0 active:translate-y-1 transition text-xs font-black uppercase tracking-wider shadow-xs"
-                >
-                  FREE TRIAL
-                </button>
+                {user?.is_super ? (
+                  <span className="px-5 py-2.5 rounded-2xl bg-[#a855f7] text-white text-xs font-black uppercase tracking-wider select-none block">
+                    ACTIVE
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => setShowSuperModal(true)}
+                    className="px-5 py-2.5 rounded-2xl bg-white border-2 border-gray-200 border-b-4 text-[#a855f7] hover:bg-purple-50 active:border-b-0 active:translate-y-1 transition text-xs font-black uppercase tracking-wider shadow-xs"
+                  >
+                    FREE TRIAL
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -193,7 +222,7 @@ export default function ShopPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-black text-base text-gray-800">Streak Freeze</h3>
                     <span className="bg-[#58cc02] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                      2 / 2 EQUIPPED
+                      {streakFreezes} / 2 EQUIPPED
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 font-bold leading-relaxed mt-0.5">
@@ -202,9 +231,19 @@ export default function ShopPage() {
                 </div>
               </div>
               <div className="shrink-0">
-                <span className="px-5 py-2.5 rounded-2xl bg-white border-2 border-gray-200 text-xs font-black uppercase tracking-wider text-gray-400 select-none block">
-                  EQUIPPED
-                </span>
+                {streakFreezes >= 2 ? (
+                  <span className="px-5 py-2.5 rounded-2xl bg-white border-2 border-gray-200 text-xs font-black uppercase tracking-wider text-gray-400 select-none block">
+                    EQUIPPED
+                  </span>
+                ) : (
+                  <button
+                    onClick={handleBuyFreeze}
+                    className="px-5 py-2.5 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <span>💎</span>
+                    <span>200</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -275,7 +314,7 @@ export default function ShopPage() {
                 You&apos;re ranked <span className="text-[#58cc02] font-black">#9</span>
               </div>
               <p className="text-xs font-bold text-gray-400 mt-0.5 leading-snug">
-                You&apos;ve earned 48 XP this week so far
+                You&apos;ve earned {user?.xp ?? 265} XP so far
               </p>
             </div>
           </Link>
@@ -300,14 +339,14 @@ export default function ShopPage() {
 
             <div className="flex-1 min-w-0">
               <div className="text-sm font-black text-gray-800 mb-1.5">
-                Earn 30 XP
+                Earn {user?.daily_goal_xp ?? 10} XP
               </div>
               <div className="relative w-full bg-gray-200 h-6 rounded-full overflow-hidden flex items-center">
                 <div
                   className="bg-[#ffc800] h-full rounded-full transition-all flex items-center justify-center font-black text-xs text-amber-950"
-                  style={{ width: "46.6%" }}
+                  style={{ width: `${Math.min(100, Math.max(15, Math.round(((user?.xp ?? 0) / (user?.daily_goal_xp ?? 10)) * 100)))}%` }}
                 >
-                  14 / 30
+                  {Math.min(user?.xp ?? 0, user?.daily_goal_xp ?? 10)} / {user?.daily_goal_xp ?? 10}
                 </div>
               </div>
             </div>

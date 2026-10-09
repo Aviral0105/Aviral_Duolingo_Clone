@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -14,6 +15,9 @@ class PurchaseResponse(BaseModel):
     success: bool
     item_id: str
     new_gems: int
+    streak_freezes: Optional[int] = None
+    hearts: Optional[int] = None
+    is_super: Optional[bool] = None
     message: str
 
 ITEM_PRICES = {
@@ -34,6 +38,18 @@ def purchase_item(payload: PurchaseRequest, db: Session = Depends(get_db)):
     if item_id not in ITEM_PRICES:
         raise HTTPException(status_code=400, detail=f"Invalid item: '{item_id}'. Valid items: {list(ITEM_PRICES.keys())}")
 
+    if item_id in ("freeze_streak", "streak_freeze") and (user.streak_freezes or 0) >= 2:
+        raise HTTPException(
+            status_code=400,
+            detail="Streak Freeze inventory is already full (2/2 equipped)!"
+        )
+
+    if item_id == "refill_hearts" and user.hearts >= 5 and not user.is_super:
+        raise HTTPException(
+            status_code=400,
+            detail="Hearts are already full (5/5)!"
+        )
+
     cost = ITEM_PRICES[item_id]
     if user.gems < cost:
         raise HTTPException(
@@ -47,6 +63,7 @@ def purchase_item(payload: PurchaseRequest, db: Session = Depends(get_db)):
     # Apply item effects
     if item_id == "refill_hearts":
         user.hearts = 5
+        user.hearts_updated_at = None
         msg = "Hearts refilled to 5!"
     elif item_id in ("freeze_streak", "streak_freeze"):
         user.streak_freezes = min(2, (user.streak_freezes or 0) + 1)
@@ -68,5 +85,8 @@ def purchase_item(payload: PurchaseRequest, db: Session = Depends(get_db)):
         "success": True,
         "item_id": item_id,
         "new_gems": user.gems,
+        "streak_freezes": user.streak_freezes,
+        "hearts": user.hearts,
+        "is_super": user.is_super,
         "message": msg
     }

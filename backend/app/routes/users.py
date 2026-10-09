@@ -18,6 +18,7 @@ from ..schemas import (
     XPSummaryOut,
 )
 from ..services.xp_engine import get_xp_summary
+from ..services.gamification_engine import check_heart_regeneration, refill_user_hearts
 
 router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -26,6 +27,7 @@ def get_current_user(db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == 1).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    check_heart_regeneration(user, db)
     return user
 
 @router.patch("/profile", response_model=UserOut)
@@ -178,7 +180,7 @@ def refill_hearts(db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == 1).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    user.hearts = 5
+    refill_user_hearts(user, db)
     db.commit()
     db.refresh(user)
     return {

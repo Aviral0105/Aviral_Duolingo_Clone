@@ -16,6 +16,9 @@ export interface User {
   gems: number;
   daily_goal_xp: number;
   is_super: boolean;
+  streak_freezes?: number;
+  double_xp_until?: string | null;
+  hearts_updated_at?: string | null;
 }
 
 export interface Exercise {

@@ -16,13 +16,13 @@ import { User } from "@/lib/types";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>({
     id: 1,
-    username: "AVIRAL JAIN",
+    username: "Aviral Jain",
     handle: "@AVIRALJAIN51695",
-    avatar: "A",
-    xp: 15,
-    streak: 1,
-    hearts: 4,
-    gems: 505,
+    avatar: "🧑",
+    xp: 265,
+    streak: 3,
+    hearts: 5,
+    gems: 155,
     daily_goal_xp: 10,
     is_super: false,
   });
@@ -89,6 +89,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         isOpen={isStreakOpen}
         onClose={() => setIsStreakOpen(false)}
         streak={user.streak}
+        streakFreezes={user.streak_freezes ?? 2}
         initialTab={streakTab}
       />
       <ShopModal

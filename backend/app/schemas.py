@@ -72,6 +72,8 @@ class LessonCompleteResponse(BaseModel):
     bonus_xp: int = 0
     multiplier: int = 1
     new_total_xp: int
+    gems_earned: int = 0
+    new_total_gems: int = 155
     streak: int
     unlocked_next_lesson_id: Optional[int] = None
     message: str

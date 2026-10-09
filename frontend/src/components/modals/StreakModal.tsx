@@ -10,6 +10,7 @@ interface StreakModalProps {
   isOpen: boolean;
   onClose: () => void;
   streak: number;
+  streakFreezes?: number;
   initialTab?: "personal" | "friends";
 }
 
@@ -17,6 +18,7 @@ export default function StreakModal({
   isOpen,
   onClose,
   streak,
+  streakFreezes = 2,
   initialTab = "personal",
 }: StreakModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -294,6 +296,36 @@ export default function StreakModal({
                   </div>
                   <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 text-[#ff9600] flex items-center justify-center font-black text-xs shrink-0">
                     7
+                  </div>
+                </div>
+              </div>
+
+              {/* Streak Freeze Section */}
+              <div>
+                <h3 className="font-black text-base text-gray-800 mb-2">Streak Protection</h3>
+                <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-2xl shrink-0">
+                      🧊
+                    </div>
+                    <div>
+                      <h4 className="font-black text-sm text-gray-800">Streak Freeze</h4>
+                      <p className="text-xs font-bold text-gray-400">Protects your streak if you miss a day</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-xs px-2.5 py-1 rounded-xl bg-sky-50 text-sky-700 border border-sky-200">
+                      {streakFreezes} / 2 EQUIPPED
+                    </span>
+                    {streakFreezes < 2 && (
+                      <Link
+                        href="/shop"
+                        onClick={onClose}
+                        className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
+                      >
+                        GET MORE
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

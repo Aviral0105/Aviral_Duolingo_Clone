@@ -12,6 +12,11 @@ from ..schemas import (
     MistakeActionResponse
 )
 from ..services.xp_engine import calculate_lesson_xp, award_xp
+from ..services.gamification_engine import (
+    process_streak_activity,
+    award_gems,
+    deduct_heart_on_mistake
+)
 
 router = APIRouter(prefix="/api/lessons", tags=["Lessons"])
 
@@ -84,6 +89,7 @@ def record_mistake(
         )
         db.add(mistake)
 
+    deduct_heart_on_mistake(user, db)
     db.commit()
     db.refresh(mistake)
 
@@ -178,13 +184,23 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
         description=f"Completed '{lesson.title}' (Mistakes: {payload.mistakes_count})"
     )
 
-    # If first completion of the day, ensure streak is active
-    if is_first_completion and user.streak == 0:
-        user.streak = 1
+    # Authentic streak engine with freeze protection
+    streak_info = process_streak_activity(user, db)
+
+    # Gems Economy: Award gems for accuracy & progress
+    gems_earned = 0
+    if payload.mistakes_count == 0:
+        gems_earned += 5
+        award_gems(user, 5)
+    if is_first_completion:
+        gems_earned += 10
+        award_gems(user, 10)
 
     # Persist updated hearts from payload if not super
     if not user.is_super:
         user.hearts = max(0, min(5, payload.hearts_left))
+        if user.hearts < 5:
+            user.hearts_updated_at = datetime.utcnow()
 
     # Determine next lesson to unlock across units/sections
     next_lesson = db.query(Lesson).filter(
@@ -214,6 +230,8 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
         "bonus_xp": xp_calc["bonus_xp"],
         "multiplier": xp_calc["multiplier"],
         "new_total_xp": user.xp,
+        "gems_earned": gems_earned,
+        "new_total_gems": user.gems or 155,
         "streak": user.streak,
         "unlocked_next_lesson_id": next_lesson_id,
         "message": f"Congratulations! You completed '{lesson.title}' and earned {xp_calc['total_xp']} XP!"

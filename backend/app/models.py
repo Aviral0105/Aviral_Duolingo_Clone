@@ -21,6 +21,7 @@ class User(Base):
     streak_freezes = Column(Integer, default=2)
     invite_code = Column(String(50), default="BDHTZTB5CW77A")
     double_xp_until = Column(DateTime, nullable=True)
+    hearts_updated_at = Column(DateTime, default=datetime.utcnow)
     last_active_date = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
 
