@@ -10,6 +10,7 @@ export interface User {
   username: string;
   handle: string;
   avatar: string;
+  profile_image?: string | null;
   xp: number;
   streak: number;
   hearts: number;
@@ -17,9 +18,26 @@ export interface User {
   daily_goal_xp: number;
   is_super: boolean;
   streak_freezes?: number;
+  invite_code?: string;
   double_xp_until?: string | null;
   hearts_updated_at?: string | null;
   current_league?: string;
+}
+
+export interface UserFriend {
+  id: number;
+  username: string;
+  handle: string;
+  avatar: string;
+  profile_image?: string | null;
+  is_following: boolean;
+}
+
+export interface SocialStats {
+  following_count: number;
+  followers_count: number;
+  following: UserFriend[];
+  followers: UserFriend[];
 }
 
 export interface Exercise {

@@ -1,4 +1,4 @@
-import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData, AchievementItem } from "./types";
+import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData, AchievementItem, SocialStats, UserFriend } from "./types";
 
 // NEXT_PUBLIC_* variables are inlined at BUILD time. On a deployed site you must set
 // NEXT_PUBLIC_API_URL to your public backend URL (e.g. https://my-api.onrender.com) and REDEPLOY,
@@ -18,6 +18,8 @@ const FALLBACK_USER: User = {
   username: "Aviral Jain",
   handle: "@AVIRALJAIN213584",
   avatar: "🧑",
+  profile_image: null,
+  invite_code: "BDHTZTB5CW77A",
   xp: 265,
   streak: 3,
   hearts: 5,
@@ -758,37 +760,134 @@ export async function fetchAchievements(userId?: number): Promise<AchievementIte
   ];
 }
 
-export async function searchUsers(q: string) {
+export async function searchUsers(q: string): Promise<UserFriend[]> {
+  const currentId = getActiveUserId();
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/search?q=${encodeURIComponent(q)}`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/api/user/search?q=${encodeURIComponent(q)}&user_id=${currentId}`, {
+      cache: "no-store",
+    });
     if (res.ok) return await res.json();
   } catch (e) {
-    console.warn("User search backend not reachable");
+    console.warn("User search backend not reachable, using mock list");
   }
-  return [];
+  // Local fallback mock users if offline
+  const fallbackFollowers: UserFriend[] = [
+    { id: 2, username: "Priyanka M.", handle: "@priyanka_m", avatar: "👩🏽", is_following: false },
+    { id: 3, username: "Nitheesh Kumar B", handle: "@nitheesh_k", avatar: "🧑🏾‍🦱", is_following: false },
+    { id: 4, username: "Lucas Dupont", handle: "@lucas_d", avatar: "🧑🏼", is_following: false },
+    { id: 5, username: "Seyit Musevi", handle: "@seyit_m", avatar: "👦🏻", is_following: false },
+    { id: 6, username: "Sara Connor", handle: "@sara_c", avatar: "👩🏼", is_following: false },
+  ];
+  if (!q.trim()) return fallbackFollowers;
+  return fallbackFollowers.filter(
+    (u) =>
+      u.username.toLowerCase().includes(q.toLowerCase()) ||
+      u.handle.toLowerCase().includes(q.toLowerCase())
+  );
 }
 
-export async function toggleFollowUser(targetId: number) {
+export async function toggleFollowUser(targetId: number): Promise<{ success: boolean; target_user_id: number; is_following: boolean; message: string }> {
+  const currentId = getActiveUserId();
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/follow/${targetId}`, { method: "POST" });
-    if (res.ok) return await res.json();
+    const res = await fetch(`${API_BASE_URL}/api/user/follow/${targetId}?user_id=${currentId}`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_social_updated"));
+      }
+      return data;
+    }
   } catch (e) {
     console.warn("Follow user backend not reachable");
   }
   return { success: true, target_user_id: targetId, is_following: true, message: "Updated follow status" };
 }
 
-export async function updateUserProfile(profile: { username?: string; email?: string; phone?: string }) {
+export async function fetchSocialStats(): Promise<SocialStats> {
+  const currentId = getActiveUserId();
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/profile`, {
+    const res = await fetch(`${API_BASE_URL}/api/user/social?user_id=${currentId}`, {
+      cache: "no-store",
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Social stats backend not reachable");
+  }
+  return {
+    following_count: 0,
+    followers_count: 0,
+    following: [],
+    followers: [],
+  };
+}
+
+export async function fetchInviteLink(): Promise<{ invite_code: string; invite_url: string }> {
+  const currentId = getActiveUserId();
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/invite?user_id=${currentId}`, {
+      cache: "no-store",
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Invite link backend not reachable");
+  }
+  return {
+    invite_code: "BDHTZTB5CW77A",
+    invite_url: "https://invite.duolingo.com/BDHTZTB5CW77A",
+  };
+}
+
+export async function updateUserAvatar(data: {
+  avatar?: string;
+  profile_image?: string | null;
+}): Promise<User | null> {
+  const currentId = getActiveUserId();
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/avatar?user_id=${currentId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      const updatedUser = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return updatedUser;
+    }
+  } catch (e) {
+    console.warn("Avatar update backend not reachable");
+  }
+  return null;
+}
+
+export async function updateUserProfile(profile: {
+  username?: string;
+  email?: string;
+  phone?: string;
+  avatar?: string;
+  profile_image?: string | null;
+}): Promise<User | null> {
+  const currentId = getActiveUserId();
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/profile?user_id=${currentId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(profile),
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const updated = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return updated;
+    }
   } catch (e) {
     console.warn("Failed to update profile on backend");
   }
+  return null;
 }
 
 export async function fetchGuidebook(unitId: number = 1): Promise<GuidebookData> {

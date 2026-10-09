@@ -12,6 +12,7 @@ class User(Base):
     email = Column(String(120), default="aviral@example.com")
     phone = Column(String(30), nullable=True)
     avatar = Column(String(255), default="🧑")
+    profile_image = Column(Text, nullable=True, default=None)
     xp = Column(Integer, default=265)
     streak = Column(Integer, default=3)
     hearts = Column(Integer, default=5)

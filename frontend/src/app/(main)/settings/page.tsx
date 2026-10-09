@@ -16,6 +16,7 @@ import {
   Heart,
 } from "lucide-react";
 import { fetchUserSettings, updateUserSettings, fetchUser } from "@/lib/api";
+import { User } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
 
 function ToggleSwitch({
@@ -99,6 +100,7 @@ function SettingsContent() {
   const [schoolSuccess, setSchoolSuccess] = useState<string | null>(null);
 
   // Modals & Feedback
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [savedToast, setSavedToast] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<"delete" | "logout" | "resetCourse" | null>(null);
 
@@ -110,6 +112,7 @@ function SettingsContent() {
       ]);
 
       if (userData) {
+        setCurrentUser(userData);
         if (userData.username) setUsername(userData.username);
       }
 
@@ -236,12 +239,18 @@ function SettingsContent() {
             {/* Avatar Section matching Image 1 */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-gray-700">Avatar</label>
-              <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50/50">
-                <span className="text-3xl font-black text-gray-400">A</span>
+              <div className="relative w-20 h-20 rounded-full border-2 border-[#1cb0f6] flex items-center justify-center bg-gray-50/50 overflow-hidden shadow-xs">
+                {currentUser?.profile_image ? (
+                  <img src={currentUser.profile_image} alt="Avatar" className="w-full h-full object-cover" />
+                ) : currentUser?.avatar ? (
+                  <span className="text-3xl">{currentUser.avatar}</span>
+                ) : (
+                  <span className="text-3xl font-black text-gray-400">A</span>
+                )}
                 <button
                   onClick={() => router.push("/profile")}
                   className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#1cb0f6] text-white flex items-center justify-center shadow-sm hover:brightness-110 active:scale-95 transition"
-                  title="Edit Avatar"
+                  title="Edit Avatar & Photo"
                 >
                   <Pencil className="w-3 h-3 stroke-[2.5]" />
                 </button>

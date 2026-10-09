@@ -140,14 +140,37 @@ def update_user_profile(
         user.email = payload.email.strip()
     if payload.phone is not None:
         user.phone = payload.phone.strip()
+    if payload.avatar is not None:
+        user.avatar = payload.avatar.strip()
+    if payload.profile_image is not None:
+        user.profile_image = payload.profile_image
+
+    db.commit()
+    db.refresh(user)
+    return user
+
+@router.post("/avatar", response_model=UserOut)
+def update_user_avatar(
+    payload: dict,
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    user = _get_target_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if "avatar" in payload and payload["avatar"]:
+        user.avatar = payload["avatar"]
+    if "profile_image" in payload:
+        user.profile_image = payload["profile_image"]
 
     db.commit()
     db.refresh(user)
     return user
 
 @router.get("/invite", response_model=InviteLinkOut)
-def get_invite_link(db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == 1).first()
+def get_invite_link(user_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    user = _get_target_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     invite_code = user.invite_code or "BDHTZTB5CW77A"
@@ -157,14 +180,21 @@ def get_invite_link(db: Session = Depends(get_db)):
     }
 
 @router.get("/search", response_model=List[UserSearchItem])
-def search_users(q: str = Query("", description="Query by username or handle"), db: Session = Depends(get_db)):
-    query_str = q.strip().lower()
-    users = db.query(User).filter(User.id != 1).all()
+def search_users(
+    q: str = Query("", description="Query by username or handle"),
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    caller = _get_target_user(db, user_id)
+    caller_id = caller.id if caller else 1
 
-    # Get set of users currently followed by user 1
+    query_str = q.strip().lower()
+    users = db.query(User).filter(User.id != caller_id).all()
+
+    # Get set of users currently followed by caller
     following_ids = {
         uf.following_id
-        for uf in db.query(UserFollow).filter(UserFollow.follower_id == 1).all()
+        for uf in db.query(UserFollow).filter(UserFollow.follower_id == caller_id).all()
     }
 
     results = []
@@ -175,13 +205,21 @@ def search_users(q: str = Query("", description="Query by username or handle"), 
                 "username": u.username,
                 "handle": u.handle,
                 "avatar": u.avatar,
+                "profile_image": getattr(u, "profile_image", None),
                 "is_following": u.id in following_ids
             })
     return results
 
 @router.post("/follow/{target_id}", response_model=FollowActionResponse)
-def toggle_follow(target_id: int, db: Session = Depends(get_db)):
-    if target_id == 1:
+def toggle_follow(
+    target_id: int,
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    caller = _get_target_user(db, user_id)
+    caller_id = caller.id if caller else 1
+
+    if target_id == caller_id:
         raise HTTPException(status_code=400, detail="Cannot follow yourself")
 
     target = db.query(User).filter(User.id == target_id).first()
@@ -189,7 +227,7 @@ def toggle_follow(target_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Target user not found")
 
     existing = db.query(UserFollow).filter(
-        UserFollow.follower_id == 1,
+        UserFollow.follower_id == caller_id,
         UserFollow.following_id == target_id
     ).first()
 
@@ -203,7 +241,7 @@ def toggle_follow(target_id: int, db: Session = Depends(get_db)):
             "message": f"Unfollowed {target.username}"
         }
     else:
-        new_follow = UserFollow(follower_id=1, following_id=target_id)
+        new_follow = UserFollow(follower_id=caller_id, following_id=target_id)
         db.add(new_follow)
         db.commit()
         return {
@@ -214,21 +252,38 @@ def toggle_follow(target_id: int, db: Session = Depends(get_db)):
         }
 
 @router.get("/social", response_model=SocialStatsOut)
-def get_social_stats(db: Session = Depends(get_db)):
-    following_records = db.query(UserFollow).filter(UserFollow.follower_id == 1).all()
+def get_social_stats(user_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    caller = _get_target_user(db, user_id)
+    caller_id = caller.id if caller else 1
+
+    following_records = db.query(UserFollow).filter(UserFollow.follower_id == caller_id).all()
     following_user_ids = [f.following_id for f in following_records]
     following_users = db.query(User).filter(User.id.in_(following_user_ids)).all() if following_user_ids else []
 
-    follower_records = db.query(UserFollow).filter(UserFollow.following_id == 1).all()
+    follower_records = db.query(UserFollow).filter(UserFollow.following_id == caller_id).all()
     follower_user_ids = [f.follower_id for f in follower_records]
     follower_users = db.query(User).filter(User.id.in_(follower_user_ids)).all() if follower_user_ids else []
 
     following_list = [
-        {"id": u.id, "username": u.username, "handle": u.handle, "avatar": u.avatar, "is_following": True}
+        {
+            "id": u.id,
+            "username": u.username,
+            "handle": u.handle,
+            "avatar": u.avatar,
+            "profile_image": getattr(u, "profile_image", None),
+            "is_following": True
+        }
         for u in following_users
     ]
     followers_list = [
-        {"id": u.id, "username": u.username, "handle": u.handle, "avatar": u.avatar, "is_following": u.id in following_user_ids}
+        {
+            "id": u.id,
+            "username": u.username,
+            "handle": u.handle,
+            "avatar": u.avatar,
+            "profile_image": getattr(u, "profile_image", None),
+            "is_following": u.id in following_user_ids
+        }
         for u in follower_users
     ]
 

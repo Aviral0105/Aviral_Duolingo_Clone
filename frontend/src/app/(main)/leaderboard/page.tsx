@@ -203,7 +203,13 @@ export default function LeaderboardPage() {
                     {/* Avatar with Status Sticker (Screenshot 1: Molik has bicep 💪 sticker) */}
                     <div className="relative shrink-0">
                       <div className="w-11 h-11 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center text-xl overflow-hidden shadow-xs">
-                        {entry.avatar}
+                        {entry.is_current_user && currentUser?.profile_image ? (
+                          <img src={currentUser.profile_image} alt={entry.username} className="w-full h-full object-cover" />
+                        ) : (entry as any).profile_image ? (
+                          <img src={(entry as any).profile_image} alt={entry.username} className="w-full h-full object-cover" />
+                        ) : (
+                          entry.avatar
+                        )}
                       </div>
 
                       {/* Status Sticker Badge */}

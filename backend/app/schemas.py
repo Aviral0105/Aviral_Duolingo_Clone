@@ -13,6 +13,7 @@ class UserBase(BaseModel):
     gems: int
     daily_goal_xp: int
     is_super: bool
+    profile_image: Optional[str] = None
     email: Optional[str] = "aviral@example.com"
     phone: Optional[str] = None
     streak_freezes: Optional[int] = 2
@@ -28,6 +29,8 @@ class UserProfileUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
+    avatar: Optional[str] = None
+    profile_image: Optional[str] = None
 
 class UserRegisterRequest(BaseModel):
     username: str
@@ -219,6 +222,7 @@ class UserSearchItem(BaseModel):
     username: str
     handle: str
     avatar: str
+    profile_image: Optional[str] = None
     is_following: bool
 
 class FollowActionResponse(BaseModel):
