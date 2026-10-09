@@ -112,7 +112,7 @@ def reset_user_progress(
     user.gems = 100
     user.streak_freezes = 0
     user.double_xp_until = None
-    user.current_league = "Gold League"
+    user.current_league = "Bronze League"
     user.last_active_date = datetime.utcnow()
 
     db.commit()

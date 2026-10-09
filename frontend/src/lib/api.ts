@@ -183,6 +183,7 @@ export async function resetUserProgress(userId?: number) {
         localStorage.removeItem("duo_completed_lessons");
         localStorage.removeItem("duo_claimed_chests");
         localStorage.removeItem("duo_unlocked_units");
+        localStorage.setItem("duo_user_league", "Bronze League");
         window.dispatchEvent(new Event("duo_progress_updated"));
       }
       return await res.json();
@@ -194,6 +195,7 @@ export async function resetUserProgress(userId?: number) {
     localStorage.removeItem("duo_completed_lessons");
     localStorage.removeItem("duo_claimed_chests");
     localStorage.removeItem("duo_unlocked_units");
+    localStorage.setItem("duo_user_league", "Bronze League");
     window.dispatchEvent(new Event("duo_progress_updated"));
   }
   return { success: true, message: "Progress reset to 0!" };
