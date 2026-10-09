@@ -157,7 +157,7 @@ export default function RightPanel() {
       </div>
 
       {/* Footer Links with official Duolingo URLs */}
-      <DuolingoFooterLinks className="px-2" />
+      <DuolingoFooterLinks className="pt-2" />
     </div>
   );
 }

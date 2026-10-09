@@ -796,7 +796,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Footer Links */}
-            <DuolingoFooterLinks align="left" className="px-2" />
+            <DuolingoFooterLinks align="left" className="pt-2" />
           </div>
         </>
       )}
