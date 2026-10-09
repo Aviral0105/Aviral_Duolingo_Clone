@@ -2,15 +2,29 @@
 
 import React from "react";
 
-export default function DuolingoFooterLinks({ className = "" }: { className?: string }) {
+interface DuolingoFooterLinksProps {
+  className?: string;
+  align?: "center" | "left";
+}
+
+export default function DuolingoFooterLinks({
+  className = "",
+  align = "center",
+}: DuolingoFooterLinksProps) {
+  const isLeft = align === "left";
+  const justifyClass = isLeft ? "justify-start" : "justify-center";
+  const textClass = isLeft ? "text-left" : "text-center";
+
   return (
-    <footer className={`text-center text-[11px] font-black text-gray-400 uppercase tracking-widest space-y-2 select-none ${className}`}>
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+    <footer
+      className={`${textClass} text-[11px] font-black text-gray-400 uppercase tracking-widest space-y-1.5 select-none ${className}`}
+    >
+      <div className={`flex flex-wrap items-center ${justifyClass} gap-x-4 gap-y-1`}>
         <a
           href="https://about.duolingo.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           ABOUT
         </a>
@@ -18,7 +32,7 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://blog.duolingo.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           BLOG
         </a>
@@ -26,7 +40,7 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://store-asia.duolingo.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           STORE
         </a>
@@ -34,7 +48,7 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://www.duolingo.com/efficacy"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           EFFICACY
         </a>
@@ -42,17 +56,17 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://careers.duolingo.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           CAREERS
         </a>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+      <div className={`flex flex-wrap items-center ${justifyClass} gap-x-4 gap-y-1`}>
         <a
           href="https://investors.duolingo.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           INVESTORS
         </a>
@@ -60,7 +74,7 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://www.duolingo.com/terms"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           TERMS
         </a>
@@ -68,7 +82,7 @@ export default function DuolingoFooterLinks({ className = "" }: { className?: st
           href="https://www.duolingo.com/privacy"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 transition"
+          className="hover:text-gray-600 hover:underline transition"
         >
           PRIVACY
         </a>

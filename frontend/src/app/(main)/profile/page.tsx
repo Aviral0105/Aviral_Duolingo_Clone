@@ -20,6 +20,7 @@ import { fetchUser, fetchAchievements } from "@/lib/api";
 import { User, AchievementItem } from "@/lib/types";
 import { getLeagueConfig } from "@/lib/league";
 import { sounds } from "@/lib/sounds";
+import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -590,16 +591,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Footer Links */}
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-black text-gray-400 uppercase tracking-wider px-2">
-              <a href="#" className="hover:underline">About</a>
-              <a href="#" className="hover:underline">Blog</a>
-              <a href="#" className="hover:underline">Store</a>
-              <a href="#" className="hover:underline">Efficacy</a>
-              <a href="#" className="hover:underline">Careers</a>
-              <a href="#" className="hover:underline">Investors</a>
-              <a href="#" className="hover:underline">Terms</a>
-              <a href="#" className="hover:underline">Privacy</a>
-            </div>
+            <DuolingoFooterLinks align="left" className="px-2" />
           </div>
         </>
       )}
