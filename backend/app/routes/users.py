@@ -15,7 +15,9 @@ from ..schemas import (
     FollowActionResponse,
     SocialStatsOut,
     InviteLinkOut,
+    XPSummaryOut,
 )
+from ..services.xp_engine import get_xp_summary
 
 router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -185,6 +187,37 @@ def refill_hearts(db: Session = Depends(get_db)):
         "message": "Hearts successfully refilled to 5!"
     }
 
+@router.post("/practice-complete", response_model=HeartsActionResponse)
+def complete_practice(
+    type: str = Query("general", description="Drill type: listening, mistakes, general"),
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.id == 1).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.hearts = min(5, (user.hearts or 0) + 1)
+    base_xp = 20 if type == "listening" else 15
+    has_double_xp = bool(user.double_xp_until and user.double_xp_until > datetime.utcnow())
+    multiplier = 2 if has_double_xp else 1
+
+    award_xp(
+        db=db,
+        user=user,
+        source_type="practice",
+        base_xp=base_xp,
+        bonus_xp=0,
+        multiplier=multiplier,
+        description=f"Completed {type.capitalize()} practice drill"
+    )
+    db.commit()
+    db.refresh(user)
+    return {
+        "hearts": user.hearts,
+        "xp": user.xp,
+        "message": f"Practice complete! +{base_xp * multiplier} XP earned and 1 Heart restored ❤️"
+    }
+
 @router.post("/toggle-super", response_model=UserOut)
 def toggle_super(db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == 1).first()
@@ -212,3 +245,11 @@ def simulate_day(db: Session = Depends(get_db)):
         "streak": user.streak,
         "message": f"Day simulated successfully! New streak: {user.streak} days."
     }
+
+@router.get("/xp-summary", response_model=XPSummaryOut)
+def get_user_xp_summary(db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == 1).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_xp_summary(db, user)
+

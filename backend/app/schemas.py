@@ -17,6 +17,7 @@ class UserBase(BaseModel):
     phone: Optional[str] = None
     streak_freezes: Optional[int] = 2
     invite_code: Optional[str] = "BDHTZTB5CW77A"
+    double_xp_until: Optional[datetime] = None
 
 class UserOut(UserBase):
     id: int
@@ -67,6 +68,9 @@ class LessonCompleteRequest(BaseModel):
 class LessonCompleteResponse(BaseModel):
     success: bool
     xp_earned: int
+    base_xp: int = 10
+    bonus_xp: int = 0
+    multiplier: int = 1
     new_total_xp: int
     streak: int
     unlocked_next_lesson_id: Optional[int] = None
@@ -202,3 +206,31 @@ class AchievementOut(BaseModel):
     current_value: int
     target_value: int
     unlocked: bool
+
+# ----------------- XP Ledger Schemas -----------------
+class XPEntryOut(BaseModel):
+    id: int
+    amount: int
+    base_xp: int
+    bonus_xp: int
+    multiplier: int
+    source_type: str
+    source_id: Optional[int] = None
+    description: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class DailyXPSummary(BaseModel):
+    day: str
+    date: str
+    xp: int
+
+class XPSummaryOut(BaseModel):
+    total_xp: int
+    weekly_xp: int
+    today_xp: int
+    daily_breakdown: List[DailyXPSummary]
+    recent_transactions: List[XPEntryOut]
+

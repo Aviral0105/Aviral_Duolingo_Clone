@@ -51,6 +51,7 @@ function LessonContent() {
   const [showReviewIntro, setShowReviewIntro] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isOutOfHearts, setIsOutOfHearts] = useState(false);
+  const [completedResult, setCompletedResult] = useState<any>(null);
 
   // Exercise Inputs
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -230,7 +231,10 @@ function LessonContent() {
     }
 
     // If no missed exercises remaining, the lesson is fully complete!
-    await completeLesson(lessonId, hearts, mistakesCount);
+    const res = await completeLesson(lessonId, hearts, mistakesCount);
+    if (res) {
+      setCompletedResult(res);
+    }
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("duo_progress_updated"));
     }
@@ -239,6 +243,7 @@ function LessonContent() {
 
   const handleRestartLesson = () => {
     setIsFinished(false);
+    setCompletedResult(null);
     setCurrentIndex(0);
     setMissedExercises([]);
     setIsReviewPhase(false);
@@ -315,8 +320,8 @@ function LessonContent() {
     );
     return (
       <LessonComplete
-        xpEarned={lesson.xp_reward + 4}
-        streak={user.streak}
+        xpEarned={completedResult?.xp_earned ?? (lesson.xp_reward + 4)}
+        streak={completedResult?.streak ?? user.streak}
         accuracy={Math.max(65, accuracy)}
         onRestart={handleRestartLesson}
       />

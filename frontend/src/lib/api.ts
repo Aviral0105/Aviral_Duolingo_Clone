@@ -281,6 +281,32 @@ export async function refillHearts() {
   return { hearts: 5, xp: 265, message: "Hearts refilled!" };
 }
 
+export async function completePractice(type: "listening" | "mistakes" | "general" = "general") {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/practice-complete?type=${type}`, { method: "POST" });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
+  } catch (e) {
+    console.warn("Backend not reachable for practice complete");
+  }
+  return { hearts: 5, xp: 285, message: "Practice complete!" };
+}
+
+export async function fetchXPSummary() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/xp-summary`, { cache: "no-store" });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("Backend not reachable for xp-summary");
+  }
+  return null;
+}
+
 export async function purchaseShopItem(itemId: string) {
   try {
     const res = await fetch(`${API_BASE_URL}/api/shop/purchase`, {

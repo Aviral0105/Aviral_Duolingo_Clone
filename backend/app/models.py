@@ -20,6 +20,7 @@ class User(Base):
     is_super = Column(Boolean, default=False)
     streak_freezes = Column(Integer, default=2)
     invite_code = Column(String(50), default="BDHTZTB5CW77A")
+    double_xp_until = Column(DateTime, nullable=True)
     last_active_date = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -28,6 +29,7 @@ class User(Base):
     mistakes = relationship("UserMistake", back_populates="user", cascade="all, delete-orphan")
     settings = relationship("UserSetting", back_populates="user", uselist=False, cascade="all, delete-orphan")
     achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
+    xp_ledger = relationship("XPLedger", back_populates="user", cascade="all, delete-orphan")
 
 
 class UserFollow(Base):
@@ -202,3 +204,25 @@ class UserAchievement(Base):
     __table_args__ = (
         Index("idx_user_achievements_pair", "user_id", "achievement_id", unique=True),
     )
+
+
+class XPLedger(Base):
+    __tablename__ = "xp_ledger"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    amount = Column(Integer, nullable=False)
+    base_xp = Column(Integer, default=10)
+    bonus_xp = Column(Integer, default=0)
+    multiplier = Column(Integer, default=1)
+    source_type = Column(String(50), nullable=False)  # "lesson", "practice", "listening", "letters", "quest"
+    source_id = Column(Integer, nullable=True)
+    description = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    user = relationship("User", back_populates="xp_ledger")
+
+    __table_args__ = (
+        Index("idx_xp_ledger_user_created", "user_id", "created_at"),
+    )
+

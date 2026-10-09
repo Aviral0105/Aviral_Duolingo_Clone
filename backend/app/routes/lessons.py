@@ -10,6 +10,7 @@ from ..schemas import (
     MistakeActionRequest,
     MistakeActionResponse
 )
+from ..services.xp_engine import calculate_lesson_xp, award_xp
 
 router = APIRouter(prefix="/api/lessons", tags=["Lessons"])
 
@@ -131,9 +132,29 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
     prog.crowns = (prog.crowns or 0) + 1
     prog.completed_at = datetime.utcnow()
 
-    # Award XP
-    earned_xp = lesson.xp_reward
-    user.xp += earned_xp
+    # Check if user has an active 2x XP boost
+    has_double_xp = bool(user.double_xp_until and user.double_xp_until > datetime.utcnow())
+    active_multiplier = 2 if has_double_xp else 1
+
+    # Calculate detailed XP using production calculation engine
+    xp_calc = calculate_lesson_xp(
+        base_xp=lesson.xp_reward or 10,
+        mistakes_count=payload.mistakes_count,
+        is_review=False,
+        multiplier=active_multiplier
+    )
+
+    # Award XP and log atomic entry to XPLedger
+    award_xp(
+        db=db,
+        user=user,
+        source_type="lesson",
+        base_xp=xp_calc["base_xp"],
+        bonus_xp=xp_calc["bonus_xp"],
+        multiplier=xp_calc["multiplier"],
+        source_id=lesson.id,
+        description=f"Completed '{lesson.title}' (Mistakes: {payload.mistakes_count})"
+    )
 
     # If first completion of the day, ensure streak is active
     if is_first_completion and user.streak == 0:
@@ -166,9 +187,12 @@ def complete_lesson(lesson_id: int, payload: LessonCompleteRequest, db: Session 
 
     return {
         "success": True,
-        "xp_earned": earned_xp,
+        "xp_earned": xp_calc["total_xp"],
+        "base_xp": xp_calc["base_xp"],
+        "bonus_xp": xp_calc["bonus_xp"],
+        "multiplier": xp_calc["multiplier"],
         "new_total_xp": user.xp,
         "streak": user.streak,
         "unlocked_next_lesson_id": next_lesson_id,
-        "message": f"Congratulations! You completed '{lesson.title}' and earned {earned_xp} XP!"
+        "message": f"Congratulations! You completed '{lesson.title}' and earned {xp_calc['total_xp']} XP!"
     }

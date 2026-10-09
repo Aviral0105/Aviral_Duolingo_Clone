@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { refillHearts } from "@/lib/api";
+import { completePractice } from "@/lib/api";
 import { sounds } from "@/lib/sounds";
 import RightPanel from "@/components/navigation/RightPanel";
 import { RefreshCw, Volume2, BookOpen, Sparkles, X, Check } from "lucide-react";
@@ -12,15 +12,15 @@ export default function PracticePage() {
 
   const handleRefillMistakes = async () => {
     sounds.playCorrect();
-    await refillHearts();
-    setRefillStatus("✨ Practice Complete! +15 XP earned and 1 Heart refilled ❤️");
+    const res = await completePractice("mistakes");
+    setRefillStatus(`✨ Practice Complete! +${res?.message ? "15" : "15"} XP earned and 1 Heart refilled ❤️`);
     setTimeout(() => setRefillStatus(null), 4000);
   };
 
   const handleListenPractice = async () => {
     sounds.playVictory();
-    await refillHearts();
-    setRefillStatus("🎧 Listening drill complete! +20 XP earned");
+    const res = await completePractice("listening");
+    setRefillStatus("🎧 Listening drill complete! +20 XP earned and 1 Heart refilled ❤️");
     setTimeout(() => setRefillStatus(null), 4000);
   };
 

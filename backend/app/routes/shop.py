@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -51,6 +52,7 @@ def purchase_item(payload: PurchaseRequest, db: Session = Depends(get_db)):
         user.streak_freezes = min(2, (user.streak_freezes or 0) + 1)
         msg = f"Streak Freeze equipped! ({user.streak_freezes}/2 EQUIPPED)"
     elif item_id == "double_xp":
+        user.double_xp_until = datetime.utcnow() + timedelta(minutes=15)
         msg = "2x XP Boost activated for 15 minutes!"
     elif item_id == "super_trial":
         user.is_super = True

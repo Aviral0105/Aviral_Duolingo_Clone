@@ -1,6 +1,6 @@
 from datetime import datetime
 from .database import SessionLocal, engine, Base
-from .models import User, Course, Unit, Lesson, Exercise, UserProgress, UserMistake, UserSetting, Achievement, UserFollow, SupportTicket
+from .models import User, Course, Unit, Lesson, Exercise, UserProgress, UserMistake, UserSetting, Achievement, UserFollow, SupportTicket, XPLedger
 
 def _ensure_supplementary_data(db):
     # Fellow learners for search & follow
@@ -40,6 +40,15 @@ def _ensure_supplementary_data(db):
         ]
         for ach in default_achievements:
             db.add(Achievement(**ach))
+
+    # Ensure sample learner has initial ledger entries corresponding to their XP
+    user1 = db.query(User).filter(User.id == 1).first()
+    if user1 and db.query(XPLedger).filter(XPLedger.user_id == user1.id).count() == 0:
+        db.add_all([
+            XPLedger(user_id=1, amount=100, base_xp=100, bonus_xp=0, multiplier=1, source_type="welcome", description="Welcome to Duolingo bonus"),
+            XPLedger(user_id=1, amount=15, base_xp=10, bonus_xp=5, multiplier=1, source_type="lesson", source_id=1, description="Completed Basics 1 (Perfect 100%)"),
+            XPLedger(user_id=1, amount=150, base_xp=150, bonus_xp=0, multiplier=1, source_type="milestone", description="Section 1 Foundation Milestone")
+        ])
     db.commit()
 
 def seed_database(force: bool = False):
@@ -51,9 +60,9 @@ def seed_database(force: bool = False):
         Base.metadata.drop_all(bind=engine)
         Base.metadata.create_all(bind=engine)
     elif db.query(Course).first():
-        # Check if full database is already seeded (e.g. >= 80 exercises)
+        # Check if full database is already seeded (>= 70 exercises)
         total_exercises = db.query(Exercise).count()
-        if total_exercises >= 80 and db.query(UserSetting).first():
+        if total_exercises >= 70 and db.query(UserSetting).first():
             _ensure_supplementary_data(db)
             db.close()
             return
