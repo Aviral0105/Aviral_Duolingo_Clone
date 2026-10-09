@@ -7,6 +7,7 @@ import { fetchLeaderboard, setLeaderboardStatus, switchLeague, fetchUser } from 
 import { LeaderboardResponse, User } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
 import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
+import TopStatsBar from "@/components/navigation/TopStatsBar";
 
 const EMOJI_OPTIONS = [
   // Row 1
@@ -260,7 +261,10 @@ export default function LeaderboardPage() {
       {/* ======================================================== */}
       {/* RIGHT COLUMN: "SET YOUR STATUS" WIDGET (Matching 1:1)    */}
       {/* ======================================================== */}
-      <div className="w-full lg:w-80 shrink-0 space-y-6">
+      <div className="w-full lg:w-80 shrink-0 space-y-4">
+        {/* Top Stats Bar: Course Flag, Streak, Gems, Hearts (Desktop Right Column) */}
+        <TopStatsBar user={currentUser} />
+
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
           {/* Header with Title and dynamic CLEAR button */}
           <div className="flex items-center justify-between mb-4">

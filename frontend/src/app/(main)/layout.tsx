@@ -65,16 +65,19 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       {/* Main Column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar
-          user={user}
-          onOpenCourse={() => setIsCourseOpen(true)}
-          onOpenStreak={(tab = "personal") => {
-            setStreakTab(tab);
-            setIsStreakOpen(true);
-          }}
-          onOpenShop={() => setIsShopOpen(true)}
-          onOpenEnergy={() => setIsEnergyOpen(true)}
-        />
+        {/* Mobile-only Topbar header */}
+        <div className="md:hidden">
+          <Topbar
+            user={user}
+            onOpenCourse={() => setIsCourseOpen(true)}
+            onOpenStreak={(tab = "personal") => {
+              setStreakTab(tab);
+              setIsStreakOpen(true);
+            }}
+            onOpenShop={() => setIsShopOpen(true)}
+            onOpenEnergy={() => setIsEnergyOpen(true)}
+          />
+        </div>
 
         <main className="flex-1 pb-20 md:pb-8 flex justify-center">
           <div className="w-full max-w-5xl px-4 py-6">{children}</div>

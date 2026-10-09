@@ -6,6 +6,7 @@ import { Zap, Clock, X, Gift, Users, Shuffle } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { fetchUser, fetchXPSummary } from "@/lib/api";
 import { User } from "@/lib/types";
+import TopStatsBar from "@/components/navigation/TopStatsBar";
 
 interface Quest {
   id: string;
@@ -310,7 +311,10 @@ export default function QuestsPage() {
       </div>
 
       {/* RIGHT COLUMN */}
-      <div className="w-full lg:w-80 flex flex-col gap-6">
+      <div className="w-full lg:w-80 flex flex-col gap-4">
+        {/* Top Stats Bar: Course Flag, Streak, Gems, Hearts (Desktop Right Column) */}
+        <TopStatsBar user={user} />
+
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs text-center">
           <span className="text-5xl block mb-2">🏆</span>
           <h3 className="text-base font-black text-gray-800">Monthly challenges unlock soon!</h3>

@@ -7,6 +7,7 @@ import { ChevronRight, X, Sparkles, Heart, Zap, Info } from "lucide-react";
 import { fetchUser, purchaseShopItem, refillHearts } from "@/lib/api";
 import { User } from "@/lib/types";
 import { getLeagueConfig } from "@/lib/league";
+import TopStatsBar from "@/components/navigation/TopStatsBar";
 
 export default function ShopPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -291,7 +292,10 @@ export default function ShopPage() {
       {/* ======================================================== */}
       {/* RIGHT-HAND COLUMN: STATS, BRONZE LEAGUE, DAILY QUESTS, AD */}
       {/* ======================================================== */}
-      <div className="w-full lg:w-80 shrink-0 space-y-5">
+      <div className="w-full lg:w-80 shrink-0 space-y-4">
+        {/* Top Stats Bar: Course Flag, Streak, Gems, Hearts (Desktop Right Column) */}
+        <TopStatsBar user={user} />
+
         {/* 1. Dynamic League Card (Forwards to /leaderboard) */}
         {(() => {
           const leagueCfg = getLeagueConfig(user?.current_league || "Gold League");

@@ -7,6 +7,7 @@ import { fetchUser, fetchXPSummary, fetchLeaderboard } from "@/lib/api";
 import { User, LeaderboardResponse } from "@/lib/types";
 import { getLeagueConfig } from "@/lib/league";
 import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
+import TopStatsBar from "./TopStatsBar";
 
 export default function RightPanel() {
   const [user, setUser] = useState<User | null>(null);
@@ -43,7 +44,10 @@ export default function RightPanel() {
   const leagueCfg = getLeagueConfig(user?.current_league || leaderboard?.league_name || "Gold League");
 
   return (
-    <div className="w-full lg:w-80 shrink-0 space-y-5 select-none">
+    <div className="w-full lg:w-80 shrink-0 space-y-4 select-none">
+      {/* Top Stats Bar: Course Flag, Streak, Gems, Hearts (Desktop Right Column) */}
+      <TopStatsBar user={user} />
+
       {/* Super Duolingo Promo Card */}
       <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xs">
         <div className="flex items-center gap-2 mb-2">

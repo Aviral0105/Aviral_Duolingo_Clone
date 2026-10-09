@@ -34,6 +34,7 @@ import { User, AchievementItem, SocialStats, UserFriend } from "@/lib/types";
 import { getLeagueConfig } from "@/lib/league";
 import { sounds } from "@/lib/sounds";
 import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
+import TopStatsBar from "@/components/navigation/TopStatsBar";
 
 const AVATAR_OPTIONS = [
   "🧑", "🧑🏽‍💻", "👩🏽", "🧑🏾‍🦱", "👦🏻", "👩🏼", "🦉", "🦊",
@@ -359,7 +360,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Right Column in Search View */}
-          <div className="w-full lg:w-80 shrink-0 space-y-5">
+          <div className="w-full lg:w-80 shrink-0 space-y-4">
+            <TopStatsBar user={user} />
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
               <h3 className="text-base font-black text-gray-800 mb-3">Other ways to connect</h3>
               <div
@@ -595,7 +597,10 @@ export default function ProfilePage() {
           {/* ======================================================== */}
           {/* RIGHT-HAND COLUMN: SOCIAL & FRIENDS HUB                  */}
           {/* ======================================================== */}
-          <div className="w-full lg:w-80 shrink-0 space-y-5">
+          <div className="w-full lg:w-80 shrink-0 space-y-4">
+            {/* Top Stats Bar: Course Flag, Streak, Gems, Hearts (Desktop Right Column) */}
+            <TopStatsBar user={user} />
+
             {/* Social Hub Card (FOLLOWING / FOLLOWERS Tabs) */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl overflow-hidden shadow-xs">
               <div className="grid grid-cols-2 border-b-2 border-gray-100">
