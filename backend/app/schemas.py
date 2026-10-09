@@ -111,17 +111,44 @@ class PathResponse(BaseModel):
     units: List[UnitOut]
 
 # ----------------- Leaderboard Schemas -----------------
+class LeagueOut(BaseModel):
+    id: int
+    name: str
+    tier: int
+    icon: str
+    color: str
+    promotion_threshold: int
+    demotion_threshold: int
+    description: str
+
+    class Config:
+        from_attributes = True
+
 class LeaderboardEntry(BaseModel):
     rank: int
     username: str
     avatar: str
     xp: int
     is_current_user: bool
+    status_emoji: Optional[str] = None
 
 class LeaderboardResponse(BaseModel):
     league_name: str
-    time_remaining: str
+    tier: int = 1
+    time_remaining: str = "2 DAYS"
+    promotion_threshold: int = 11
+    demotion_threshold: int = 0
+    user_status_emoji: Optional[str] = None
+    all_leagues: List[LeagueOut] = []
     entries: List[LeaderboardEntry]
+
+class StatusUpdateRequest(BaseModel):
+    status_emoji: Optional[str] = None
+
+class StatusUpdateResponse(BaseModel):
+    success: bool
+    status_emoji: Optional[str] = None
+    message: str
 
 # ----------------- User Mistakes & Settings Schemas -----------------
 class UserMistakeCreate(BaseModel):

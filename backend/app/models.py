@@ -23,6 +23,8 @@ class User(Base):
     double_xp_until = Column(DateTime, nullable=True)
     hearts_updated_at = Column(DateTime, default=datetime.utcnow)
     last_active_date = Column(DateTime, default=datetime.utcnow)
+    current_league = Column(String(50), default="Bronze League")
+    status_emoji = Column(String(20), nullable=True, default=None)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -226,4 +228,18 @@ class XPLedger(Base):
     __table_args__ = (
         Index("idx_xp_ledger_user_created", "user_id", "created_at"),
     )
+
+
+class League(Base):
+    __tablename__ = "leagues"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, index=True)
+    tier = Column(Integer, unique=True, index=True)
+    icon = Column(String(20), default="🪶")
+    color = Column(String(50), default="#b47748")
+    promotion_threshold = Column(Integer, default=11)
+    demotion_threshold = Column(Integer, default=0)
+    description = Column(String(255), default="Top 11 advance to the next league")
+
 

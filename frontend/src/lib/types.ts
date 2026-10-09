@@ -63,17 +63,34 @@ export interface PathResponse {
   units: Unit[];
 }
 
+export interface LeagueInfo {
+  id: number;
+  name: string;
+  tier: number;
+  icon: string;
+  color: string;
+  promotion_threshold: number;
+  demotion_threshold: number;
+  description: string;
+}
+
 export interface LeaderboardEntry {
   rank: number;
   username: string;
   avatar: string;
   xp: number;
   is_current_user: boolean;
+  status_emoji?: string | null;
 }
 
 export interface LeaderboardResponse {
   league_name: string;
+  tier?: number;
   time_remaining: string;
+  promotion_threshold?: number;
+  demotion_threshold?: number;
+  user_status_emoji?: string | null;
+  all_leagues?: LeagueInfo[];
   entries: LeaderboardEntry[];
 }
 

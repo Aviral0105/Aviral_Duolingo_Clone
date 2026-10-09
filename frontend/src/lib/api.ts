@@ -360,9 +360,10 @@ export async function updateUserSettings(settings: Record<string, any>) {
 }
 
 
-export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
+export async function fetchLeaderboard(tier?: number): Promise<LeaderboardResponse> {
+  const url = tier ? `${API_BASE_URL}/api/leaderboard?tier=${tier}` : `${API_BASE_URL}/api/leaderboard`;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/leaderboard`, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store" });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn("Backend not reachable, using local leaderboard fallback");
@@ -370,31 +371,105 @@ export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
 
   let userXp = 265;
   let userName = "Aviral Jain";
+  let userStatus: string | null = null;
   try {
     const u = await fetchUser();
     if (u?.xp !== undefined) userXp = u.xp;
     if (u?.username) userName = u.username;
+    if (typeof window !== "undefined") {
+      userStatus = localStorage.getItem("duo_user_status") || null;
+    }
   } catch {}
 
   const seeded = [
-    { username: "Nitheesh Kumar B", avatar: "🧑🏾‍🦱", xp: 45, is_current_user: false },
-    { username: userName, avatar: "🧑", xp: userXp, is_current_user: true },
-    { username: "Seyit Musevi", avatar: "👦🏻", xp: 10, is_current_user: false },
-    { username: "Priyanka M.", avatar: "👩🏽", xp: 8, is_current_user: false },
-    { username: "Lucas Dupont", avatar: "🧑🏼", xp: 5, is_current_user: false },
+    { username: "Maya Patel", avatar: "👩🏽", xp: 120, status_emoji: null },
+    { username: "Carlos Silva", avatar: "👨🏽", xp: 95, status_emoji: "🔥" },
+    { username: "Liam O'Connor", avatar: "🧑🏼", xp: 82, status_emoji: null },
+    { username: "Elena Rostova", avatar: "👱🏻‍♀️", xp: 74, status_emoji: "✨" },
+    { username: "Kenji Sato", avatar: "👨🏻", xp: 68, status_emoji: null },
+    { username: "Fatima Al-Zahra", avatar: "🧕🏽", xp: 59, status_emoji: "🇮🇳" },
+    { username: "Arjun Sharma", avatar: "🧑🏾", xp: 55, status_emoji: null },
+    { username: "Chloe Dubois", avatar: "👩🏼", xp: 50, status_emoji: null },
+    { username: userName, avatar: "🧑", xp: userXp, status_emoji: userStatus, is_current_user: true },
+    { username: "Molik", avatar: "🕶️", xp: 41, status_emoji: "💪" },
+    { username: "SHAUN ALLEN", avatar: "👨🏼", xp: 40, status_emoji: null },
+    { username: "Thrive", avatar: "🧢", xp: 29, status_emoji: null },
+    { username: "nguyễn đức trường", avatar: "🧑🏻", xp: 27, status_emoji: null },
+    { username: "Seyit Musevi", avatar: "👦🏻", xp: 20, status_emoji: null },
+    { username: "Quang Quy Hà", avatar: "🐻", xp: 13, status_emoji: null },
   ].sort((a, b) => b.xp - a.xp);
 
   return {
-    league_name: userXp >= 300 ? "Silver League" : "Bronze League",
+    league_name: "Bronze League",
+    tier: 1,
     time_remaining: "2 DAYS",
+    promotion_threshold: 11,
+    demotion_threshold: 0,
+    user_status_emoji: userStatus,
+    all_leagues: [
+      { id: 1, name: "Bronze League", tier: 1, icon: "🪶", color: "#b47748", promotion_threshold: 11, demotion_threshold: 0, description: "Top 11 advance to the next league" },
+      { id: 2, name: "Silver League", tier: 2, icon: "🥈", color: "#a8a8a8", promotion_threshold: 11, demotion_threshold: 5, description: "Top 11 advance to the Gold League" },
+      { id: 3, name: "Gold League", tier: 3, icon: "🥇", color: "#ffc800", promotion_threshold: 11, demotion_threshold: 5, description: "Top 11 advance to the Sapphire League" },
+      { id: 4, name: "Sapphire League", tier: 4, icon: "💎", color: "#1cb0f6", promotion_threshold: 11, demotion_threshold: 5, description: "Top 11 advance to the Ruby League" },
+      { id: 5, name: "Ruby League", tier: 5, icon: "🔴", color: "#ff4b4b", promotion_threshold: 11, demotion_threshold: 5, description: "Top 11 advance to the Diamond League" },
+    ],
     entries: seeded.map((item, idx) => ({
       rank: idx + 1,
       username: item.username,
       avatar: item.avatar,
       xp: item.xp,
-      is_current_user: item.is_current_user,
+      is_current_user: (item as any).is_current_user || false,
+      status_emoji: item.status_emoji,
     })),
   };
+}
+
+export async function setLeaderboardStatus(emoji: string | null) {
+  if (typeof window !== "undefined") {
+    if (emoji) {
+      localStorage.setItem("duo_user_status", emoji);
+    } else {
+      localStorage.removeItem("duo_user_status");
+    }
+  }
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/leaderboard/status`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status_emoji: emoji }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
+  } catch (e) {
+    console.warn("Backend not reachable for status update, using local status");
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("duo_progress_updated"));
+  }
+  return { success: true, status_emoji: emoji, message: emoji ? `Status set to ${emoji}` : "Status cleared" };
+}
+
+export async function switchLeague(tier: number) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/leaderboard/switch-league?tier=${tier}`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
+  } catch (e) {
+    console.warn("Backend not reachable for switch-league");
+  }
+  return { success: true, tier, message: "Switched league!" };
 }
 
 export async function submitSupportFeedback(data: { name: string; email: string; category: string; message: string }) {
