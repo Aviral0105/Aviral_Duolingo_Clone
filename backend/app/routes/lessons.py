@@ -48,11 +48,45 @@ def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
             "correct_answer": ex.correct_answer
         })
 
+    # Select exactly 4 balanced, diverse exercises for this lesson button session:
+    # 1. Multiple Choice / Vocabulary
+    # 2. Word Bank Translation
+    # 3. Listening (Tap what you hear)
+    # 4. Interactive (Match Pairs / Fill Blank / Type Answer)
+    mc_cands = [e for e in exercise_items if e["type"] == "MULTIPLE_CHOICE"]
+    wb_cands = [e for e in exercise_items if e["type"] == "WORD_BANK" and "LISTEN" not in (e["category_tag"] or "")]
+    listen_cands = [e for e in exercise_items if "LISTEN" in (e["category_tag"] or "") or "hear" in (e["prompt"] or "").lower()]
+    other_cands = [e for e in exercise_items if e["type"] in ("MATCH_PAIRS", "FILL_BLANK", "TYPE_ANSWER")]
+
+    selected = []
+    if mc_cands:
+        selected.append(mc_cands[0])
+    if wb_cands:
+        selected.append(wb_cands[0])
+    if listen_cands:
+        selected.append(listen_cands[0])
+    if other_cands:
+        selected.append(other_cands[0])
+
+    # Fill up to 4 if any category was missing
+    if len(selected) < 4:
+        used_ids = {e["id"] for e in selected}
+        for e in exercise_items:
+            if e["id"] not in used_ids:
+                selected.append(e)
+                used_ids.add(e["id"])
+                if len(selected) >= 4:
+                    break
+
+    final_exercises = selected[:4] if len(selected) >= 4 else exercise_items[:4]
+    for idx, e in enumerate(final_exercises, start=1):
+        e["order_index"] = idx
+
     return {
         "id": lesson.id,
         "title": lesson.title,
         "xp_reward": lesson.xp_reward,
-        "exercises": exercise_items
+        "exercises": final_exercises
     }
 
 @router.post("/{lesson_id}/record-mistake", response_model=MistakeActionResponse)

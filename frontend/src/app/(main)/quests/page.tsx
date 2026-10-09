@@ -2,17 +2,28 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Lock, Zap, Clock, Sparkles, X, Gift, Users } from "lucide-react";
+import { Zap, Clock, X, Gift, Users, Shuffle } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { fetchUser, fetchXPSummary } from "@/lib/api";
 import { User } from "@/lib/types";
 
+interface Quest {
+  id: string;
+  title: string;
+  icon: string;
+  iconBg: string;
+  current: number;
+  target: number;
+  gemReward: number;
+}
+
 export default function QuestsPage() {
   const [activeTab, setActiveTab] = useState<"quests" | "badges">("quests");
-  const [questClaimed, setQuestClaimed] = useState(false);
-  const [showChestModal, setShowChestModal] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [xpSummary, setXpSummary] = useState<any>(null);
+  const [activeQuests, setActiveQuests] = useState<Quest[]>([]);
+  const [claimedQuestIds, setClaimedQuestIds] = useState<Set<string>>(new Set());
+  const [selectedChestQuest, setSelectedChestQuest] = useState<Quest | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -30,14 +41,86 @@ export default function QuestsPage() {
 
   const dailyGoal = user?.daily_goal_xp ?? 10;
   const todayXp = xpSummary?.today_xp ?? Math.min(user?.xp ?? 0, 10);
-  const questProgress = Math.min(dailyGoal, todayXp);
-  const questPct = Math.min(100, Math.round((questProgress / dailyGoal) * 100));
-  const isCompleted = questProgress >= dailyGoal;
 
-  const handleClaimReward = () => {
+  // Pool of 6 Authentic Duolingo Quests
+  const getQuestPool = useCallback((): Quest[] => {
+    return [
+      {
+        id: "earn_xp",
+        title: `Earn ${dailyGoal} XP`,
+        icon: "⚡",
+        iconBg: "bg-amber-50",
+        current: Math.min(dailyGoal, todayXp),
+        target: dailyGoal,
+        gemReward: 10,
+      },
+      {
+        id: "listening",
+        title: "Complete 2 listening exercises",
+        icon: "🎧",
+        iconBg: "bg-sky-50",
+        current: Math.min(2, (user?.xp ?? 0) >= 15 ? 2 : 1),
+        target: 2,
+        gemReward: 10,
+      },
+      {
+        id: "combo",
+        title: "Get 5 in a row in a lesson",
+        icon: "🔥",
+        iconBg: "bg-orange-50",
+        current: Math.min(5, (user?.streak ?? 0) > 0 ? 5 : 3),
+        target: 5,
+        gemReward: 10,
+      },
+      {
+        id: "accuracy",
+        title: "Score 90% or higher in 2 lessons",
+        icon: "🎯",
+        iconBg: "bg-emerald-50",
+        current: Math.min(2, (user?.xp ?? 0) >= 20 ? 2 : 1),
+        target: 2,
+        gemReward: 15,
+      },
+      {
+        id: "study_time",
+        title: "Spend 10 minutes learning",
+        icon: "⏱️",
+        iconBg: "bg-purple-50",
+        current: Math.min(10, Math.max(5, Math.round((user?.xp ?? 0) / 10))),
+        target: 10,
+        gemReward: 10,
+      },
+      {
+        id: "perfect_lesson",
+        title: "Complete 1 lesson with no mistakes",
+        icon: "🛡️",
+        iconBg: "bg-indigo-50",
+        current: (user?.xp ?? 0) >= 15 ? 1 : 0,
+        target: 1,
+        gemReward: 20,
+      },
+    ];
+  }, [dailyGoal, todayXp, user]);
+
+  // Pick 3 random quests from the 6-quest pool on mount or shuffle
+  const shuffleQuests = useCallback(() => {
+    sounds.playTap();
+    const pool = getQuestPool();
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    setActiveQuests(shuffled.slice(0, 3));
+  }, [getQuestPool]);
+
+  useEffect(() => {
+    const pool = getQuestPool();
+    // Deterministic random seed per visit to guarantee fresh set of 3 quests
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    setActiveQuests(shuffled.slice(0, 3));
+  }, [getQuestPool]);
+
+  const handleClaimReward = (quest: Quest) => {
     sounds.playVictory();
-    setQuestClaimed(true);
-    setShowChestModal(false);
+    setClaimedQuestIds((prev) => new Set(prev).add(quest.id));
+    setSelectedChestQuest(null);
   };
 
   return (
@@ -83,55 +166,87 @@ export default function QuestsPage() {
               </div>
             </div>
 
-            {/* Daily Quests Header */}
+            {/* Daily Quests Header with Shuffle Action */}
             <div className="flex items-center justify-between pt-2">
               <h2 className="text-xl font-black text-gray-800">Daily Quests</h2>
-              <div className="flex items-center gap-1.5 text-xs font-black text-[#ff9600]">
-                <Clock className="w-4 h-4 stroke-[2.5]" />
-                <span>2 HOURS</span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={shuffleQuests}
+                  className="flex items-center gap-1.5 text-xs font-black text-[#1cb0f6] hover:underline transition active:scale-95"
+                  title="Randomize daily quests"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                  <span>Randomize</span>
+                </button>
+                <div className="flex items-center gap-1.5 text-xs font-black text-[#ff9600]">
+                  <Clock className="w-4 h-4 stroke-[2.5]" />
+                  <span>2 HOURS</span>
+                </div>
               </div>
             </div>
 
-            {/* Quest 1: Active Completed Quest (Earn XP) */}
-            <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
-                <Zap className="w-7 h-7 text-[#ffc800] fill-[#ffc800]" />
-              </div>
+            {/* Quests List: Dynamic from 6 authentic examples */}
+            <div className="space-y-3">
+              {activeQuests.map((quest) => {
+                const pct = Math.min(100, Math.round((quest.current / quest.target) * 100));
+                const isCompleted = quest.current >= quest.target;
+                const isClaimed = claimedQuestIds.has(quest.id);
 
-              <div className="flex-1 min-w-0">
-                <h3 className="font-black text-base text-gray-800 mb-2">Earn {dailyGoal} XP</h3>
-                <div className="relative w-full bg-gray-200 h-6 rounded-full overflow-hidden flex items-center">
+                return (
                   <div
-                    className="bg-[#ffc800] h-full rounded-full transition-all flex items-center justify-center font-black text-xs text-amber-900"
-                    style={{ width: `${Math.max(12, questPct)}%` }}
+                    key={quest.id}
+                    className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs flex items-center gap-4 hover:border-gray-300 transition"
                   >
-                    {questProgress} / {dailyGoal}
-                  </div>
-                </div>
-              </div>
+                    <div
+                      className={`w-12 h-12 rounded-2xl ${quest.iconBg} border border-gray-100 flex items-center justify-center shrink-0 text-2xl`}
+                    >
+                      {quest.icon}
+                    </div>
 
-              {/* Clickable Treasure Chest */}
-              <button
-                onClick={() => {
-                  if (isCompleted && !questClaimed) setShowChestModal(true);
-                }}
-                className={`text-4xl shrink-0 p-2 rounded-2xl transition active:scale-90 ${
-                  questClaimed
-                    ? "opacity-50 cursor-default"
-                    : isCompleted
-                    ? "animate-pulse hover:scale-110 cursor-pointer"
-                    : "opacity-40 cursor-not-allowed"
-                }`}
-                title={
-                  questClaimed
-                    ? "Reward claimed"
-                    : isCompleted
-                    ? "Click to claim reward!"
-                    : "Complete quest to unlock reward"
-                }
-              >
-                {questClaimed ? "🪙" : "🎁"}
-              </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <h3 className="font-black text-base text-gray-800 truncate">
+                          {quest.title}
+                        </h3>
+                        <span className="text-xs font-bold text-gray-400 shrink-0 ml-2">
+                          {quest.current} / {quest.target}
+                        </span>
+                      </div>
+                      <div className="relative w-full bg-gray-200 h-5 rounded-full overflow-hidden flex items-center">
+                        <div
+                          className="bg-[#ffc800] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(6, pct)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Clickable Treasure Chest */}
+                    <button
+                      onClick={() => {
+                        if (isCompleted && !isClaimed) {
+                          setSelectedChestQuest(quest);
+                        }
+                      }}
+                      className={`text-4xl shrink-0 p-2 rounded-2xl transition active:scale-90 ${
+                        isClaimed
+                          ? "opacity-50 cursor-default"
+                          : isCompleted
+                          ? "animate-pulse hover:scale-110 cursor-pointer"
+                          : "opacity-40 cursor-not-allowed"
+                      }`}
+                      title={
+                        isClaimed
+                          ? "Reward claimed"
+                          : isCompleted
+                          ? "Click to claim reward!"
+                          : "Complete quest to unlock reward"
+                      }
+                    >
+                      {isClaimed ? "🪙" : "🎁"}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Friends Quest Section */}
@@ -206,26 +321,32 @@ export default function QuestsPage() {
       </div>
 
       {/* Chest Opening Claim Modal */}
-      {showChestModal && (
+      {selectedChestQuest && (
         <div
-          onClick={() => setShowChestModal(false)}
+          onClick={() => setSelectedChestQuest(null)}
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
             className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border-2 border-gray-200 text-center relative animate-scale-up"
           >
+            <button
+              onClick={() => setSelectedChestQuest(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <span className="text-7xl block mb-3 animate-bounce">🎁✨</span>
             <h2 className="text-2xl font-black text-gray-800 mb-1">Quest Completed!</h2>
             <p className="text-xs font-bold text-gray-500 mb-6">
-              You earned 10 XP today! Here is your reward:
+              You completed &quot;{selectedChestQuest.title}&quot;! Here is your reward:
             </p>
             <div className="p-4 bg-amber-50 rounded-2xl border-2 border-amber-300 font-black text-lg text-amber-900 mb-6 flex items-center justify-center gap-2">
               <span>💎</span>
-              <span>+10 Gems</span>
+              <span>+{selectedChestQuest.gemReward} Gems</span>
             </div>
             <button
-              onClick={handleClaimReward}
+              onClick={() => handleClaimReward(selectedChestQuest)}
               className="w-full py-3.5 rounded-2xl bg-[#58cc02] border-b-4 border-[#46a302] text-white font-black text-sm uppercase tracking-wider btn-3d-green"
             >
               Claim Reward

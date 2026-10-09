@@ -58,12 +58,17 @@ export default function MultipleChoice({
 
   const hasIcons = normalizedOptions.some((o) => Boolean(o.icon));
 
+  const isListening =
+    (categoryTag || "").toUpperCase().includes("LISTEN") ||
+    (prompt || "").toLowerCase().includes("hear") ||
+    (prompt || "").toLowerCase().includes("listen");
+
   return (
     <div className="flex flex-col flex-1 max-w-xl mx-auto w-full select-none justify-center">
       {/* Category Tag */}
       <div className="flex items-center gap-1.5 text-purple-600 font-black text-xs uppercase tracking-wider mb-2">
-        <span>🃏</span>
-        <span>{categoryTag}</span>
+        <span>{isListening ? "🎧" : "🃏"}</span>
+        <span>{isListening ? "TAP WHAT YOU HEAR" : categoryTag}</span>
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-black text-gray-800 mb-4">{prompt}</h2>
@@ -73,21 +78,24 @@ export default function MultipleChoice({
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => sounds.speak(audioText, 0.9)}
-            className="w-12 h-12 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center hover:opacity-90 active:scale-95 transition shadow-sm btn-3d-blue"
+            className="w-14 h-14 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center hover:opacity-90 active:scale-95 transition shadow-sm btn-3d-blue"
+            title="Listen to audio"
           >
-            <Volume2 className="w-6 h-6" />
+            <Volume2 className="w-7 h-7" />
           </button>
-          <span
-            onClick={() => sounds.speak(audioText, 0.9)}
-            className="text-xl font-black text-gray-800 border-b-2 border-dotted border-gray-400 cursor-pointer hover:text-purple-600"
-          >
-            {audioText}
-          </span>
+          {!isListening && (
+            <span
+              onClick={() => sounds.speak(audioText, 0.9)}
+              className="text-xl font-black text-gray-800 border-b-2 border-dotted border-gray-400 cursor-pointer hover:text-purple-600"
+            >
+              {audioText}
+            </span>
+          )}
         </div>
       )}
 
       {/* Vikram Character with Speech Bubble (matching Duolingo Frame 50s/52s) */}
-      {speechBubbleText && (
+      {speechBubbleText && !isListening && (
         <div className="flex items-center gap-4 mb-6 mt-2">
           {/* Vikram SVG Avatar */}
           <div className="w-20 h-24 shrink-0 drop-shadow-sm">

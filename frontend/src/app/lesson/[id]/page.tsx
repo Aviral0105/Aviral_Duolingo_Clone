@@ -119,6 +119,13 @@ function LessonContent() {
       }
       setAvailableWords(pool);
     }
+
+    if (ex.category_tag === "LISTEN" || ex.prompt?.toLowerCase().includes("hear") || ex.prompt?.toLowerCase().includes("listen")) {
+      const audioToPlay = ex.audio_text || ex.content?.sentence_to_translate || ex.correct_answer;
+      if (audioToPlay) {
+        setTimeout(() => sounds.speak(audioToPlay, 0.9), 250);
+      }
+    }
   };
 
   const currentExercise = exerciseQueue[currentIndex] || exerciseQueue[0] || null;

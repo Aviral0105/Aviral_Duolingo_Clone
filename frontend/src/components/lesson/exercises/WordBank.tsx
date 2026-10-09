@@ -32,40 +32,71 @@ export default function WordBank({
   const [useKeyboard, setUseKeyboard] = useState(false);
 
 
+  const isListening =
+    categoryTag.toUpperCase().includes("LISTEN") ||
+    prompt.toLowerCase().includes("hear") ||
+    prompt.toLowerCase().includes("listen");
+
   return (
     <div className="flex flex-col h-full select-none max-w-xl mx-auto w-full">
       {/* Category Tag */}
       <span className="text-[11px] font-black uppercase tracking-wider text-purple-600 mb-1">
-        ✨ {categoryTag}
+        {isListening ? "🎧 TAP WHAT YOU HEAR" : `✨ ${categoryTag}`}
       </span>
 
       {/* Prompt */}
       <h2 className="text-xl sm:text-2xl font-black text-gray-800 mb-4">{prompt}</h2>
 
-      {/* Sentence with Speakers */}
-      <div className="flex items-center gap-3 my-2">
-        {audioText && (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => sounds.speak(audioText, 0.9)}
-              className="w-12 h-12 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md hover:brightness-105 transition btn-3d-blue"
-              title="Normal Speed"
-            >
-              <Volume2 className="w-6 h-6" />
-            </button>
-            <button
-              type="button"
-              onClick={() => sounds.speak(audioText, 0.5)}
-              className="w-11 h-11 rounded-2xl bg-[#e5f6fd] text-[#1cb0f6] border-2 border-[#84d8ff] flex items-center justify-center shrink-0 active:scale-95 hover:bg-[#d0effc] transition"
-              title="Slow Speed (Snail)"
-            >
-              <Snail className="w-6 h-6 stroke-[2.2]" />
-            </button>
+      {/* Audio Player / Sentence Display */}
+      {isListening ? (
+        /* Authentic Duolingo Listening Mode: AUDIO ONLY, ZERO TEXT */
+        <div className="flex items-center gap-4 my-4 p-4 bg-sky-50/60 rounded-3xl border-2 border-sky-100">
+          <button
+            type="button"
+            onClick={() => sounds.speak(audioText || sentenceToTranslate, 0.9)}
+            className="w-16 h-16 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md hover:brightness-105 transition btn-3d-blue group"
+            title="Listen at normal speed"
+          >
+            <Volume2 className="w-8 h-8 group-hover:scale-110 transition" />
+          </button>
+          <button
+            type="button"
+            onClick={() => sounds.speak(audioText || sentenceToTranslate, 0.5)}
+            className="w-12 h-12 rounded-2xl bg-white text-[#1cb0f6] border-2 border-[#84d8ff] flex items-center justify-center shrink-0 active:scale-95 hover:bg-[#d0effc] transition shadow-xs"
+            title="Listen slowly"
+          >
+            <Snail className="w-6 h-6 stroke-[2.2]" />
+          </button>
+          <div className="text-xs font-bold text-sky-700">
+            Tap the speaker to hear the sentence
           </div>
-        )}
-        <span className="text-lg sm:text-xl font-black text-gray-800">{sentenceToTranslate}</span>
-      </div>
+        </div>
+      ) : (
+        /* Translation Mode: Shows text with optional speaker */
+        <div className="flex items-center gap-3 my-2">
+          {audioText && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => sounds.speak(audioText, 0.9)}
+                className="w-12 h-12 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md hover:brightness-105 transition btn-3d-blue"
+                title="Normal Speed"
+              >
+                <Volume2 className="w-6 h-6" />
+              </button>
+              <button
+                type="button"
+                onClick={() => sounds.speak(audioText, 0.5)}
+                className="w-11 h-11 rounded-2xl bg-[#e5f6fd] text-[#1cb0f6] border-2 border-[#84d8ff] flex items-center justify-center shrink-0 active:scale-95 hover:bg-[#d0effc] transition"
+                title="Slow Speed (Snail)"
+              >
+                <Snail className="w-6 h-6 stroke-[2.2]" />
+              </button>
+            </div>
+          )}
+          <span className="text-lg sm:text-xl font-black text-gray-800">{sentenceToTranslate}</span>
+        </div>
+      )}
 
       {useKeyboard ? (
         /* Keyboard Direct Type Input */

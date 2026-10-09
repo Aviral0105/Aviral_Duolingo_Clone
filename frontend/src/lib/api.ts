@@ -282,20 +282,6 @@ export async function fetchLesson(id: number): Promise<LessonDetail> {
         },
         correct_answer: "ALL_MATCHED",
       },
-      {
-        id: 5,
-        order_index: 5,
-        type: "FILL_BLANK",
-        category_tag: "FILL BLANK",
-        prompt: "Complete the sentence",
-        audio_text: "यह एक सेब है",
-        content: {
-          prefix: "यह एक",
-          suffix: "है।",
-          options: ["सेब", "पीती", "और"],
-        },
-        correct_answer: "सेब",
-      },
     ],
   };
 }

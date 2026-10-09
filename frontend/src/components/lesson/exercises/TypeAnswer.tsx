@@ -24,27 +24,38 @@ export default function TypeAnswer({
   onChange,
   onSubmit,
 }: TypeAnswerProps) {
+  const isListening =
+    (categoryTag || "").toUpperCase().includes("LISTEN") ||
+    (prompt || "").toLowerCase().includes("hear") ||
+    (prompt || "").toLowerCase().includes("listen");
+
   return (
     <div className="flex flex-col flex-1 max-w-xl mx-auto w-full select-none">
       <div className="flex items-center gap-1.5 text-purple-600 font-black text-xs uppercase tracking-wider mb-2">
-        <span>⌨️</span>
-        <span>{categoryTag}</span>
+        <span>{isListening ? "🎧" : "⌨️"}</span>
+        <span>{isListening ? "LISTEN & TYPE" : categoryTag}</span>
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-black text-gray-800 mb-4">{prompt}</h2>
 
       {/* Target sentence display */}
-      <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-200 rounded-2xl shadow-xs mb-6">
+      <div className="flex items-center gap-4 p-4 bg-white border-2 border-gray-200 rounded-2xl shadow-xs mb-6">
         {audioText && (
           <button
-            onClick={() => sounds.speak(audioText)}
-            className="w-10 h-10 rounded-xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95"
+            type="button"
+            onClick={() => sounds.speak(audioText, 0.9)}
+            className="w-14 h-14 rounded-2xl bg-[#1cb0f6] text-white flex items-center justify-center shrink-0 active:scale-95 shadow-md btn-3d-blue"
+            title="Listen to audio"
           >
-            <Volume2 className="w-5 h-5" />
+            <Volume2 className="w-7 h-7" />
           </button>
         )}
         <div>
-          <span className="text-xl font-black text-gray-800">{sentenceToTranslate}</span>
+          {isListening ? (
+            <span className="text-sm font-bold text-sky-700">Listen and type what you hear</span>
+          ) : (
+            <span className="text-xl font-black text-gray-800">{sentenceToTranslate}</span>
+          )}
           {hint && <p className="text-xs text-gray-400 font-bold mt-0.5">Hint: {hint}</p>}
         </div>
       </div>
