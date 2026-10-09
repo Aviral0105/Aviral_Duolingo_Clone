@@ -408,3 +408,17 @@ def get_user_xp_summary(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return get_xp_summary(db, user)
 
+@router.post("/award-gems")
+def award_user_gems(
+    amount: int = Query(..., ge=1),
+    user_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db)
+):
+    user = _get_target_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.gems = (user.gems or 0) + amount
+    db.commit()
+    db.refresh(user)
+    return {"success": True, "gems": user.gems, "awarded": amount}
+

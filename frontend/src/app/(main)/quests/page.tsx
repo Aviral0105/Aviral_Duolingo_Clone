@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Zap, Clock, X, Gift, Users, Shuffle } from "lucide-react";
 import { sounds } from "@/lib/sounds";
-import { fetchUser, fetchXPSummary } from "@/lib/api";
+import { fetchUser, fetchXPSummary, awardGems } from "@/lib/api";
 import { User } from "@/lib/types";
 import TopStatsBar from "@/components/navigation/TopStatsBar";
 
@@ -119,16 +119,37 @@ export default function QuestsPage() {
   }, [getQuestPool]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("duo_claimed_quests");
+        if (stored) {
+          setClaimedQuestIds(new Set(JSON.parse(stored)));
+        }
+      } catch {}
+    }
+  }, []);
+
+  useEffect(() => {
     const pool = getQuestPool();
     // Deterministic random seed per visit to guarantee fresh set of 3 quests
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     setActiveQuests(shuffled.slice(0, 3));
   }, [getQuestPool]);
 
-  const handleClaimReward = (quest: Quest) => {
+  const handleClaimReward = async (quest: Quest) => {
     sounds.playVictory();
-    setClaimedQuestIds((prev) => new Set(prev).add(quest.id));
+    const nextClaimed = new Set(claimedQuestIds).add(quest.id);
+    setClaimedQuestIds(nextClaimed);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("duo_claimed_quests", JSON.stringify(Array.from(nextClaimed)));
+    }
     setSelectedChestQuest(null);
+    showToast(`Claimed +${quest.gemReward} Gems! 💎`);
+
+    try {
+      const res = await awardGems(quest.gemReward);
+      setUser((prev) => (prev ? { ...prev, gems: res.gems } : null));
+    } catch {}
   };
 
   return (

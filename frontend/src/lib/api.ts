@@ -107,6 +107,12 @@ export async function fetchUser(userId?: number): Promise<User> {
         } else if (u.current_league) {
           localStorage.setItem("duo_user_league", u.current_league);
         }
+        const storedGems = localStorage.getItem("duo_user_gems");
+        if (storedGems) {
+          u.gems = parseInt(storedGems, 10);
+        } else if (u.gems !== undefined) {
+          localStorage.setItem("duo_user_gems", String(u.gems));
+        }
       }
       return u;
     }
@@ -117,6 +123,8 @@ export async function fetchUser(userId?: number): Promise<User> {
   if (typeof window !== "undefined") {
     const storedLeague = localStorage.getItem("duo_user_league");
     if (storedLeague) fallback.current_league = storedLeague;
+    const storedGems = localStorage.getItem("duo_user_gems");
+    if (storedGems) fallback.gems = parseInt(storedGems, 10);
   }
   return fallback;
 }
@@ -183,6 +191,8 @@ export async function resetUserProgress(userId?: number) {
         localStorage.removeItem("duo_completed_lessons");
         localStorage.removeItem("duo_claimed_chests");
         localStorage.removeItem("duo_unlocked_units");
+        localStorage.removeItem("duo_claimed_quests");
+        localStorage.removeItem("duo_user_gems");
         localStorage.setItem("duo_user_league", "Bronze League");
         window.dispatchEvent(new Event("duo_progress_updated"));
       }
@@ -195,10 +205,41 @@ export async function resetUserProgress(userId?: number) {
     localStorage.removeItem("duo_completed_lessons");
     localStorage.removeItem("duo_claimed_chests");
     localStorage.removeItem("duo_unlocked_units");
+    localStorage.removeItem("duo_claimed_quests");
+    localStorage.removeItem("duo_user_gems");
     localStorage.setItem("duo_user_league", "Bronze League");
     window.dispatchEvent(new Event("duo_progress_updated"));
   }
   return { success: true, message: "Progress reset to 0!" };
+}
+
+export async function awardGems(amount: number): Promise<{ gems: number }> {
+  const targetId = getActiveUserId();
+  const currentBase = typeof window !== "undefined" ? getApiBaseUrl() : API_BASE_URL;
+  try {
+    const res = await fetch(`${currentBase}/api/user/award-gems?amount=${amount}&user_id=${targetId}`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof window !== "undefined") {
+        localStorage.setItem("duo_user_gems", String(data.gems));
+        window.dispatchEvent(new Event("duo_progress_updated"));
+      }
+      return data;
+    }
+  } catch (e) {
+    console.warn("Backend award-gems failed, using local fallback");
+  }
+
+  let newGems = 100;
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("duo_user_gems");
+    newGems = (stored ? parseInt(stored, 10) : 100) + amount;
+    localStorage.setItem("duo_user_gems", String(newGems));
+    window.dispatchEvent(new Event("duo_progress_updated"));
+  }
+  return { gems: newGems };
 }
 
 export async function fetchPath(): Promise<PathResponse> {
