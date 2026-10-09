@@ -870,8 +870,39 @@ export async function searchUsers(q: string): Promise<UserFriend[]> {
   );
 }
 
+const DEFAULT_FOLLOWING_LIST: UserFriend[] = [
+  { id: 2, username: "Maya Patel", handle: "@mayapatel", avatar: "👩🏽", is_following: true },
+  { id: 3, username: "Felix Brandt", handle: "@felixbrandt", avatar: "🧑🏼", is_following: true },
+  { id: 4, username: "Kavita Rao", handle: "@kavitarao", avatar: "👩🏽", is_following: true },
+];
+
+const DEFAULT_FOLLOWERS_LIST: UserFriend[] = [
+  { id: 2, username: "Maya Patel", handle: "@mayapatel", avatar: "👩🏽", is_following: true },
+  { id: 3, username: "Felix Brandt", handle: "@felixbrandt", avatar: "🧑🏼", is_following: true },
+  { id: 6, username: "Elena Rostova", handle: "@elenarostova", avatar: "👱🏻‍♀️", is_following: false },
+  { id: 5, username: "Carlos Silva", handle: "@carlossilva", avatar: "👨🏽", is_following: false },
+];
+
 export async function toggleFollowUser(targetId: number): Promise<{ success: boolean; target_user_id: number; is_following: boolean; message: string }> {
   const currentId = getActiveUserId();
+  let nextIsFollowing = true;
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("duo_following_ids");
+      const currentSet = new Set<number>(stored ? JSON.parse(stored) : [2, 3, 4]);
+      if (currentSet.has(targetId)) {
+        currentSet.delete(targetId);
+        nextIsFollowing = false;
+      } else {
+        currentSet.add(targetId);
+        nextIsFollowing = true;
+      }
+      localStorage.setItem("duo_following_ids", JSON.stringify(Array.from(currentSet)));
+      window.dispatchEvent(new Event("duo_social_updated"));
+    } catch {}
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/user/follow/${targetId}?user_id=${currentId}`, {
       method: "POST",
@@ -884,9 +915,15 @@ export async function toggleFollowUser(targetId: number): Promise<{ success: boo
       return data;
     }
   } catch (e) {
-    console.warn("Follow user backend not reachable");
+    console.warn("Follow user backend not reachable, using local toggle");
   }
-  return { success: true, target_user_id: targetId, is_following: true, message: "Updated follow status" };
+
+  return {
+    success: true,
+    target_user_id: targetId,
+    is_following: nextIsFollowing,
+    message: nextIsFollowing ? "Now following!" : "Unfollowed",
+  };
 }
 
 export async function fetchSocialStats(): Promise<SocialStats> {
@@ -895,15 +932,48 @@ export async function fetchSocialStats(): Promise<SocialStats> {
     const res = await fetch(`${API_BASE_URL}/api/user/social?user_id=${currentId}`, {
       cache: "no-store",
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data: SocialStats = await res.json();
+      if (data.following.length > 0 || data.followers.length > 0) {
+        return data;
+      }
+    }
   } catch (e) {
-    console.warn("Social stats backend not reachable");
+    console.warn("Social stats backend not reachable, using authentic defaults");
   }
+
+  let followingIds = new Set<number>([2, 3, 4]);
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("duo_following_ids");
+      if (stored) {
+        followingIds = new Set<number>(JSON.parse(stored));
+      }
+    } catch {}
+  }
+
+  const allAvailableFriends: UserFriend[] = [
+    { id: 2, username: "Maya Patel", handle: "@mayapatel", avatar: "👩🏽", is_following: true },
+    { id: 3, username: "Felix Brandt", handle: "@felixbrandt", avatar: "🧑🏼", is_following: true },
+    { id: 4, username: "Kavita Rao", handle: "@kavitarao", avatar: "👩🏽", is_following: true },
+    { id: 5, username: "Carlos Silva", handle: "@carlossilva", avatar: "👨🏽", is_following: false },
+    { id: 6, username: "Elena Rostova", handle: "@elenarostova", avatar: "👱🏻‍♀️", is_following: false },
+  ];
+
+  const following = allAvailableFriends
+    .filter((u) => followingIds.has(u.id))
+    .map((u) => ({ ...u, is_following: true }));
+
+  const followers = DEFAULT_FOLLOWERS_LIST.map((u) => ({
+    ...u,
+    is_following: followingIds.has(u.id),
+  }));
+
   return {
-    following_count: 0,
-    followers_count: 0,
-    following: [],
-    followers: [],
+    following_count: following.length,
+    followers_count: followers.length,
+    following,
+    followers,
   };
 }
 

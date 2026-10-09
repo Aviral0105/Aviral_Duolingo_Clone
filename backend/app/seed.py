@@ -94,7 +94,26 @@ def seed_database(force: bool = False):
     )
     db.add(user)
 
-    # 1b. Create User Settings
+    # 1b. Create Sample Friends / Followers from Leaderboard
+    friend_maya = User(id=2, username="Maya Patel", handle="@mayapatel", avatar="👩🏽", xp=120, streak=4, current_league="Gold League")
+    friend_felix = User(id=3, username="Felix Brandt", handle="@felixbrandt", avatar="🧑🏼", xp=465, streak=8, current_league="Gold League")
+    friend_kavita = User(id=4, username="Kavita Rao", handle="@kavitarao", avatar="👩🏽", xp=490, streak=12, current_league="Gold League")
+    friend_carlos = User(id=5, username="Carlos Silva", handle="@carlossilva", avatar="👨🏽", xp=95, streak=2, current_league="Silver League")
+    friend_elena = User(id=6, username="Elena Rostova", handle="@elenarostova", avatar="👱🏻‍♀️", xp=260, streak=6, current_league="Gold League")
+    db.add_all([friend_maya, friend_felix, friend_kavita, friend_carlos, friend_elena])
+
+    # Following: Aviral follows Maya, Felix, Kavita
+    db.add(UserFollow(follower_id=1, following_id=2))
+    db.add(UserFollow(follower_id=1, following_id=3))
+    db.add(UserFollow(follower_id=1, following_id=4))
+
+    # Followers: Maya, Felix, Elena, Carlos follow Aviral
+    db.add(UserFollow(follower_id=2, following_id=1))
+    db.add(UserFollow(follower_id=3, following_id=1))
+    db.add(UserFollow(follower_id=6, following_id=1))
+    db.add(UserFollow(follower_id=5, following_id=1))
+
+    # 1c. Create User Settings
     settings = UserSetting(
         user_id=1,
         sound_effects=True,
