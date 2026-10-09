@@ -19,6 +19,7 @@ export interface User {
   streak_freezes?: number;
   double_xp_until?: string | null;
   hearts_updated_at?: string | null;
+  current_league?: string;
 }
 
 export interface Exercise {
@@ -142,3 +143,18 @@ export interface GuidebookData {
   grammar_tips: GrammarTip[];
   vocabulary: VocabularyWord[];
 }
+
+export interface AchievementItem {
+  key: string;
+  title: string;
+  description: string;
+  icon: string;
+  level: number;
+  max_level: number;
+  current_value: number;
+  target_value: number;
+  unlocked: boolean;
+  bg_color?: string;
+  ribbon_color?: string;
+}
+

@@ -16,12 +16,14 @@ import {
   ArrowLeft,
   UserPlus,
 } from "lucide-react";
-import { fetchUser } from "@/lib/api";
-import { User } from "@/lib/types";
+import { fetchUser, fetchAchievements } from "@/lib/api";
+import { User, AchievementItem } from "@/lib/types";
+import { getLeagueConfig } from "@/lib/league";
 import { sounds } from "@/lib/sounds";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
+  const [achievements, setAchievements] = useState<AchievementItem[]>([]);
   const [activeTab, setActiveTab] = useState<"following" | "followers">("following");
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -48,14 +50,19 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const loadUser = () => {
+    const loadData = () => {
       fetchUser()
         .then(setUser)
         .catch(() => {});
+      fetchAchievements()
+        .then((data) => {
+          if (data && data.length > 0) setAchievements(data);
+        })
+        .catch(() => {});
     };
-    loadUser();
-    window.addEventListener("duo_progress_updated", loadUser);
-    return () => window.removeEventListener("duo_progress_updated", loadUser);
+    loadData();
+    window.addEventListener("duo_progress_updated", loadData);
+    return () => window.removeEventListener("duo_progress_updated", loadData);
   }, []);
 
   const showToast = (msg: string) => {
@@ -248,22 +255,28 @@ export default function ProfilePage() {
           <div className="flex-1 w-full max-w-xl mx-auto space-y-6">
             {/* Avatar Hero Card with Pencil Button and Avatar Outline */}
             <div className="relative bg-[#dff2fb] border-2 border-[#bce3f8] rounded-3xl h-60 flex items-center justify-center overflow-hidden shadow-xs">
-              {/* Avatar Silhouette Outline */}
+              {/* Avatar */}
               <div
                 onClick={() => setIsAvatarModalOpen(true)}
                 className="cursor-pointer group flex flex-col items-center justify-center transition active:scale-95"
               >
                 <div className="relative w-32 h-36 flex items-center justify-center">
-                  <svg
-                    viewBox="0 0 120 140"
-                    className="w-full h-full fill-[#98d5f6] stroke-[#1cb0f6] stroke-2 transition group-hover:scale-105"
-                    strokeDasharray="5,5"
-                  >
-                    <path d="M60 15 C45 15, 35 25, 33 40 C28 42, 25 48, 26 55 C27 60, 31 64, 35 66 C36 80, 48 90, 60 90 C72 90, 84 80, 85 66 C89 64, 93 60, 94 55 C95 48, 92 42, 87 40 C85 25, 75 15, 60 15 Z M25 105 C15 112, 10 125, 10 140 L110 140 C110 125, 105 112, 95 105 C85 100, 75 96, 60 96 C45 96, 35 100, 25 105 Z" />
-                  </svg>
+                  {user?.avatar ? (
+                    <div className="w-28 h-28 rounded-full bg-white/90 border-4 border-[#1cb0f6] flex items-center justify-center text-6xl shadow-md group-hover:scale-105 transition select-none">
+                      {user.avatar}
+                    </div>
+                  ) : (
+                    <svg
+                      viewBox="0 0 120 140"
+                      className="w-full h-full fill-[#98d5f6] stroke-[#1cb0f6] stroke-2 transition group-hover:scale-105"
+                      strokeDasharray="5,5"
+                    >
+                      <path d="M60 15 C45 15, 35 25, 33 40 C28 42, 25 48, 26 55 C27 60, 31 64, 35 66 C36 80, 48 90, 60 90 C72 90, 84 80, 85 66 C89 64, 93 60, 94 55 C95 48, 92 42, 87 40 C85 25, 75 15, 60 15 Z M25 105 C15 112, 10 125, 10 140 L110 140 C110 125, 105 112, 95 105 C85 100, 75 96, 60 96 C45 96, 35 100, 25 105 Z" />
+                    </svg>
+                  )}
 
-                  {/* Plus Badge Icon in center */}
-                  <div className="absolute top-12 w-8 h-8 rounded-full bg-white/90 text-[#1cb0f6] shadow-sm flex items-center justify-center font-black group-hover:bg-white group-hover:scale-110 transition">
+                  {/* Plus Badge Icon in corner */}
+                  <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white text-[#1cb0f6] border-2 border-[#1cb0f6] shadow-sm flex items-center justify-center font-black group-hover:bg-[#1cb0f6] group-hover:text-white group-hover:scale-110 transition">
                     <Plus className="w-5 h-5 stroke-[3]" />
                   </div>
                 </div>
@@ -284,10 +297,10 @@ export default function ProfilePage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-                    AVIRAL JAIN
+                    {user?.username?.toUpperCase() || "AVIRAL JAIN"}
                   </h1>
                   <div className="text-sm font-bold text-gray-400 mt-0.5">
-                    AVIRALJAIN51695
+                    {user?.handle ? user.handle.toUpperCase() : `@${(user?.username || "aviraljain").toLowerCase().replace(/\s+/g, "")}`}
                   </div>
                   <div className="text-sm font-semibold text-gray-400 mt-1">
                     Joined October 2026
@@ -332,7 +345,7 @@ export default function ProfilePage() {
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
                   <span className="text-3xl shrink-0">🔥</span>
                   <div>
-                    <div className="text-xl font-black text-gray-800">{user?.streak ?? 3}</div>
+                    <div className="text-xl font-black text-gray-800">{user?.streak ?? 0}</div>
                     <div className="text-xs font-bold text-gray-400">Day streak</div>
                   </div>
                 </div>
@@ -343,29 +356,34 @@ export default function ProfilePage() {
                     <Zap className="w-6 h-6 text-[#ffc800] fill-[#ffc800]" />
                   </div>
                   <div>
-                    <div className="text-xl font-black text-gray-800">{user?.xp ?? 265}</div>
+                    <div className="text-xl font-black text-gray-800">{user?.xp ?? 0}</div>
                     <div className="text-xs font-bold text-gray-400">Total XP</div>
                   </div>
                 </div>
 
                 {/* Stat 3: Current League with WEEK 1 badge -> Links to /leaderboard */}
-                <Link
-                  href="/leaderboard"
-                  className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs relative hover:border-[#1cb0f6] transition group"
-                >
-                  <div className="absolute top-2 right-2 bg-[#ff9600] text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
-                    WEEK 1
-                  </div>
-                  <div className="w-10 h-10 rounded-xl bg-[#b47748]/20 border border-[#d99462] flex items-center justify-center shrink-0 text-xl group-hover:scale-105 transition">
-                    🪶
-                  </div>
-                  <div>
-                    <div className="text-xl font-black text-gray-800 group-hover:text-[#1cb0f6] transition">
-                      {(user?.xp ?? 0) >= 300 ? "Silver" : "Bronze"}
-                    </div>
-                    <div className="text-xs font-bold text-gray-400">Current league</div>
-                  </div>
-                </Link>
+                {(() => {
+                  const leagueCfg = getLeagueConfig(user?.current_league || "Gold League");
+                  return (
+                    <Link
+                      href="/leaderboard"
+                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs relative hover:border-[#1cb0f6] transition group"
+                    >
+                      <div className="absolute top-2 right-2 bg-[#ff9600] text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                        WEEK 1
+                      </div>
+                      <div className={`w-10 h-10 rounded-xl ${leagueCfg.bgColor} border ${leagueCfg.borderColor} flex items-center justify-center shrink-0 text-xl group-hover:scale-105 transition`}>
+                        {leagueCfg.icon}
+                      </div>
+                      <div>
+                        <div className="text-xl font-black text-gray-800 group-hover:text-[#1cb0f6] transition">
+                          {leagueCfg.name.replace(" League", "")}
+                        </div>
+                        <div className="text-xs font-bold text-gray-400">Current league</div>
+                      </div>
+                    </Link>
+                  );
+                })()}
 
                 {/* Stat 4: Top 3 Finishes */}
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
@@ -393,39 +411,42 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-3">
-                {/* Wildfire */}
-                <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-4 shadow-xs">
-                  <div className="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-3xl shrink-0">
-                    🔥
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-black text-base text-gray-800">Wildfire</h3>
-                      <span className="text-xs font-black text-gray-400">Level 1/10</span>
+                {(achievements.length > 0 ? achievements.slice(0, 3) : []).map((ach) => {
+                  const pct = Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      ach.target_value > 0
+                        ? Math.round((ach.current_value / ach.target_value) * 100)
+                        : 0
+                    )
+                  );
+                  return (
+                    <div
+                      key={ach.key}
+                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-4 shadow-xs"
+                    >
+                      <div className={`w-14 h-14 rounded-2xl ${ach.bg_color || "bg-amber-50"} border border-gray-200 flex items-center justify-center text-3xl shrink-0 shadow-2xs`}>
+                        {ach.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="font-black text-base text-gray-800">{ach.title}</h3>
+                          <span className="text-xs font-black text-gray-400">
+                            Level {ach.level}/{ach.max_level}
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-gray-500 mb-2">{ach.description}</p>
+                        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+                          <div
+                            className="bg-[#ffc800] h-full rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs font-bold text-gray-500 mb-2">Reach a 3-day streak</p>
-                    <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-                      <div className="bg-[#ff9600] h-full rounded-full" style={{ width: "33%" }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sage */}
-                <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-4 shadow-xs">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl shrink-0">
-                    ⚡
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-black text-base text-gray-800">Sage</h3>
-                      <span className="text-xs font-black text-gray-400">Level 1/10</span>
-                    </div>
-                    <p className="text-xs font-bold text-gray-500 mb-2">Earn 100 XP</p>
-                    <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-                      <div className="bg-[#ffc800] h-full rounded-full" style={{ width: "48%" }} />
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>

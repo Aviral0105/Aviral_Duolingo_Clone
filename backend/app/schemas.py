@@ -248,6 +248,8 @@ class AchievementOut(BaseModel):
     current_value: int
     target_value: int
     unlocked: bool
+    bg_color: Optional[str] = None
+    ribbon_color: Optional[str] = None
 
 # ----------------- XP Ledger Schemas -----------------
 class XPEntryOut(BaseModel):

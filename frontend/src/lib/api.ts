@@ -1,4 +1,4 @@
-import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData } from "./types";
+import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData, AchievementItem } from "./types";
 
 // NEXT_PUBLIC_* variables are inlined at BUILD time. On a deployed site you must set
 // NEXT_PUBLIC_API_URL to your public backend URL (e.g. https://my-api.onrender.com) and REDEPLOY,
@@ -453,8 +453,13 @@ export async function updateUserSettings(settings: Record<string, any>) {
 }
 
 
-export async function fetchLeaderboard(tier?: number): Promise<LeaderboardResponse> {
-  const url = tier ? `${API_BASE_URL}/api/leaderboard?tier=${tier}` : `${API_BASE_URL}/api/leaderboard`;
+export async function fetchLeaderboard(tier?: number, userId?: number): Promise<LeaderboardResponse> {
+  const targetId = userId || getActiveUserId();
+  const params = new URLSearchParams();
+  if (tier) params.set("tier", String(tier));
+  if (targetId) params.set("user_id", String(targetId));
+  const queryString = params.toString();
+  const url = queryString ? `${API_BASE_URL}/api/leaderboard?${queryString}` : `${API_BASE_URL}/api/leaderboard`;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (res.ok) return await res.json();
@@ -464,11 +469,13 @@ export async function fetchLeaderboard(tier?: number): Promise<LeaderboardRespon
 
   let userXp = 265;
   let userName = "Aviral Jain";
+  let userLeague = "Gold League";
   let userStatus: string | null = null;
   try {
-    const u = await fetchUser();
+    const u = await fetchUser(targetId);
     if (u?.xp !== undefined) userXp = u.xp;
     if (u?.username) userName = u.username;
+    if (u?.current_league) userLeague = u.current_league;
     if (typeof window !== "undefined") {
       userStatus = localStorage.getItem("duo_user_status") || null;
     }
@@ -493,11 +500,11 @@ export async function fetchLeaderboard(tier?: number): Promise<LeaderboardRespon
   ].sort((a, b) => b.xp - a.xp);
 
   return {
-    league_name: "Bronze League",
-    tier: 1,
+    league_name: userLeague,
+    tier: tier || 3,
     time_remaining: "2 DAYS",
     promotion_threshold: 11,
-    demotion_threshold: 0,
+    demotion_threshold: 5,
     user_status_emoji: userStatus,
     all_leagues: [
       { id: 1, name: "Bronze League", tier: 1, icon: "🪶", color: "#b47748", promotion_threshold: 11, demotion_threshold: 0, description: "Top 11 advance to the next league" },
@@ -583,14 +590,186 @@ export async function submitSupportFeedback(data: { name: string; email: string;
   };
 }
 
-export async function fetchAchievements() {
+export async function fetchAchievements(userId?: number): Promise<AchievementItem[]> {
+  const targetId = userId || getActiveUserId();
+  const url = targetId ? `${API_BASE_URL}/api/achievements?user_id=${targetId}` : `${API_BASE_URL}/api/achievements`;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/achievements`, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store" });
     if (res.ok) return await res.json();
   } catch (e) {
-    console.warn("Achievements backend not reachable");
+    console.warn("Achievements backend not reachable, using calculated fallback");
   }
-  return null;
+
+  // Robust fallback calculation matching backend logic
+  let streak = 3;
+  let xp = 265;
+  let league = "Gold League";
+  let hasAvatar = true;
+  try {
+    const u = await fetchUser(targetId);
+    if (u) {
+      streak = u.streak ?? 0;
+      xp = u.xp ?? 0;
+      league = u.current_league ?? "Gold League";
+      hasAvatar = Boolean(u.avatar);
+    }
+  } catch {}
+
+  const calcTier = (val: number, thresh: number[]) => {
+    for (let i = 0; i < thresh.length; i++) {
+      if (val < thresh[i]) return { level: i + 1, target: thresh[i], max: thresh.length };
+    }
+    return { level: thresh.length, target: thresh[thresh.length - 1], max: thresh.length };
+  };
+
+  const wf = calcTier(streak, [3, 7, 14, 30, 50, 75, 100, 150, 200, 365]);
+  const sg = calcTier(xp, [100, 250, 500, 1000, 2000, 4000, 7500, 12500, 25000, 50000]);
+
+  return [
+    {
+      key: "wildfire",
+      title: "Wildfire",
+      description: `Reach a ${wf.target}-day streak`,
+      icon: "🔥",
+      level: wf.level,
+      max_level: wf.max,
+      current_value: streak,
+      target_value: wf.target,
+      unlocked: streak >= wf.target,
+      bg_color: "bg-[#ff4b4b]",
+      ribbon_color: "bg-[#d62828]",
+    },
+    {
+      key: "sage",
+      title: "Sage",
+      description: `Earn ${sg.target} XP`,
+      icon: "🧙‍♂️",
+      level: sg.level,
+      max_level: sg.max,
+      current_value: xp,
+      target_value: sg.target,
+      unlocked: xp >= sg.target,
+      bg_color: "bg-[#58cc02]",
+      ribbon_color: "bg-[#46a302]",
+    },
+    {
+      key: "scholar",
+      title: "Scholar",
+      description: "Learn 50 new words in a single course",
+      icon: "📜",
+      level: 1,
+      max_level: 5,
+      current_value: 30,
+      target_value: 50,
+      unlocked: false,
+      bg_color: "bg-[#1cb0f6]",
+      ribbon_color: "bg-[#1899d6]",
+    },
+    {
+      key: "regal",
+      title: "Regal",
+      description: "Earn 3 crowns by completing lessons",
+      icon: "👑",
+      level: 1,
+      max_level: 5,
+      current_value: 1,
+      target_value: 3,
+      unlocked: false,
+      bg_color: "bg-[#ffc800]",
+      ribbon_color: "bg-[#e5a500]",
+    },
+    {
+      key: "champion",
+      title: "Champion",
+      description: `Advance to the ${league}`,
+      icon: "🛡️",
+      level: 3,
+      max_level: 5,
+      current_value: 3,
+      target_value: 3,
+      unlocked: true,
+      bg_color: "bg-[#a855f7]",
+      ribbon_color: "bg-[#9333ea]",
+    },
+    {
+      key: "sharpshooter",
+      title: "Sharpshooter",
+      description: "Complete 5 lessons with no mistakes",
+      icon: "🏹",
+      level: 1,
+      max_level: 5,
+      current_value: 1,
+      target_value: 5,
+      unlocked: false,
+      bg_color: "bg-[#58cc02]",
+      ribbon_color: "bg-[#46a302]",
+    },
+    {
+      key: "winner",
+      title: "Winner",
+      description: "Finish #1 on your leaderboard",
+      icon: "🏆",
+      level: 1,
+      max_level: 1,
+      current_value: 0,
+      target_value: 1,
+      unlocked: false,
+      bg_color: "bg-[#a855f7]",
+      ribbon_color: "bg-[#9333ea]",
+    },
+    {
+      key: "friendly",
+      title: "Friendly",
+      description: "Follow 3 fellow learners",
+      icon: "🧑‍🤝‍🧑",
+      level: 1,
+      max_level: 1,
+      current_value: 0,
+      target_value: 3,
+      unlocked: false,
+      bg_color: "bg-[#a855f7]",
+      ribbon_color: "bg-[#9333ea]",
+    },
+    {
+      key: "weekend_warrior",
+      title: "Weekend Warrior",
+      description: "Complete a lesson on Saturday and Sunday",
+      icon: "🪖",
+      level: 1,
+      max_level: 1,
+      current_value: 0,
+      target_value: 2,
+      unlocked: false,
+      bg_color: "bg-[#58cc02]",
+      ribbon_color: "bg-[#46a302]",
+    },
+    {
+      key: "photogenic",
+      title: "Photogenic",
+      description: "Upload or customize your avatar",
+      icon: "👤",
+      level: 1,
+      max_level: 1,
+      current_value: hasAvatar ? 1 : 0,
+      target_value: 1,
+      unlocked: hasAvatar,
+      bg_color: "bg-[#1cb0f6]",
+      ribbon_color: "bg-[#1899d6]",
+    },
+    {
+      key: "challenger",
+      title: "Challenger",
+      description: "Complete 5 daily quests",
+      icon: "⚡",
+      level: 1,
+      max_level: 5,
+      current_value: 1,
+      target_value: 5,
+      unlocked: false,
+      bg_color: "bg-[#ff9600]",
+      ribbon_color: "bg-[#e58500]",
+    },
+  ];
 }
 
 export async function searchUsers(q: string) {

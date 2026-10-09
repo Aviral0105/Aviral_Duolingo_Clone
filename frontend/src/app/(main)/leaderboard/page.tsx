@@ -72,7 +72,7 @@ export default function LeaderboardPage() {
     await loadLeaderboardData(tier);
   };
 
-  const leagueTitle = leaderboardData?.league_name || "Bronze League";
+  const leagueTitle = leaderboardData?.league_name || currentUser?.current_league || "Gold League";
   const timeRemaining = leaderboardData?.time_remaining || "2 DAYS";
   const promotionThreshold = leaderboardData?.promotion_threshold || 11;
   const demotionThreshold = leaderboardData?.demotion_threshold || 0;

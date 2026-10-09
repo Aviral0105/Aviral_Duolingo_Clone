@@ -6,6 +6,7 @@ import { sounds } from "@/lib/sounds";
 import { ChevronRight, X, Sparkles, Heart, Zap, Info } from "lucide-react";
 import { fetchUser, purchaseShopItem, refillHearts } from "@/lib/api";
 import { User } from "@/lib/types";
+import { getLeagueConfig } from "@/lib/league";
 
 export default function ShopPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -291,34 +292,38 @@ export default function ShopPage() {
       {/* RIGHT-HAND COLUMN: STATS, BRONZE LEAGUE, DAILY QUESTS, AD */}
       {/* ======================================================== */}
       <div className="w-full lg:w-80 shrink-0 space-y-5">
-        {/* 1. Bronze League Card (Forwards to /leaderboard) */}
-        <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-black text-gray-800">Bronze League</h3>
-            <Link
-              href="/leaderboard"
-              className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline transition"
-            >
-              VIEW LEAGUE
-            </Link>
-          </div>
-
-          <Link href="/leaderboard" className="flex items-center gap-4 group">
-            {/* Bronze Shield with Feather */}
-            <div className="w-14 h-16 rounded-2xl bg-gradient-to-b from-[#b47748] to-[#8d542b] border-2 border-[#d99462] flex items-center justify-center text-3xl shadow-xs shrink-0 group-hover:scale-105 transition">
-              🪶
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="font-black text-base text-gray-800">
-                You&apos;re ranked <span className="text-[#58cc02] font-black">#9</span>
+        {/* 1. Dynamic League Card (Forwards to /leaderboard) */}
+        {(() => {
+          const leagueCfg = getLeagueConfig(user?.current_league || "Gold League");
+          return (
+            <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-black text-gray-800">{leagueCfg.name}</h3>
+                <Link
+                  href="/leaderboard"
+                  className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline transition"
+                >
+                  VIEW LEAGUE
+                </Link>
               </div>
-              <p className="text-xs font-bold text-gray-400 mt-0.5 leading-snug">
-                You&apos;ve earned {user?.xp ?? 265} XP so far
-              </p>
+
+              <Link href="/leaderboard" className="flex items-center gap-4 group">
+                <div className={`w-14 h-16 rounded-2xl bg-gradient-to-b ${leagueCfg.gradient} border-2 ${leagueCfg.borderColor} flex items-center justify-center text-3xl shadow-xs shrink-0 group-hover:scale-105 transition`}>
+                  {leagueCfg.icon}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="font-black text-base text-gray-800">
+                    You&apos;re ranked <span className="text-[#58cc02] font-black">#9</span>
+                  </div>
+                  <p className="text-xs font-bold text-gray-400 mt-0.5 leading-snug">
+                    You&apos;ve earned {user?.xp ?? 0} XP so far
+                  </p>
+                </div>
+              </Link>
             </div>
-          </Link>
-        </div>
+          );
+        })()}
 
         {/* 2. Daily Quests Card (Forwards to /quests) */}
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">

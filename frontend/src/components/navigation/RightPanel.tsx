@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Sparkles, Zap } from "lucide-react";
 import { fetchUser, fetchXPSummary, fetchLeaderboard } from "@/lib/api";
 import { User, LeaderboardResponse } from "@/lib/types";
+import { getLeagueConfig } from "@/lib/league";
 import DuolingoFooterLinks from "@/components/common/DuolingoFooterLinks";
 
 export default function RightPanel() {
@@ -39,7 +40,7 @@ export default function RightPanel() {
 
   const userEntry = leaderboard?.entries?.find((e) => e.is_current_user);
   const currentRank = userEntry?.rank ?? 2;
-  const leagueName = leaderboard?.league_name ?? (weeklyXp >= 300 ? "Silver League" : "Bronze League");
+  const leagueCfg = getLeagueConfig(user?.current_league || leaderboard?.league_name || "Gold League");
 
   return (
     <div className="w-full lg:w-80 shrink-0 space-y-5 select-none">
@@ -62,10 +63,10 @@ export default function RightPanel() {
         </Link>
       </div>
 
-      {/* 1. Bronze League Card */}
+      {/* 1. Dynamic League Card */}
       <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-black text-gray-800">{leagueName}</h3>
+          <h3 className="text-base font-black text-gray-800">{leagueCfg.name}</h3>
           <Link
             href="/leaderboard"
             className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
@@ -74,9 +75,9 @@ export default function RightPanel() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-16 rounded-2xl bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-amber-500 flex items-center justify-center text-3xl shadow-xs shrink-0">
-            🪶
+        <Link href="/leaderboard" className="flex items-center gap-4 group">
+          <div className={`w-14 h-16 rounded-2xl bg-gradient-to-b ${leagueCfg.gradient} border-2 ${leagueCfg.borderColor} flex items-center justify-center text-3xl shadow-xs shrink-0 group-hover:scale-105 transition`}>
+            {leagueCfg.icon}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -88,7 +89,7 @@ export default function RightPanel() {
               You&apos;ve earned {weeklyXp} XP this week so far
             </p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* 2. Daily Quests Card */}
