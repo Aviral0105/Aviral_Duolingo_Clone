@@ -25,6 +25,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     gems: 155,
     daily_goal_xp: 10,
     is_super: false,
+    current_league: "Gold League",
   });
 
   const [isCourseOpen, setIsCourseOpen] = useState(false);

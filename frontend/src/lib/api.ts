@@ -29,6 +29,7 @@ const FALLBACK_USER: User = {
   gems: 126,
   daily_goal_xp: 10,
   is_super: false,
+  current_league: "Gold League",
 };
 
 const FALLBACK_PATH: PathResponse = {
@@ -97,11 +98,27 @@ export async function fetchUser(userId?: number): Promise<User> {
   const targetId = userId || getActiveUserId();
   try {
     const res = await fetch(`${API_BASE_URL}/api/user?user_id=${targetId}`, { cache: "no-store" });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const u = await res.json();
+      if (typeof window !== "undefined") {
+        const storedLeague = localStorage.getItem("duo_user_league");
+        if (storedLeague) {
+          u.current_league = storedLeague;
+        } else if (u.current_league) {
+          localStorage.setItem("duo_user_league", u.current_league);
+        }
+      }
+      return u;
+    }
   } catch (e) {
     console.warn("Backend not reachable, using local user fallback");
   }
-  return FALLBACK_USER;
+  const fallback = { ...FALLBACK_USER };
+  if (typeof window !== "undefined") {
+    const storedLeague = localStorage.getItem("duo_user_league");
+    if (storedLeague) fallback.current_league = storedLeague;
+  }
+  return fallback;
 }
 
 export async function fetchAllUsers(): Promise<User[]> {
@@ -551,6 +568,18 @@ export async function setLeaderboardStatus(emoji: string | null) {
 }
 
 export async function switchLeague(tier: number) {
+  const LEAGUE_NAMES: Record<number, string> = {
+    1: "Bronze League",
+    2: "Silver League",
+    3: "Gold League",
+    4: "Sapphire League",
+    5: "Ruby League",
+  };
+  const leagueName = LEAGUE_NAMES[tier] || "Gold League";
+  if (typeof window !== "undefined") {
+    localStorage.setItem("duo_user_league", leagueName);
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/leaderboard/switch-league?tier=${tier}`, {
       method: "POST",
@@ -565,7 +594,11 @@ export async function switchLeague(tier: number) {
   } catch (e) {
     console.warn("Backend not reachable for switch-league");
   }
-  return { success: true, tier, message: "Switched league!" };
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("duo_progress_updated"));
+  }
+  return { success: true, tier, current_league: leagueName, message: "Switched league!" };
 }
 
 export async function submitSupportFeedback(data: { name: string; email: string; category: string; message: string }) {

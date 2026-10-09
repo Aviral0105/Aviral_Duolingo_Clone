@@ -19,6 +19,7 @@ class UserBase(BaseModel):
     streak_freezes: Optional[int] = 2
     invite_code: Optional[str] = "BDHTZTB5CW77A"
     double_xp_until: Optional[datetime] = None
+    current_league: Optional[str] = "Gold League"
 
 class UserOut(UserBase):
     id: int

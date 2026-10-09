@@ -24,7 +24,7 @@ class User(Base):
     double_xp_until = Column(DateTime, nullable=True)
     hearts_updated_at = Column(DateTime, default=datetime.utcnow)
     last_active_date = Column(DateTime, default=datetime.utcnow)
-    current_league = Column(String(50), default="Bronze League")
+    current_league = Column(String(50), default="Gold League")
     status_emoji = Column(String(20), nullable=True, default=None)
     created_at = Column(DateTime, default=datetime.utcnow)
 

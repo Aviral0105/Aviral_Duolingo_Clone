@@ -50,9 +50,28 @@ export default function LeaderboardPage() {
   }, [selectedTier]);
 
   useEffect(() => {
-    loadLeaderboardData();
-    window.addEventListener("duo_progress_updated", () => loadLeaderboardData());
-    return () => window.removeEventListener("duo_progress_updated", () => loadLeaderboardData());
+    let initialTier = selectedTier;
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("duo_user_league");
+      if (stored) {
+        const tierMap: Record<string, number> = {
+          "bronze league": 1,
+          "silver league": 2,
+          "gold league": 3,
+          "sapphire league": 4,
+          "ruby league": 5,
+        };
+        const mapped = tierMap[stored.toLowerCase()];
+        if (mapped) {
+          initialTier = mapped;
+          setSelectedTier(mapped);
+        }
+      }
+    }
+    loadLeaderboardData(initialTier);
+    const handleUpdate = () => loadLeaderboardData();
+    window.addEventListener("duo_progress_updated", handleUpdate);
+    return () => window.removeEventListener("duo_progress_updated", handleUpdate);
   }, [loadLeaderboardData]);
 
   const handleSelectEmoji = async (emoji: string) => {

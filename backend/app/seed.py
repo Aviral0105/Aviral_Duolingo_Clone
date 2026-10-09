@@ -89,6 +89,7 @@ def seed_database(force: bool = False):
         gems=1500,
         daily_goal_xp=10,
         is_super=False,
+        current_league="Gold League",
         last_active_date=datetime.utcnow()
     )
     db.add(user)

@@ -41,7 +41,9 @@ export default function RightPanel() {
 
   const userEntry = leaderboard?.entries?.find((e) => e.is_current_user);
   const currentRank = userEntry?.rank ?? 2;
-  const leagueCfg = getLeagueConfig(user?.current_league || leaderboard?.league_name || "Gold League");
+  const storedLeague = typeof window !== "undefined" ? localStorage.getItem("duo_user_league") : null;
+  const activeLeagueName = storedLeague || user?.current_league || leaderboard?.league_name || "Gold League";
+  const leagueCfg = getLeagueConfig(activeLeagueName);
 
   return (
     <div className="w-full lg:w-80 shrink-0 space-y-4 select-none">
