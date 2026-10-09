@@ -25,6 +25,12 @@ export default function QuestsPage() {
   const [activeQuests, setActiveQuests] = useState<Quest[]>([]);
   const [claimedQuestIds, setClaimedQuestIds] = useState<Set<string>>(new Set());
   const [selectedChestQuest, setSelectedChestQuest] = useState<Quest | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -126,6 +132,13 @@ export default function QuestsPage() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#58cc02] text-white px-5 py-3 rounded-2xl shadow-xl font-black text-sm flex items-center gap-2 animate-bounce">
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* LEFT/CENTER COLUMN: QUESTS FEED */}
       <div className="flex-1 w-full max-w-xl mx-auto space-y-6">
         {/* Quests / Badges Header Tabs */}
@@ -266,13 +279,19 @@ export default function QuestsPage() {
               </p>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => alert("Nudge sent! Your friend received a friendly reminder.")}
+                  onClick={() => {
+                    sounds.playTap();
+                    showToast("👋 Nudge sent! Your friend received a friendly reminder.");
+                  }}
                   className="px-4 py-2 rounded-xl border-2 border-gray-200 text-xs font-black text-gray-700 hover:bg-gray-50 active:scale-95 transition"
                 >
                   Nudge 👋
                 </button>
                 <button
-                  onClick={() => alert("Gift sent: +10 Gems sent to your friend!")}
+                  onClick={() => {
+                    sounds.playVictory();
+                    showToast("🎁 Gift sent: +10 Gems sent to your friend!");
+                  }}
                   className="px-4 py-2 rounded-xl bg-[#1cb0f6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:scale-95 transition flex items-center gap-1.5"
                 >
                   <Gift className="w-3.5 h-3.5" />

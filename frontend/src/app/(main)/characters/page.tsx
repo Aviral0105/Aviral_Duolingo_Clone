@@ -90,6 +90,7 @@ export default function CharactersPage() {
   const [quizScore, setQuizScore] = useState(0);
   const [showTipsModal, setShowTipsModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const speakLetter = (letter: { char: string; translit: string }) => {
     setActiveChar(letter.char);
@@ -115,7 +116,8 @@ export default function CharactersPage() {
           setQuizIndex((prev) => prev + 1);
         } else {
           sounds.playVictory();
-          alert(`Great job! You scored ${quizScore + 1}/${QUIZ_QUESTIONS.length} on Hindi Letters practice! (+10 XP)`);
+          setToastMessage(`🎉 Great job! You scored ${quizScore + 1}/${QUIZ_QUESTIONS.length} on Hindi Letters practice! (+10 XP)`);
+          setTimeout(() => setToastMessage(null), 4000);
           setIsQuizModalOpen(false);
           setQuizIndex(0);
           setQuizScore(0);
@@ -130,6 +132,13 @@ export default function CharactersPage() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 select-none items-start pb-12">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#58cc02] text-white px-5 py-3 rounded-2xl shadow-xl font-black text-sm flex items-center gap-2 animate-bounce">
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* CENTER FEED */}
       <div className="flex-1 w-full max-w-xl mx-auto space-y-6">
         {/* Hero Card */}

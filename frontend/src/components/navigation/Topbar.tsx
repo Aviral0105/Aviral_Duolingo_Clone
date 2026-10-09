@@ -16,7 +16,10 @@ interface TopbarProps {
 
 export default function Topbar({
   user,
+  onOpenCourse,
   onOpenStreak,
+  onOpenShop,
+  onOpenEnergy,
 }: TopbarProps) {
   const [activePopover, setActivePopover] = useState<"course" | "streak" | "gems" | "hearts" | null>(null);
   const [heartsCount, setHeartsCount] = useState(user.hearts);
@@ -110,7 +113,9 @@ export default function Topbar({
               <div
                 onClick={() => {
                   sounds.playTap();
-                  alert("More language courses (Spanish, French, German, Japanese) coming soon!");
+                  if (onOpenCourse) {
+                    onOpenCourse();
+                  }
                   setActivePopover(null);
                 }}
                 className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition text-gray-700 hover:text-gray-900 group"

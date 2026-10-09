@@ -6,20 +6,24 @@ import { User } from "@/lib/types";
 import { Plus, Lock, Dumbbell, ChevronRight } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { fetchUser, refillHearts } from "@/lib/api";
+import CourseModal from "@/components/modals/CourseModal";
 
 interface TopStatsBarProps {
   user?: User | null;
   className?: string;
   onOpenStreak?: (tab?: "personal" | "friends") => void;
+  onOpenCourse?: () => void;
 }
 
 export default function TopStatsBar({
   user: initialUser,
   className = "",
   onOpenStreak,
+  onOpenCourse,
 }: TopStatsBarProps) {
   const [user, setUser] = useState<User | null>(initialUser || null);
   const [activePopover, setActivePopover] = useState<"course" | "streak" | "gems" | "hearts" | null>(null);
+  const [isCourseOpen, setIsCourseOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Sync or fetch user
@@ -117,7 +121,11 @@ export default function TopStatsBar({
             <div
               onClick={() => {
                 sounds.playTap();
-                alert("More language courses (Spanish, French, German, Japanese) coming soon!");
+                if (onOpenCourse) {
+                  onOpenCourse();
+                } else {
+                  setIsCourseOpen(true);
+                }
                 setActivePopover(null);
               }}
               className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition text-gray-700 hover:text-gray-900 group"
@@ -349,6 +357,8 @@ export default function TopStatsBar({
           </div>
         )}
       </div>
+
+      <CourseModal isOpen={isCourseOpen} onClose={() => setIsCourseOpen(false)} />
     </div>
   );
 }

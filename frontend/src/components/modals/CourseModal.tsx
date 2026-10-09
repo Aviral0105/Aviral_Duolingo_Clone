@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Plus } from "lucide-react";
+import { sounds } from "@/lib/sounds";
 
 interface CourseModalProps {
   isOpen: boolean;
@@ -8,6 +10,13 @@ interface CourseModalProps {
 }
 
 export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -17,8 +26,14 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[85vh] overflow-y-auto animate-slide-up shadow-2xl cursor-default"
+        className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[85vh] overflow-y-auto animate-slide-up shadow-2xl cursor-default relative"
       >
+        {toastMessage && (
+          <div className="absolute top-4 left-6 right-6 z-50 bg-[#1cb0f6] text-white px-4 py-2.5 rounded-xl shadow-lg font-black text-xs text-center animate-bounce">
+            {toastMessage}
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-gray-200">
           <h2 className="text-xl font-black text-gray-800">My Courses</h2>
@@ -43,7 +58,10 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
 
         {/* Add Course Button */}
         <button
-          onClick={() => alert("Add Course dialog: Select from 30+ languages including Spanish, French, German...")}
+          onClick={() => {
+            sounds.playTap();
+            showToast("🌍 Course catalog: 30+ languages coming soon!");
+          }}
           className="w-full mb-5 py-3.5 rounded-2xl border-2 border-dashed border-gray-300 hover:border-[#1cb0f6] bg-gray-50 hover:bg-sky-50/50 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-wider text-gray-600 hover:text-[#1cb0f6] transition active:scale-95"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
@@ -57,7 +75,10 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
               Score Progress & Sections
             </span>
             <button
-              onClick={() => alert("Section Added: Section 2 unlocked!")}
+              onClick={() => {
+                sounds.playVictory();
+                showToast("✨ Section 2 unlocked! Keep advancing.");
+              }}
               className="flex items-center gap-1 text-[11px] font-black text-[#1cb0f6] bg-sky-100 hover:bg-sky-200 px-2.5 py-1 rounded-lg transition active:scale-95"
             >
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
