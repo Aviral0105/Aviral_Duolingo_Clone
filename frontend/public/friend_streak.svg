@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" width="100%" height="100%">
+  <defs>
+    <radialGradient id="flameBackGlow" cx="45%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffe600" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#ff9600" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ff4500" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lilyHair" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#6b21a8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Glowing background flame outline -->
+  <path d="M42 12 C44 26 56 34 56 50 C56 64 45 74 32 74 C18 74 8 63 8 50 C8 38 18 30 26 22 C30 18 36 10 42 12 Z" fill="url(#flameBackGlow)"/>
+  <path d="M42 16 C43 28 52 34 52 48 C52 58 43 66 32 66 C21 66 14 58 14 48 C14 38 22 32 28 26 Z" fill="#ffe600" opacity="0.8"/>
+
+  <!-- Duo Owl (green, sitting on left looking up) -->
+  <g id="duo">
+    <ellipse cx="38" cy="74" rx="22" ry="18" fill="#58cc02"/>
+    <ellipse cx="36" cy="62" rx="18" ry="16" fill="#78d804"/>
+    <!-- Face mask -->
+    <ellipse cx="38" cy="62" rx="14" ry="10" fill="#58cc02"/>
+    <!-- Eyes -->
+    <circle cx="34" cy="60" r="5" fill="#ffffff"/>
+    <circle cx="43" cy="60" r="5" fill="#ffffff"/>
+    <circle cx="35" cy="60" r="2.5" fill="#4b4b4b"/>
+    <circle cx="44" cy="60" r="2.5" fill="#4b4b4b"/>
+    <!-- Beak -->
+    <polygon points="36,64 42,64 39,70" fill="#ff9600"/>
+    <!-- Cute little wing -->
+    <path d="M20 68 C20 62 26 66 28 72 Z" fill="#46a302"/>
+  </g>
+
+  <!-- Lily (Purple hair, dark clothes on right) -->
+  <g id="lily">
+    <!-- Body / Cape -->
+    <path d="M68 65 C68 56 80 56 86 65 L94 92 C88 95 62 95 58 92 Z" fill="#3b0764"/>
+    <polygon points="76,64 74,74 80,70" fill="#e9d5ff"/>
+    <!-- Hand reaching down to pet Duo -->
+    <path d="M68 72 C60 72 52 69 48 68 C46 67 48 71 52 73 C56 75 62 76 66 76 Z" fill="#fbcfe8"/>
+    <!-- Head -->
+    <ellipse cx="80" cy="50" rx="13" ry="13" fill="#fbcfe8"/>
+    <!-- Lily Purple Hair with bangs -->
+    <path d="M66 50 C66 35 94 35 94 50 C94 58 90 62 88 64 C86 52 82 46 80 46 C76 46 72 52 70 64 C68 62 66 58 66 50 Z" fill="url(#lilyHair)"/>
+    <!-- Eye (Chill/unbothered half-closed) -->
+    <ellipse cx="75" cy="50" rx="3.5" ry="3" fill="#ffffff"/>
+    <circle cx="75" cy="50" r="2" fill="#581c87"/>
+    <path d="M72 47 Q75 46 78 48" stroke="#3b0764" stroke-width="1.2" fill="none"/>
+    <!-- Mouth -->
+    <path d="M74 56 Q76 58 78 56" stroke="#db2777" stroke-width="1" fill="none"/>
+  </g>
+</svg>

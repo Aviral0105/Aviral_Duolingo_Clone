@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { X, Lock, Users, ChevronLeft, ChevronRight, UserPlus, Check } from "lucide-react";
+import Image from "next/image";
+import { X, Lock, Users, ChevronLeft, ChevronRight, UserPlus, Check, Flag } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 
 interface StreakModalProps {
@@ -162,22 +163,24 @@ export default function StreakModal({
             /* TAB 1: PERSONAL VIEW (Real Dynamic Calendar)             */
             /* ======================================================== */
             <>
-              {/* Orange Hero Card */}
-              <div className="bg-[#ff9600] rounded-3xl p-5 sm:p-6 text-white shadow-xs">
+              {/* Orange Hero Card with White Flame Badge and Milestone Banner */}
+              <div className="bg-[#ff9600] rounded-3xl p-5 sm:p-6 text-white shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-3xl font-black text-white leading-tight">
                     {streak} day streak
                   </h2>
-                  <div className="text-5xl opacity-95">🔥</div>
+                  <div className="shrink-0 pl-2">
+                    <Image src="/flame_badge.svg" width={64} height={64} alt="Flame Badge" className="drop-shadow-sm select-none" />
+                  </div>
                 </div>
 
-                {/* Sub-card with learner metric */}
-                <div className="mt-4 bg-white rounded-2xl p-3.5 flex items-center gap-3 shadow-xs text-gray-700">
-                  <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-                    <Users className="w-5 h-5" />
+                {/* White Milestone Card with Flag */}
+                <div className="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-xs text-gray-700">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+                    <Flag className="w-5 h-5 text-[#ff9600] fill-[#ff9600]" />
                   </div>
                   <p className="text-xs font-bold text-gray-600 leading-snug">
-                    You extended your streak before <span className="font-black text-gray-800">96.32%</span> of all learners yesterday!
+                    You&apos;ll reach your next streak milestone on October 14!
                   </p>
                 </div>
               </div>
@@ -284,48 +287,22 @@ export default function StreakModal({
               {/* Streak Goal Section */}
               <div>
                 <h3 className="font-black text-base text-gray-800 mb-2">Streak Goal</h3>
-                <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 flex items-center gap-3 shadow-xs">
-                  <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 text-[#ff9600] flex items-center justify-center font-black text-xs shrink-0">
-                    1
+                <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 shadow-xs">
+                  {/* Calendar 1 Icon */}
+                  <div className="w-9 h-9 rounded-xl bg-[#ff9600] text-white flex flex-col items-center justify-center shadow-xs shrink-0 border border-orange-500 overflow-hidden">
+                    <div className="w-full h-2 bg-orange-600" />
+                    <span className="font-black text-xs leading-none mt-1">1</span>
                   </div>
                   <div className="flex-1 bg-gray-200 h-3 rounded-full overflow-hidden">
                     <div
                       className="bg-[#ff9600] h-full rounded-full transition-all"
-                      style={{ width: `${Math.min(100, (streak / 7) * 100)}%` }}
+                      style={{ width: `${Math.min(100, Math.max(14, (streak / 7) * 100))}%` }}
                     />
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 text-[#ff9600] flex items-center justify-center font-black text-xs shrink-0">
-                    7
-                  </div>
-                </div>
-              </div>
-
-              {/* Streak Freeze Section */}
-              <div>
-                <h3 className="font-black text-base text-gray-800 mb-2">Streak Protection</h3>
-                <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 flex items-center justify-between shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-2xl shrink-0">
-                      🧊
-                    </div>
-                    <div>
-                      <h4 className="font-black text-sm text-gray-800">Streak Freeze</h4>
-                      <p className="text-xs font-bold text-gray-400">Protects your streak if you miss a day</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-black text-xs px-2.5 py-1 rounded-xl bg-sky-50 text-sky-700 border border-sky-200">
-                      {streakFreezes} / 2 EQUIPPED
-                    </span>
-                    {streakFreezes < 2 && (
-                      <Link
-                        href="/shop"
-                        onClick={onClose}
-                        className="text-xs font-black text-[#1cb0f6] uppercase tracking-wider hover:underline"
-                      >
-                        GET MORE
-                      </Link>
-                    )}
+                  {/* Calendar 7 Icon */}
+                  <div className="w-9 h-9 rounded-xl bg-[#ff9600] text-white flex flex-col items-center justify-center shadow-xs shrink-0 border border-orange-500 overflow-hidden">
+                    <div className="w-full h-2 bg-orange-600" />
+                    <span className="font-black text-xs leading-none mt-1">7</span>
                   </div>
                 </div>
               </div>
@@ -333,7 +310,7 @@ export default function StreakModal({
               {/* Streak Society Section */}
               <div>
                 <h3 className="font-black text-base text-gray-800 mb-2">Streak Society</h3>
-                <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 flex items-center gap-4 shadow-xs">
+                <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 flex items-center gap-4 shadow-xs">
                   <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
                     <Lock className="w-6 h-6 stroke-[2]" />
                   </div>
