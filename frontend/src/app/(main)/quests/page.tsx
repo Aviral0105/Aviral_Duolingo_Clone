@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Zap, Clock, X, Gift, Users, Shuffle } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { fetchUser, fetchXPSummary } from "@/lib/api";
@@ -175,8 +176,8 @@ export default function QuestsPage() {
                   Complete quests to earn rewards! Quests refresh every day.
                 </p>
               </div>
-              <div className="text-7xl sm:text-8xl shrink-0 z-10 animate-bounce">
-                🦉📦✨
+              <div className="shrink-0 z-10 animate-bounce">
+                <Image src="/mascot.svg" width={96} height={96} alt="Duo Mascot" className="drop-shadow-md" />
               </div>
             </div>
 
@@ -212,9 +213,19 @@ export default function QuestsPage() {
                     className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs flex items-center gap-4 hover:border-gray-300 transition"
                   >
                     <div
-                      className={`w-12 h-12 rounded-2xl ${quest.iconBg} border border-gray-100 flex items-center justify-center shrink-0 text-2xl`}
+                      className={`w-12 h-12 rounded-2xl ${quest.iconBg} border border-gray-100 flex items-center justify-center shrink-0 p-2`}
                     >
-                      {quest.icon}
+                      {quest.icon === "⚡" ? (
+                        <Image src="/points.svg" width={28} height={28} alt="XP" />
+                      ) : quest.icon === "🔥" ? (
+                        <Image src="/streak.svg" width={28} height={28} alt="Streak" />
+                      ) : quest.icon === "🎯" ? (
+                        <Image src="/quests.svg" width={28} height={28} alt="Goal" />
+                      ) : quest.icon === "🛡️" ? (
+                        <Image src="/leaderboard.svg" width={28} height={28} alt="Shield" />
+                      ) : (
+                        <span className="text-2xl">{quest.icon}</span>
+                      )}
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -241,9 +252,9 @@ export default function QuestsPage() {
                           setSelectedChestQuest(quest);
                         }
                       }}
-                      className={`text-4xl shrink-0 p-2 rounded-2xl transition active:scale-90 ${
+                      className={`shrink-0 p-2 rounded-2xl transition active:scale-90 flex items-center justify-center ${
                         isClaimed
-                          ? "opacity-50 cursor-default"
+                          ? "opacity-60 cursor-default"
                           : isCompleted
                           ? "animate-pulse hover:scale-110 cursor-pointer"
                           : "opacity-40 cursor-not-allowed"
@@ -256,7 +267,13 @@ export default function QuestsPage() {
                           : "Complete quest to unlock reward"
                       }
                     >
-                      {isClaimed ? "🪙" : "🎁"}
+                      <Image
+                        src={isClaimed ? "/chest_open.svg" : "/chest.svg"}
+                        width={38}
+                        height={38}
+                        alt="Chest"
+                        className="drop-shadow-xs"
+                      />
                     </button>
                   </div>
                 );
@@ -335,7 +352,7 @@ export default function QuestsPage() {
         <TopStatsBar user={user} />
 
         <div className="bg-white border-2 border-gray-200 rounded-3xl p-5 shadow-xs text-center">
-          <span className="text-5xl block mb-2">🏆</span>
+          <Image src="/finish.svg" width={48} height={48} alt="Trophy" className="mx-auto mb-2" />
           <h3 className="text-base font-black text-gray-800">Monthly challenges unlock soon!</h3>
           <p className="text-xs text-gray-400 font-bold mt-1">
             Keep completing daily quests to unlock badges and earn bonus gems.
@@ -359,13 +376,13 @@ export default function QuestsPage() {
             >
               <X className="w-5 h-5" />
             </button>
-            <span className="text-7xl block mb-3 animate-bounce">🎁✨</span>
+            <Image src="/chest_open.svg" width={72} height={72} alt="Chest" className="mx-auto mb-3 animate-bounce" />
             <h2 className="text-2xl font-black text-gray-800 mb-1">Quest Completed!</h2>
             <p className="text-xs font-bold text-gray-500 mb-6">
               You completed &quot;{selectedChestQuest.title}&quot;! Here is your reward:
             </p>
             <div className="p-4 bg-amber-50 rounded-2xl border-2 border-amber-300 font-black text-lg text-amber-900 mb-6 flex items-center justify-center gap-2">
-              <span>💎</span>
+              <Image src="/gem.svg" width={24} height={24} alt="Gem" />
               <span>+{selectedChestQuest.gemReward} Gems</span>
             </div>
             <button

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <radialGradient id="openGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#ffd166" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#ffb703" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chestWoodDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c9731d"/>
+      <stop offset="100%" stop-color="#8f4505"/>
+    </linearGradient>
+    <linearGradient id="chestWoodLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f09633"/>
+      <stop offset="100%" stop-color="#bf6307"/>
+    </linearGradient>
+    <linearGradient id="chestGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe169"/>
+      <stop offset="50%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#d48202"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="64" cy="116" rx="46" ry="9" fill="#000" opacity="0.18"/>
+
+  <!-- Open Lid (Angled up) -->
+  <path d="M20 20 C32 8 96 8 108 20 L104 38 C94 30 34 30 24 38 Z" fill="url(#chestWoodDark)"/>
+  <path d="M22 22 C34 11 94 11 106 22 L102 36 C92 29 36 29 26 36 Z" fill="url(#chestWoodLight)"/>
+
+  <!-- Golden Ray Burst from inside -->
+  <circle cx="64" cy="48" r="32" fill="url(#openGlow)"/>
+
+  <!-- Gems & Coins coming out -->
+  <polygon points="52,38 60,30 68,38 60,46" fill="#00e5ff" stroke="#00b4d8" stroke-width="1.5"/>
+  <circle cx="76" cy="40" r="7" fill="#ffd166" stroke="#f77f00" stroke-width="1.5"/>
+  <circle cx="44" cy="44" r="6" fill="#ffd166" stroke="#f77f00" stroke-width="1.5"/>
+
+  <!-- Chest Body (Bottom Base) -->
+  <rect x="22" y="56" width="84" height="48" rx="14" fill="url(#chestWoodDark)"/>
+  <rect x="24" y="58" width="80" height="44" rx="12" fill="url(#chestWoodLight)"/>
+
+  <!-- Gold bands (Bottom) -->
+  <path d="M22 68 H106 V78 H22 Z" fill="url(#chestGold)"/>
+  <path d="M22 92 H106 V100 H22 Z" fill="url(#chestGold)"/>
+
+  <!-- Gold Rim around top opening -->
+  <rect x="18" y="52" width="92" height="8" rx="4" fill="url(#chestGold)"/>
+  <!-- Latch Plate hanging open -->
+  <rect x="54" y="54" width="20" height="18" rx="4" fill="url(#chestGold)"/>
+</svg>

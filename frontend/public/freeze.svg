@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <linearGradient id="iceTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#cbf3f9"/>
+      <stop offset="100%" stop-color="#90e0ef"/>
+    </linearGradient>
+    <linearGradient id="iceLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#90e0ef"/>
+      <stop offset="100%" stop-color="#0077b6"/>
+    </linearGradient>
+    <linearGradient id="iceRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#48cae4"/>
+      <stop offset="100%" stop-color="#0096c7"/>
+    </linearGradient>
+    <radialGradient id="freezeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#90e0ef" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#0077b6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Ice Glow -->
+  <circle cx="64" cy="64" r="54" fill="url(#freezeGlow)"/>
+
+  <!-- Drop Shadow -->
+  <ellipse cx="64" cy="112" rx="42" ry="8" fill="#000" opacity="0.15"/>
+
+  <!-- 3D Ice Cube -->
+  <!-- Top Face -->
+  <polygon points="64,22 104,42 64,62 24,42" fill="url(#iceTop)" stroke="#cbf3f9" stroke-width="2"/>
+  <!-- Left Face -->
+  <polygon points="24,42 64,62 64,104 24,84" fill="url(#iceLeft)" stroke="#0077b6" stroke-width="2"/>
+  <!-- Right Face -->
+  <polygon points="64,62 104,42 104,84 64,104" fill="url(#iceRight)" stroke="#0096c7" stroke-width="2"/>
+
+  <!-- Inner Frost / Snowflake Glow -->
+  <g stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.9">
+    <line x1="64" y1="52" x2="64" y2="76"/>
+    <line x1="52" y1="64" x2="76" y2="64"/>
+    <line x1="56" y1="56" x2="72" y2="72"/>
+    <line x1="72" y1="56" x2="56" y2="72"/>
+  </g>
+
+  <!-- Frosted Sparkles -->
+  <polygon points="40,32 42,36 46,37 43,40 44,44 40,41 36,44 37,40 34,37 38,36" fill="#ffffff" opacity="0.95"/>
+  <polygon points="90,70 91.5,73 95,74 92.5,76 93,79 90,77 87,79 87.5,76 85,74 88.5,73" fill="#ffffff" opacity="0.85"/>
+</svg>

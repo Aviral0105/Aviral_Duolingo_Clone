@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { BookOpen, ArrowUp } from "lucide-react";
 
 import GuidebookModal from "@/components/modals/GuidebookModal";
@@ -323,9 +324,13 @@ export default function LearnPage() {
                     }`}
                     title="Milestone Chest"
                   >
-                    <span className="text-3xl">
-                      {claimedChests.includes(unit.id) ? "🪙" : "📦"}
-                    </span>
+                    <Image
+                      src={claimedChests.includes(unit.id) ? "/chest_open.svg" : "/chest.svg"}
+                      width={44}
+                      height={44}
+                      alt="Milestone Chest"
+                      className="drop-shadow-sm select-none"
+                    />
                   </button>
                 </div>
               </div>
@@ -380,7 +385,10 @@ export default function LearnPage() {
             onClick={(e) => e.stopPropagation()}
             className="bg-white max-w-sm w-full rounded-3xl p-6 text-center animate-scale-up border-2 border-gray-200 shadow-2xl"
           >
-            <span className="text-6xl animate-bounce">🪙💎</span>
+            <div className="flex items-center justify-center gap-3 animate-bounce my-2">
+              <Image src="/chest_open.svg" width={56} height={56} alt="Chest" />
+              <Image src="/gem.svg" width={48} height={48} alt="Gems" />
+            </div>
             <h3 className="text-2xl font-black text-gray-800 mt-4 mb-2">Milestone Unlocked!</h3>
             <p className="text-xs text-gray-500 font-bold mb-6">
               You opened the unit reward chest and claimed +25 Gems! Keep advancing to unlock the next Section.

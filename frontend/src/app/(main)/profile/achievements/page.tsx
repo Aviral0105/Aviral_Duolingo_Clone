@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { fetchAchievements } from "@/lib/api";
 import { AchievementItem } from "@/lib/types";
@@ -79,7 +80,17 @@ export default function AchievementsPage() {
                 >
                   {/* Badge Icon */}
                   <div className="flex-1 flex items-center justify-center text-2xl pt-1">
-                    {item.icon}
+                    {item.icon === "🔥" ? (
+                      <Image src="/streak.svg" width={30} height={30} alt="Streak" />
+                    ) : item.icon === "⚡" ? (
+                      <Image src="/points.svg" width={30} height={30} alt="XP" />
+                    ) : item.icon === "🏆" ? (
+                      <Image src="/finish.svg" width={30} height={30} alt="Champion" />
+                    ) : item.icon === "🎯" ? (
+                      <Image src="/quests.svg" width={30} height={30} alt="Quest" />
+                    ) : (
+                      item.icon
+                    )}
                   </div>
 
                   {/* Bottom Level Ribbon */}

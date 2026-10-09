@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <radialGradient id="chestGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fff8db" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#ffb703" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chestWoodDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c9731d"/>
+      <stop offset="100%" stop-color="#8f4505"/>
+    </linearGradient>
+    <linearGradient id="chestWoodLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f09633"/>
+      <stop offset="100%" stop-color="#bf6307"/>
+    </linearGradient>
+    <linearGradient id="chestGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe169"/>
+      <stop offset="50%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#d48202"/>
+    </linearGradient>
+    <filter id="chestShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Ground Drop Shadow -->
+  <ellipse cx="64" cy="116" rx="46" ry="9" fill="#000" opacity="0.18"/>
+
+  <!-- Chest Body (Bottom base) -->
+  <g filter="url(#chestShadow)">
+    <rect x="22" y="56" width="84" height="48" rx="14" fill="url(#chestWoodDark)"/>
+    <rect x="24" y="58" width="80" height="44" rx="12" fill="url(#chestWoodLight)"/>
+
+    <!-- Gold bands (Bottom) -->
+    <path d="M22 68 H106 V78 H22 Z" fill="url(#chestGold)"/>
+    <path d="M22 92 H106 V100 H22 Z" fill="url(#chestGold)"/>
+    
+    <!-- Chest Lid (Curved dome top) -->
+    <path d="M18 56 C18 32 38 20 64 20 C90 20 110 32 110 56 Z" fill="url(#chestWoodDark)"/>
+    <path d="M20 54 C20 34 39 23 64 23 C89 23 108 34 108 54 Z" fill="url(#chestWoodLight)"/>
+
+    <!-- Gold bands (Lid) -->
+    <path d="M38 23 C42 22 46 21 50 21 V55 H38 Z" fill="url(#chestGold)"/>
+    <path d="M78 21 C82 21 86 22 90 23 V55 H78 Z" fill="url(#chestGold)"/>
+
+    <!-- Gold Rim around lid base -->
+    <rect x="16" y="50" width="96" height="10" rx="5" fill="url(#chestGold)"/>
+    <rect x="18" y="51" width="92" height="3" rx="1.5" fill="#fff" opacity="0.4"/>
+
+    <!-- Center Gold Latch Plate -->
+    <rect x="52" y="44" width="24" height="28" rx="6" fill="url(#chestGold)"/>
+    <!-- Lock Keyhole -->
+    <circle cx="64" cy="56" r="3.5" fill="#5c3104"/>
+    <polygon points="62.5,56 65.5,56 66.5,63 61.5,63" fill="#5c3104"/>
+
+    <!-- Top Glow / Sparkle -->
+    <ellipse cx="64" cy="30" rx="36" ry="8" fill="url(#chestGlow)"/>
+    <polygon points="96,28 99,34 105,35 100,40 102,46 96,42 90,46 92,40 87,35 93,34" fill="#fff" opacity="0.8"/>
+  </g>
+</svg>

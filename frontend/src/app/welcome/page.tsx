@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ArrowLeft, Check, Sparkles, Bell } from "lucide-react";
 import { sounds } from "@/lib/sounds";
@@ -201,19 +202,8 @@ export default function WelcomePage() {
   // Mascot with speech bubble wrapper
   const renderDuoSpeech = (text: string) => (
     <div className="flex items-center gap-4 mb-8 self-start sm:self-center">
-      <div className="w-16 h-16 bg-[#58cc02] rounded-2xl border-2 border-b-4 border-[#46a302] flex flex-col items-center justify-center relative shrink-0 shadow-sm">
-        <div className="flex gap-1.5 mb-0.5">
-          <div className="w-3.5 h-4 bg-white rounded-full flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-[#4b4b4b] rounded-full" />
-          </div>
-          <div className="w-3.5 h-4 bg-white rounded-full flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-[#4b4b4b] rounded-full" />
-          </div>
-        </div>
-        <div className="w-3.5 h-2.5 bg-[#ff9600] rounded-b-md" />
-        <div className="absolute -bottom-1 -right-1 bg-[#ffc800] w-4 h-6 rounded-sm border border-amber-600 rotate-45 flex items-center justify-center text-[8px] font-black">
-          ✏️
-        </div>
+      <div className="shrink-0">
+        <Image src="/mascot.svg" width={68} height={68} alt="Duo Owl" className="drop-shadow-sm select-none" />
       </div>
       <div className="bg-white border-2 border-gray-200 rounded-2xl px-5 py-3.5 shadow-xs relative">
         <div className="text-base sm:text-lg font-black text-[#4b4b4b]">{text}</div>
@@ -242,28 +232,20 @@ export default function WelcomePage() {
           <main className="w-full max-w-5xl mx-auto px-6 py-8 my-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="flex justify-center items-center">
               <div className="relative w-80 h-80 sm:w-96 sm:h-96 flex items-center justify-center">
-                <div className="w-48 h-48 bg-[#58cc02] rounded-[44px] shadow-2xl border-4 border-b-8 border-[#46a302] flex flex-col items-center justify-center p-4 relative z-20 group hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="w-12 h-14 bg-white rounded-full flex items-center justify-center border-2 border-black/10 shadow-inner">
-                      <div className="w-6 h-6 bg-[#4b4b4b] rounded-full translate-x-1" />
-                    </div>
-                    <div className="w-12 h-14 bg-white rounded-full flex items-center justify-center border-2 border-black/10 shadow-inner">
-                      <div className="w-6 h-6 bg-[#4b4b4b] rounded-full -translate-x-1" />
-                    </div>
-                  </div>
-                  <div className="w-10 h-7 bg-[#ff9600] rounded-b-2xl border-2 border-[#e08500] shadow-md -mt-1" />
+                <div className="relative z-20 group hover:scale-105 transition-transform duration-300">
+                  <Image src="/mascot.svg" width={200} height={200} alt="Duo Owl" className="drop-shadow-2xl select-none" priority />
                 </div>
-                <div className="absolute top-2 left-6 bg-pink-100 border-2 border-pink-300 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-12 hover:rotate-0 transition">
-                  <span className="text-3xl">👧🏻</span>
+                <div className="absolute top-2 left-6 bg-pink-50 border-2 border-pink-200 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-12 hover:rotate-0 transition p-2">
+                  <Image src="/girl.svg" width={44} height={44} alt="Girl" />
                 </div>
-                <div className="absolute top-4 right-8 bg-amber-100 border-2 border-amber-300 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform rotate-12 hover:rotate-0 transition">
-                  <span className="text-3xl">👳🏾‍♂️</span>
+                <div className="absolute top-4 right-8 bg-amber-50 border-2 border-amber-200 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform rotate-12 hover:rotate-0 transition p-2">
+                  <Image src="/man.svg" width={44} height={44} alt="Man" />
                 </div>
-                <div className="absolute bottom-6 left-8 bg-purple-100 border-2 border-purple-300 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform rotate-6 hover:rotate-0 transition">
-                  <span className="text-3xl">🧕🏽</span>
+                <div className="absolute bottom-6 left-8 bg-purple-50 border-2 border-purple-200 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform rotate-6 hover:rotate-0 transition p-2">
+                  <Image src="/woman.svg" width={44} height={44} alt="Woman" />
                 </div>
-                <div className="absolute bottom-4 right-6 bg-cyan-100 border-2 border-cyan-300 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-6 hover:rotate-0 transition">
-                  <span className="text-3xl">🐻</span>
+                <div className="absolute bottom-4 right-6 bg-cyan-50 border-2 border-cyan-200 w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transform -rotate-6 hover:rotate-0 transition p-2">
+                  <Image src="/boy.svg" width={44} height={44} alt="Boy" />
                 </div>
               </div>
             </div>

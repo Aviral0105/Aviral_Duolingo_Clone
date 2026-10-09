@@ -1,0 +1,41 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Outer 3D Shadow Base -->
+    <linearGradient id="streakShadow" x1="16" y1="20" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#d95400"/>
+      <stop offset="100%" stop-color="#b83800"/>
+    </linearGradient>
+    <!-- Outer Flame Body -->
+    <linearGradient id="streakOuter" x1="16" y1="2" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff9600"/>
+      <stop offset="60%" stop-color="#ff7b00"/>
+      <stop offset="100%" stop-color="#f0471b"/>
+    </linearGradient>
+    <!-- Inner Core Flame -->
+    <linearGradient id="streakInner" x1="16" y1="12" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fff159"/>
+      <stop offset="60%" stop-color="#ffc800"/>
+      <stop offset="100%" stop-color="#ff9600"/>
+    </linearGradient>
+    <filter id="flameBlur" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- 3D Base Drop Depth -->
+  <path d="M16 28.5C10.5 28.5 6 24.2 6 18.8C6 14.5 9 10.8 12.2 7.2C13.8 5.4 15.5 3.3 16 1.5C16.5 3.3 18.2 5.4 19.8 7.2C23 10.8 26 14.5 26 18.8C26 24.2 21.5 28.5 16 28.5Z" fill="url(#streakShadow)"/>
+
+  <!-- Main Flame Body -->
+  <path d="M16 26.5C10.8 26.5 6.5 22.3 6.5 17.2C6.5 13 9.4 9.4 12.5 5.9C14 4.2 15.6 2.2 16 0.5C16.4 2.2 18 4.2 19.5 5.9C22.6 9.4 25.5 13 25.5 17.2C25.5 22.3 21.2 26.5 16 26.5Z" fill="url(#streakOuter)"/>
+
+  <!-- Left Curve Flick Depth -->
+  <path d="M16 26.5C11.5 26.5 8 23 8 18.5C8 14.8 10.5 11.5 13 8.2C14.2 6.6 15.4 5 15.8 3.5C14.8 5.8 13.2 8.5 12 11C10.5 14.2 9.5 16.5 10.5 19C11.2 20.8 13.2 22 15.5 22.5C15.7 23.8 15.9 25.2 16 26.5Z" fill="#ff6e00" opacity="0.6"/>
+
+  <!-- Inner Golden Core Flame -->
+  <path d="M16 24.5C12.5 24.5 9.8 21.6 9.8 18C9.8 15.2 11.8 12.7 13.8 10.2C14.8 9 15.6 7.6 16 6.2C16.4 7.6 17.2 9 18.2 10.2C20.2 12.7 22.2 15.2 22.2 18C22.2 21.6 19.5 24.5 16 24.5Z" fill="url(#streakInner)"/>
+
+  <!-- Bright Yellow Center Pip -->
+  <ellipse cx="16" cy="18.5" rx="3.5" ry="4.5" fill="#fff9b3" opacity="0.9"/>
+  <!-- Highlight Reflection Specular -->
+  <ellipse cx="14" cy="16.5" rx="1.2" ry="2.2" fill="#ffffff" opacity="0.8" transform="rotate(-15 14 16.5)"/>
+</svg>

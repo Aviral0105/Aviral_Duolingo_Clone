@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Flame,
   Zap,
@@ -486,7 +487,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-3.5">
                 {/* Stat 1: Day Streak */}
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
-                  <span className="text-3xl shrink-0">🔥</span>
+                  <Image src="/streak.svg" width={32} height={32} alt="Streak" className="shrink-0" />
                   <div>
                     <div className="text-xl font-black text-gray-800">{user?.streak ?? 0}</div>
                     <div className="text-xs font-bold text-gray-400">Day streak</div>
@@ -495,8 +496,8 @@ export default function ProfilePage() {
 
                 {/* Stat 2: Total XP */}
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
-                  <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                    <Zap className="w-6 h-6 text-[#ffc800] fill-[#ffc800]" />
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 p-1.5">
+                    <Image src="/points.svg" width={26} height={26} alt="XP" />
                   </div>
                   <div>
                     <div className="text-xl font-black text-gray-800">{user?.xp ?? 0}</div>
@@ -530,8 +531,8 @@ export default function ProfilePage() {
 
                 {/* Stat 4: Top 3 Finishes */}
                 <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
-                  <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-gray-400">
-                    <Medal className="w-6 h-6 stroke-[2]" />
+                  <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 p-1.5">
+                    <Image src="/finish.svg" width={26} height={26} alt="Top 3" />
                   </div>
                   <div>
                     <div className="text-xl font-black text-gray-800">0</div>

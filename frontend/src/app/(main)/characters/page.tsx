@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Volume2, Sparkles, CheckCircle2, ChevronRight, Zap, Info, X } from "lucide-react";
 import RightPanel from "@/components/navigation/RightPanel";
 import { sounds } from "@/lib/sounds";
@@ -160,7 +161,7 @@ export default function CharactersPage() {
                 }}
                 className="bg-white text-sky-600 px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider shadow-md hover:bg-sky-50 active:scale-95 transition flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4 text-sky-500" />
+                <Image src="/points.svg" width={16} height={16} alt="XP" />
                 <span>Practice (+15 XP)</span>
               </button>
               <button
@@ -172,8 +173,8 @@ export default function CharactersPage() {
               </button>
             </div>
           </div>
-          <div className="text-7xl font-serif text-white/90 select-none hidden sm:block">
-            क
+          <div className="shrink-0 hidden sm:block">
+            <Image src="/letters.svg" width={78} height={78} alt="Letters Tile" className="drop-shadow-lg select-none" />
           </div>
         </div>
 

@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, X } from "lucide-react";
+import { X, MoreHorizontal } from "lucide-react";
 
 interface SidebarProps {
   onOpenEnergy?: () => void;
@@ -69,33 +70,81 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
   const renderIcon = (type: string, isActive: boolean) => {
     switch (type) {
       case "home":
-        return <span className="text-2xl">🏠</span>;
+        return (
+          <Image
+            src="/learn.svg"
+            alt="Learn"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform"
+          />
+        );
       case "letters":
         return (
-          <span className="w-7 h-7 flex items-center justify-center font-black text-xl text-[#1cb0f6] border-2 border-[#1cb0f6] rounded-lg">
-            क
-          </span>
+          <Image
+            src="/letters.svg"
+            alt="Letters"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform"
+          />
         );
       case "shield":
-        return <span className="text-2xl">🛡️</span>;
+        return (
+          <Image
+            src="/leaderboard.svg"
+            alt="Leaderboard"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform"
+          />
+        );
       case "chest":
-        return <span className="text-2xl">📦</span>;
+        return (
+          <Image
+            src="/quests.svg"
+            alt="Quests"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform"
+          />
+        );
       case "shop":
-        return <span className="text-2xl">🏪</span>;
+        return (
+          <Image
+            src="/shop.svg"
+            alt="Shop"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform"
+          />
+        );
       case "profile":
         return (
-          <div className="w-7 h-7 rounded-full border-2 border-dashed border-[#1cb0f6] flex items-center justify-center font-black text-xs text-[#1cb0f6] bg-sky-50">
-            A
-          </div>
+          <Image
+            src="/mascot.svg"
+            alt="Profile"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform rounded-full"
+          />
         );
       case "more":
         return (
-          <div className="w-7 h-7 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-xs">
-            •••
+          <div className="w-8 h-8 rounded-xl border-2 border-gray-300 flex items-center justify-center text-gray-500 group-hover:border-gray-400 group-hover:scale-110 transition shrink-0">
+            <MoreHorizontal className="w-5 h-5 stroke-[2.5]" />
           </div>
         );
       default:
-        return <Home className="w-6 h-6" />;
+        return (
+          <Image
+            src="/learn.svg"
+            alt="Icon"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain shrink-0"
+          />
+        );
     }
   };
 
@@ -107,9 +156,16 @@ export default function Sidebar({ onOpenEnergy, onOpenShop }: SidebarProps) {
         {/* Brand Logo - Navigates directly to Learn from any other section */}
         <Link
           href="/learn"
-          className="flex items-center gap-2 px-3 mb-6 cursor-pointer group select-none"
+          className="flex items-center gap-2.5 px-3 mb-6 cursor-pointer group select-none"
           title="Go to Learn section"
         >
+          <Image
+            src="/mascot.svg"
+            alt="Duo"
+            width={36}
+            height={36}
+            className="w-9 h-9 object-contain group-hover:scale-110 transition-transform shrink-0"
+          />
           <span className="text-3xl font-black text-[#58cc02] tracking-tighter group-hover:opacity-85 transition active:scale-95 inline-block">
             duolingo
           </span>

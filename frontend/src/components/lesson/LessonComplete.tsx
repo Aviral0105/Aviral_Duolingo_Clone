@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import confetti from "canvas-confetti";
 import { sounds } from "@/lib/sounds";
 import Link from "next/link";
+import Image from "next/image";
 
 interface LessonCompleteProps {
   xpEarned: number;
@@ -46,8 +47,16 @@ export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned,
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-between p-6 max-w-lg mx-auto select-none">
       <div className="flex-1 flex flex-col items-center justify-center text-center">
-        {/* Animated Celebration Mascot */}
-        <span className="text-8xl animate-bounce mb-4">🦉🎉</span>
+        {/* Animated Celebration Mascot & Finish Trophy */}
+        <div className="relative mb-3 flex items-center justify-center">
+          <Image
+            src="/finish.svg"
+            alt="Lesson Complete"
+            width={120}
+            height={120}
+            className="w-28 h-28 object-contain animate-bounce"
+          />
+        </div>
         <h1 className="text-3xl font-black text-[#ffc800]">Lesson Complete!</h1>
         <p className="text-sm font-bold text-gray-500 mt-1">You are crushing your daily goals.</p>
 
@@ -57,8 +66,8 @@ export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned,
             <span className="text-xs font-black text-amber-600 uppercase tracking-wider">
               Total XP
             </span>
-            <div className="flex items-center gap-1.5 text-2xl font-black text-amber-500 mt-2">
-              <span>⚡</span>
+            <div className="flex items-center gap-2 text-2xl font-black text-amber-500 mt-2">
+              <Image src="/points.svg" alt="XP" width={24} height={24} className="w-6 h-6 object-contain" />
               <span>+{xpEarned}</span>
             </div>
           </div>
@@ -68,7 +77,7 @@ export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned,
               Accuracy
             </span>
             <div className="flex items-center gap-1.5 text-2xl font-black text-[#58cc02] mt-2">
-              <span>🎯</span>
+              <span className="text-xl">🎯</span>
               <span>{accuracy}%</span>
             </div>
           </div>
@@ -77,7 +86,7 @@ export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned,
         {/* Streak Flame Card */}
         <div className="w-full mt-4 border-2 border-orange-200 bg-orange-50/40 rounded-3xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">🔥</span>
+            <Image src="/streak.svg" alt="Streak" width={36} height={36} className="w-9 h-9 object-contain" />
             <div className="text-left">
               <div className="text-sm font-black text-gray-800">{streak} Day Streak</div>
               <div className="text-xs text-gray-500 font-bold">Keep it going tomorrow!</div>
@@ -92,7 +101,7 @@ export default function LessonComplete({ xpEarned, streak, accuracy, gemsEarned,
         {gemsEarned !== undefined && gemsEarned > 0 && (
           <div className="w-full mt-3 border-2 border-sky-200 bg-sky-50/40 rounded-3xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">💎</span>
+              <Image src="/gem.svg" alt="Gems" width={32} height={32} className="w-8 h-8 object-contain" />
               <div className="text-left">
                 <div className="text-sm font-black text-gray-800">+{gemsEarned} Gems Earned!</div>
                 <div className="text-xs text-gray-500 font-bold">Reward for lesson completion & accuracy</div>

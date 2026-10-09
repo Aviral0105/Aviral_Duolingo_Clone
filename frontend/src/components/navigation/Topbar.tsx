@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { User } from "@/lib/types";
 import { ChevronRight, Plus, Lock, Zap, Sparkles, Dumbbell } from "lucide-react";
 import { sounds } from "@/lib/sounds";
@@ -142,7 +143,7 @@ export default function Topbar({
             } text-[#ff9600]`}
             title="Streak"
           >
-            <span className="text-xl">🔥</span>
+            <Image src="/streak.svg" alt="Streak" width={22} height={22} className="w-5.5 h-5.5 object-contain" />
             <span className="font-black text-sm">{user.streak}</span>
           </button>
 
@@ -171,7 +172,7 @@ export default function Topbar({
                       You extended your streak before 96.32% of all learners yesterday!
                     </p>
                   </div>
-                  <div className="text-5xl opacity-95">🔥</div>
+                  <Image src="/streak.svg" alt="Streak" width={48} height={48} className="w-12 h-12 object-contain animate-bounce" />
                 </div>
 
                 {/* Days Tracker: S M T W T F S */}
@@ -260,7 +261,7 @@ export default function Topbar({
             } text-[#1cb0f6]`}
             title="Gems"
           >
-            <span className="text-xl">💎</span>
+            <Image src="/gem.svg" alt="Gems" width={22} height={22} className="w-5.5 h-5.5 object-contain" />
             <span className="font-black text-sm">{user.gems}</span>
           </button>
 
@@ -272,8 +273,8 @@ export default function Topbar({
 
               <div className="flex items-center gap-4">
                 {/* Treasure Chest Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-4xl shrink-0 shadow-xs">
-                  🧰
+                <div className="w-16 h-16 rounded-2xl bg-sky-50 border-2 border-sky-200 flex items-center justify-center p-3 shrink-0 shadow-xs">
+                  <Image src="/gem.svg" alt="Gems" width={40} height={40} className="w-10 h-10 object-contain" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -307,7 +308,13 @@ export default function Topbar({
             } text-[#ff4b4b]`}
             title="Hearts"
           >
-            <span className="text-xl">{user.is_super ? "⚡" : "❤️"}</span>
+            <Image
+              src={user.is_super ? "/unlimited.svg" : "/heart.svg"}
+              alt="Hearts"
+              width={22}
+              height={22}
+              className="w-5.5 h-5.5 object-contain"
+            />
             <span className="font-black text-sm">{user.is_super ? "∞" : heartsCount}</span>
           </button>
 
@@ -320,16 +327,19 @@ export default function Topbar({
               {/* Title & 5 Hearts */}
               <div className="text-center">
                 <h3 className="font-black text-lg text-gray-800">Hearts</h3>
-                <div className="flex items-center justify-center gap-1.5 my-2">
+                <div className="flex items-center justify-center gap-2 my-2.5">
                   {[...Array(5)].map((_, i) => (
-                    <span
-                      key={i}
-                      className={`text-2xl transition-transform ${
-                        i < heartsCount ? "text-red-500 scale-100" : "text-gray-300 scale-95"
-                      }`}
-                    >
-                      ❤️
-                    </span>
+                    <div key={i} className="transition-transform">
+                      <Image
+                        src="/heart.svg"
+                        alt="Heart"
+                        width={24}
+                        height={24}
+                        className={`w-6 h-6 object-contain transition ${
+                          i < heartsCount ? "opacity-100 scale-100" : "opacity-25 grayscale scale-90"
+                        }`}
+                      />
+                    </div>
                   ))}
                 </div>
                 <h4 className="font-black text-sm text-gray-800">

@@ -1,0 +1,45 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Base 3D Bottom Shadow -->
+    <linearGradient id="gemShadow" x1="16" y1="18" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a7cb8"/>
+      <stop offset="100%" stop-color="#065480"/>
+    </linearGradient>
+    <!-- Center Pavilion -->
+    <linearGradient id="gemPavilion" x1="16" y1="12" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1cb0f6"/>
+      <stop offset="100%" stop-color="#0e83bf"/>
+    </linearGradient>
+    <!-- Top Table Crown -->
+    <linearGradient id="gemTable" x1="16" y1="4" x2="16" y2="13" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8ce3ff"/>
+      <stop offset="100%" stop-color="#3dd1ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 3D Depth Base -->
+  <path d="M7 11.5L16 29.5L25 11.5L21.5 5.5H10.5L7 11.5Z" fill="url(#gemShadow)"/>
+
+  <!-- Main Body Pavilion (Lower V) -->
+  <path d="M7 11L16 28L25 11H7Z" fill="url(#gemPavilion)"/>
+
+  <!-- Left Facet Shade -->
+  <path d="M7 11L16 28L11.5 11H7Z" fill="#0c8ecc" opacity="0.8"/>
+  <!-- Right Facet Shade -->
+  <path d="M25 11L16 28L20.5 11H25Z" fill="#086fa3" opacity="0.8"/>
+
+  <!-- Center Diamond Lower Ridge -->
+  <path d="M11.5 11L16 28L20.5 11H11.5Z" fill="#29beff"/>
+
+  <!-- Upper Girdle / Crown Facets -->
+  <!-- Top Center Table -->
+  <polygon points="12,5 20,5 22,11 10,11" fill="url(#gemTable)"/>
+  <!-- Left Crown Triangle -->
+  <polygon points="10,5 12,5 10,11 7,11" fill="#4fe2ff"/>
+  <!-- Right Crown Triangle -->
+  <polygon points="20,5 22,5 25,11 22,11" fill="#18a2e3"/>
+
+  <!-- Sparkle Highlight -->
+  <polygon points="11,5.5 13,5.5 11.5,8 10,8" fill="#ffffff" opacity="0.9"/>
+  <circle cx="12" cy="7" r="0.8" fill="#ffffff"/>
+</svg>

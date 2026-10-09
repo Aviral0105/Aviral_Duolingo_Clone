@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { sounds } from "@/lib/sounds";
 import { ChevronRight, X, Sparkles, Heart, Zap, Info } from "lucide-react";
 import { fetchUser, purchaseShopItem, refillHearts } from "@/lib/api";
@@ -136,10 +137,10 @@ export default function ShopPage() {
           <div className="shrink-0 z-10 flex items-center justify-center pl-2">
             <div className="relative w-28 h-28 sm:w-36 sm:h-32 flex items-center justify-center">
               {/* Stylized colorful friends group badge */}
-              <div className="text-5xl sm:text-6xl drop-shadow-lg select-none flex items-center">
-                <span className="translate-y-1 scale-90">👳🏾‍♂️</span>
-                <span className="text-6xl sm:text-7xl -ml-3 z-10">🦉</span>
-                <span className="-ml-3 translate-y-2 scale-90">🏃🏾‍♀️</span>
+              <div className="flex items-center -space-x-4 select-none drop-shadow-md">
+                <Image src="/boy.svg" width={48} height={48} alt="Boy" className="scale-90" />
+                <Image src="/mascot.svg" width={68} height={68} alt="Duo Owl" className="z-10" />
+                <Image src="/girl.svg" width={48} height={48} alt="Girl" className="scale-90" />
               </div>
             </div>
           </div>
@@ -152,8 +153,8 @@ export default function ShopPage() {
             {/* Refill Hearts */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-14 h-14 rounded-full bg-red-50 border-2 border-red-100 flex items-center justify-center text-3xl shadow-xs shrink-0">
-                  ❤️
+                <div className="w-14 h-14 rounded-full bg-red-50 border-2 border-red-100 flex items-center justify-center shadow-xs shrink-0 p-2.5">
+                  <Image src="/heart.svg" width={32} height={32} alt="Heart" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-black text-base text-gray-800">Refill Hearts</h3>
@@ -172,7 +173,7 @@ export default function ShopPage() {
                     onClick={handleRefillHearts}
                     className="px-5 py-2.5 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 transition flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>💎</span>
+                    <Image src="/gem.svg" width={18} height={18} alt="Gem" />
                     <span>350</span>
                   </button>
                 )}
@@ -182,8 +183,8 @@ export default function ShopPage() {
             {/* Unlimited Hearts */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-cyan-400 via-sky-500 to-fuchsia-500 border-2 border-fuchsia-300 flex items-center justify-center text-white text-2xl font-black shadow-xs shrink-0">
-                  ♾️
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-cyan-400 via-sky-500 to-fuchsia-500 border-2 border-fuchsia-300 flex items-center justify-center shadow-xs shrink-0 p-2.5">
+                  <Image src="/unlimited.svg" width={32} height={32} alt="Unlimited" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-black text-base text-gray-800">Unlimited Hearts</h3>
@@ -217,8 +218,8 @@ export default function ShopPage() {
             {/* Streak Freeze */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-14 h-14 rounded-2xl bg-sky-50 border-2 border-sky-100 flex items-center justify-center text-3xl shadow-xs shrink-0">
-                  🧊
+                <div className="w-14 h-14 rounded-2xl bg-sky-50 border-2 border-sky-100 flex items-center justify-center shadow-xs shrink-0 p-2">
+                  <Image src="/freeze.svg" width={36} height={36} alt="Freeze" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -242,7 +243,7 @@ export default function ShopPage() {
                     onClick={handleBuyFreeze}
                     className="px-5 py-2.5 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 transition flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>💎</span>
+                    <Image src="/gem.svg" width={18} height={18} alt="Gem" />
                     <span>200</span>
                   </button>
                 )}
@@ -252,8 +253,8 @@ export default function ShopPage() {
             {/* XP Boost */}
             <div className="bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 border-2 border-amber-100 flex items-center justify-center text-3xl shadow-xs shrink-0">
-                  ⚡
+                <div className="w-14 h-14 rounded-2xl bg-amber-50 border-2 border-amber-100 flex items-center justify-center shadow-xs shrink-0 p-2">
+                  <Image src="/points.svg" width={36} height={36} alt="XP Boost" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -279,7 +280,7 @@ export default function ShopPage() {
                     onClick={handleBuyBoost}
                     className="px-5 py-2.5 rounded-2xl bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white text-xs font-black uppercase tracking-wider hover:brightness-105 active:border-b-0 active:translate-y-1 transition flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>💎</span>
+                    <Image src="/gem.svg" width={18} height={18} alt="Gem" />
                     <span>100</span>
                   </button>
                 )}
@@ -342,8 +343,8 @@ export default function ShopPage() {
           </div>
 
           <Link href="/quests" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-              <Zap className="w-6 h-6 text-[#ffc800] fill-[#ffc800]" />
+            <div className="w-11 h-11 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition p-2">
+              <Image src="/points.svg" width={26} height={26} alt="XP" />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -360,9 +361,9 @@ export default function ShopPage() {
               </div>
             </div>
 
-            <span className="text-3xl shrink-0 group-hover:scale-110 transition" title="Chest">
-              🧰
-            </span>
+            <div className="shrink-0 group-hover:scale-110 transition" title="Chest">
+              <Image src="/chest.svg" width={32} height={32} alt="Chest" />
+            </div>
           </Link>
         </div>
 
@@ -411,7 +412,7 @@ export default function ShopPage() {
             >
               <X className="w-5 h-5" />
             </button>
-            <span className="text-6xl block mb-3">🦉✨</span>
+            <Image src="/super.svg" width={72} height={72} alt="Super Duolingo" className="mx-auto mb-3" />
             <h2 className="text-2xl font-black text-gray-800 mb-2">Try Super for Free</h2>
             <p className="text-xs font-bold text-gray-500 mb-6">
               Learn faster with unlimited hearts, no ads, and personalized practice sessions.
@@ -442,14 +443,18 @@ export default function ShopPage() {
             >
               <X className="w-5 h-5" />
             </button>
-            <span className="text-6xl block mb-3">👨‍👩‍👧‍👦✨</span>
+            <div className="flex items-center justify-center -space-x-3 mb-3">
+              <Image src="/boy.svg" width={48} height={48} alt="Boy" />
+              <Image src="/mascot.svg" width={64} height={64} alt="Duo" className="z-10" />
+              <Image src="/girl.svg" width={48} height={48} alt="Girl" />
+            </div>
             <h2 className="text-2xl font-black text-gray-800 mb-2">Super Duolingo Family Plan</h2>
             <p className="text-xs font-bold text-gray-500 mb-6 leading-relaxed">
               Add up to 5 family members or friends! Everyone gets unlimited hearts, no ads, and individualized progress tracking on one low membership fee.
             </p>
             <div className="space-y-3 mb-6 text-left">
               <div className="p-3 bg-purple-50 rounded-2xl border border-purple-200 flex items-center gap-3">
-                <span className="text-xl">♾️</span>
+                <Image src="/unlimited.svg" width={22} height={22} alt="Unlimited" />
                 <span className="text-xs font-black text-purple-900">Unlimited hearts for all 6 members</span>
               </div>
               <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 flex items-center gap-3">

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Target, Sparkles, User, Dumbbell } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -22,21 +22,19 @@ export default function BottomNav() {
   const renderIcon = (type: string) => {
     switch (type) {
       case "home":
-        return <Home className="w-5 h-5" />;
+        return <Image src="/learn.svg" alt="Learn" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
       case "letters":
-        return <span className="font-serif font-black text-base leading-none">क</span>;
-      case "practice":
-        return <span className="text-lg leading-none">🏋️‍♂️</span>;
+        return <Image src="/letters.svg" alt="Letters" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
       case "ranks":
-        return <Trophy className="w-5 h-5" />;
+        return <Image src="/leaderboard.svg" alt="Ranks" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
       case "quests":
-        return <Target className="w-5 h-5" />;
+        return <Image src="/quests.svg" alt="Quests" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
       case "shop":
-        return <Sparkles className="w-5 h-5" />;
+        return <Image src="/shop.svg" alt="Shop" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
       case "profile":
-        return <User className="w-5 h-5" />;
+        return <Image src="/mascot.svg" alt="Profile" width={26} height={26} className="w-6.5 h-6.5 object-contain rounded-full" />;
       default:
-        return <Home className="w-5 h-5" />;
+        return <Image src="/learn.svg" alt="Home" width={26} height={26} className="w-6.5 h-6.5 object-contain" />;
     }
   };
 

@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lettersBase" x1="16" y1="4" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0288d1"/>
+      <stop offset="100%" stop-color="#01579b"/>
+    </linearGradient>
+    <linearGradient id="lettersFace" x1="16" y1="2" x2="16" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#29b6f6"/>
+      <stop offset="100%" stop-color="#0288d1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 3D Shadow Depth -->
+  <rect x="3" y="5" width="26" height="24" rx="8" fill="url(#lettersBase)"/>
+  <!-- Front Face -->
+  <rect x="3" y="3" width="26" height="24" rx="8" fill="url(#lettersFace)"/>
+  
+  <!-- Subtle Top Highlight Border -->
+  <path d="M11 4H21C24.866 4 28 7.13401 28 11V12C28 8.13401 24.866 5 21 5H11C7.13401 5 4 8.13401 4 12V11C4 7.13401 7.13401 4 11 4Z" fill="#81d4fa" opacity="0.6"/>
+
+  <!-- Crisp Hindi Devanagari Character 'क' -->
+  <text x="16" y="19.5" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Mukta', 'Segoe UI', sans-serif" font-weight="900" font-size="16" fill="#ffffff" style="user-select:none;">क</text>
+</svg>

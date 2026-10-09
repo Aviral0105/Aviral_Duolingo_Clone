@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Info, X, Shield, ChevronUp } from "lucide-react";
 import { fetchLeaderboard, setLeaderboardStatus, switchLeague, fetchUser } from "@/lib/api";
 import { LeaderboardResponse, User } from "@/lib/types";
@@ -235,8 +236,9 @@ export default function LeaderboardPage() {
                   </div>
 
                   {/* XP Count */}
-                  <div className="text-xs font-black text-gray-400 shrink-0 pl-3">
-                    {entry.xp} XP
+                  <div className="flex items-center gap-1.5 text-xs font-black text-gray-400 shrink-0 pl-3">
+                    <Image src="/xp.svg" width={14} height={14} alt="XP" />
+                    <span>{entry.xp} XP</span>
                   </div>
                 </div>
 

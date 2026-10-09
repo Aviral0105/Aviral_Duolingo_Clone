@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Sparkles, Zap } from "lucide-react";
+import Image from "next/image";
 import { fetchUser, fetchXPSummary, fetchLeaderboard } from "@/lib/api";
 import { User, LeaderboardResponse } from "@/lib/types";
 import { getLeagueConfig } from "@/lib/league";
@@ -51,7 +51,7 @@ export default function RightPanel() {
       {/* Super Duolingo Promo Card */}
       <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xs">
         <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-5 h-5 text-amber-300" />
+          <Image src="/super.svg" alt="Super" width={22} height={22} className="w-5.5 h-5.5 object-contain" />
           <h3 className="text-base font-black uppercase tracking-wider text-amber-300">
             Super Duolingo
           </h3>
@@ -110,7 +110,7 @@ export default function RightPanel() {
 
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
-            <Zap className="w-7 h-7 text-[#ffc800] fill-[#ffc800]" />
+            <Image src="/points.svg" alt="XP" width={28} height={28} className="w-7 h-7 object-contain" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -127,9 +127,9 @@ export default function RightPanel() {
             </div>
           </div>
 
-          <span className="text-3xl shrink-0 cursor-pointer active:scale-95 transition" title="Chest">
-            {questPct >= 100 ? "🎁" : "📦"}
-          </span>
+          <Link href="/quests" className="shrink-0 cursor-pointer active:scale-95 transition" title="Chest">
+            <Image src="/quests.svg" alt="Quests" width={32} height={32} className="w-8 h-8 object-contain" />
+          </Link>
         </div>
       </div>
 
