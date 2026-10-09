@@ -179,7 +179,7 @@ export default function LearnPage() {
 
             <div className="flex items-center gap-2 shrink-0">
               <Link
-                href="/guidebook"
+                href={`/guidebook?unit=${activeUnit.id}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   sounds.playTap();
