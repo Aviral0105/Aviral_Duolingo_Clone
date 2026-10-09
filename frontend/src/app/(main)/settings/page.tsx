@@ -15,7 +15,7 @@ import {
   Trophy,
   Heart,
 } from "lucide-react";
-import { fetchUserSettings, updateUserSettings, fetchUser } from "@/lib/api";
+import { fetchUserSettings, updateUserSettings, fetchUser, resetUserProgress } from "@/lib/api";
 import { User } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
 
@@ -103,6 +103,7 @@ function SettingsContent() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [savedToast, setSavedToast] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<"delete" | "logout" | "resetCourse" | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -909,7 +910,7 @@ function SettingsContent() {
       {/* Reset Course Modal */}
       {activeModal === "resetCourse" && (
         <div
-          onClick={() => setActiveModal(null)}
+          onClick={() => !isResetting && setActiveModal(null)}
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in"
         >
           <div
@@ -923,21 +924,35 @@ function SettingsContent() {
             </p>
             <div className="flex gap-2">
               <button
+                disabled={isResetting}
                 onClick={() => setActiveModal(null)}
-                className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-xs font-black uppercase text-gray-500"
+                className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-xs font-black uppercase text-gray-500 hover:bg-gray-100 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  setActiveModal(null);
-                  setSavedToast("Hindi course reset to Lesson 1! 🇮🇳");
-                  setTimeout(() => setSavedToast(null), 3000);
-                  router.push("/learn");
+                disabled={isResetting}
+                onClick={async () => {
+                  try {
+                    setIsResetting(true);
+                    sounds.playTap();
+                    await resetUserProgress();
+                    sounds.playCorrect();
+                    setActiveModal(null);
+                    setSavedToast("Hindi course reset to Lesson 1! 🇮🇳");
+                    setTimeout(() => {
+                      router.push("/learn");
+                    }, 800);
+                  } catch (e) {
+                    console.error("Failed to reset course", e);
+                    setSavedToast("Failed to reset course. Please try again.");
+                  } finally {
+                    setIsResetting(false);
+                  }
                 }}
-                className="flex-1 py-3 rounded-xl bg-amber-500 text-white text-xs font-black uppercase hover:bg-amber-600 transition"
+                className="flex-1 py-3 rounded-xl bg-amber-500 text-white text-xs font-black uppercase hover:bg-amber-600 active:scale-95 transition disabled:opacity-50 flex items-center justify-center font-bold"
               >
-                Reset
+                {isResetting ? "Resetting..." : "Reset"}
               </button>
             </div>
           </div>

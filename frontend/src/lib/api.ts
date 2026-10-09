@@ -3,14 +3,17 @@ import { User, PathResponse, LessonDetail, LeaderboardResponse, GuidebookData, A
 // NEXT_PUBLIC_* variables are inlined at BUILD time. On a deployed site you must set
 // NEXT_PUBLIC_API_URL to your public backend URL (e.g. https://my-api.onrender.com) and REDEPLOY,
 // otherwise the browser tries to call localhost:8000 and every request silently falls back to demo data.
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.hostname && window.location.hostname !== "localhost") {
+    return `http://${window.location.hostname}:8000`;
+  }
+  return "http://localhost:8000";
+};
 
-if (typeof window !== "undefined" && window.location.hostname !== "localhost" && API_BASE_URL.includes("localhost")) {
-  console.error(
-    "[duolingo-clone] NEXT_PUBLIC_API_URL is not set for this deployment. API calls go to " +
-      API_BASE_URL + " and will fail. Set it to your deployed backend URL and redeploy the frontend."
-  );
-}
+export const API_BASE_URL = typeof window !== "undefined" ? getApiBaseUrl() : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 // Fallback seed data if backend is offline during frontend dev
 const FALLBACK_USER: User = {
@@ -39,8 +42,8 @@ const FALLBACK_PATH: PathResponse = {
       description: "Identify basic objects, people, and simple sentence structures in Hindi",
       order_index: 1,
       lessons: [
-        { id: 1, title: "Basics 1", icon: "star", order_index: 1, status: "completed", crowns: 1 },
-        { id: 2, title: "Basics 2", icon: "star", order_index: 2, status: "available", crowns: 0 },
+        { id: 1, title: "Basics 1", icon: "star", order_index: 1, status: "available", crowns: 0 },
+        { id: 2, title: "Basics 2", icon: "star", order_index: 2, status: "locked", crowns: 0 },
         { id: 3, title: "Phrases 1", icon: "headphones", order_index: 3, status: "locked", crowns: 0 },
         { id: 4, title: "Unit 1 Milestone", icon: "chest", order_index: 4, status: "locked", crowns: 0 },
       ],
@@ -153,22 +156,27 @@ export async function registerNewUser(data: {
 
 export async function resetUserProgress(userId?: number) {
   const targetId = userId || getActiveUserId();
+  const currentBase = typeof window !== "undefined" ? getApiBaseUrl() : API_BASE_URL;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/reset?user_id=${targetId}`, {
+    const res = await fetch(`${currentBase}/api/user/reset?user_id=${targetId}`, {
       method: "POST",
     });
     if (res.ok) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("duo_completed_lessons");
+        localStorage.removeItem("duo_claimed_chests");
+        localStorage.removeItem("duo_unlocked_units");
         window.dispatchEvent(new Event("duo_progress_updated"));
       }
       return await res.json();
     }
   } catch (e) {
-    console.warn("Reset failed on backend");
+    console.warn("Reset failed on backend", e);
   }
   if (typeof window !== "undefined") {
     localStorage.removeItem("duo_completed_lessons");
+    localStorage.removeItem("duo_claimed_chests");
+    localStorage.removeItem("duo_unlocked_units");
     window.dispatchEvent(new Event("duo_progress_updated"));
   }
   return { success: true, message: "Progress reset to 0!" };

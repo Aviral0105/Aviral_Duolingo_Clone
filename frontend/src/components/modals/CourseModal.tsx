@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Plus } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 
@@ -45,7 +46,7 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
         {/* Current Active Course Card */}
         <div className="my-4 p-4 border-2 border-blue-400 bg-blue-50/50 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">🇮🇳</span>
+            <Image src="/flag_in.svg" width={36} height={26} alt="Hindi" className="rounded-xs shadow-2xs object-cover" />
             <div>
               <h3 className="font-black text-gray-800 text-lg">Hindi</h3>
               <p className="text-xs font-bold text-gray-500">Your Hindi Score is 5</p>

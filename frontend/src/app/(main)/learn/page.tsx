@@ -49,9 +49,17 @@ export default function LearnPage() {
 
   useEffect(() => {
     loadProgress();
+    if (typeof window !== "undefined") {
+      const stored = JSON.parse(localStorage.getItem("duo_claimed_chests") || "[]");
+      setClaimedChests(stored);
+    }
 
     const handleProgressUpdate = () => {
       loadProgress();
+      if (typeof window !== "undefined") {
+        const stored = JSON.parse(localStorage.getItem("duo_claimed_chests") || "[]");
+        setClaimedChests(stored);
+      }
     };
 
     window.addEventListener("duo_progress_updated", handleProgressUpdate);
@@ -108,7 +116,11 @@ export default function LearnPage() {
   const handleClaimChest = (unitId: number) => {
     if (!claimedChests.includes(unitId)) {
       sounds.playCorrect();
-      setClaimedChests((prev) => [...prev, unitId]);
+      const updated = [...claimedChests, unitId];
+      setClaimedChests(updated);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("duo_claimed_chests", JSON.stringify(updated));
+      }
       setShowChestModal(true);
     }
   };
