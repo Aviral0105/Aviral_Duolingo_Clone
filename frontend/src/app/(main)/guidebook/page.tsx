@@ -14,7 +14,8 @@ export default function GuidebookPage() {
   const [playingId, setPlayingId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchGuidebook(1).then(setGuidebook);
+    const unitParam = parseInt(new URLSearchParams(window.location.search).get("unit") || "1", 10);
+fetchGuidebook(unitParam > 0 ? unitParam : 1).then(setGuidebook);
   }, []);
 
   const handlePlayAudio = (phrase: KeyPhrase) => {
