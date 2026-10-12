@@ -7,13 +7,19 @@ const getApiBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
   }
-  if (typeof window !== "undefined" && window.location.hostname && window.location.hostname !== "localhost") {
-    return `http://${window.location.hostname}:8000`;
+  if (typeof window !== "undefined" && window.location.hostname) {
+    if (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onrender.com")) {
+      return "https://aviral-duolingo-clone.onrender.com";
+    }
+    // Local IP testing on mobile (e.g. 192.168.x.x)
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(window.location.hostname)) {
+      return `http://${window.location.hostname}:8000`;
+    }
   }
   return "http://localhost:8000";
 };
 
-export const API_BASE_URL = typeof window !== "undefined" ? getApiBaseUrl() : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+export const API_BASE_URL = typeof window !== "undefined" ? getApiBaseUrl() : (process.env.NEXT_PUBLIC_API_URL || "https://aviral-duolingo-clone.onrender.com").replace(/\/+$/, "");
 
 // Fallback seed data if backend is offline during frontend dev
 const FALLBACK_USER: User = {
@@ -32,7 +38,7 @@ const FALLBACK_USER: User = {
   current_league: "Gold League",
 };
 
-const FALLBACK_PATH: PathResponse = {
+export const FALLBACK_PATH: PathResponse = {
   course_title: "Hindi",
   course_flag: "🇮🇳",
   units: [

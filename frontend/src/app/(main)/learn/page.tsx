@@ -10,12 +10,12 @@ import SectionsModal from "@/components/modals/SectionsModal";
 import LockedModal from "@/components/modals/LockedModal";
 import StartLessonModal from "@/components/modals/StartLessonModal";
 import RightPanel from "@/components/navigation/RightPanel";
-import { fetchPath, fetchUser } from "@/lib/api";
+import { fetchPath, fetchUser, FALLBACK_PATH } from "@/lib/api";
 import { PathResponse, LessonNode, Unit } from "@/lib/types";
 import { sounds } from "@/lib/sounds";
 
 export default function LearnPage() {
-  const [pathData, setPathData] = useState<PathResponse | null>(null);
+  const [pathData, setPathData] = useState<PathResponse>(FALLBACK_PATH);
   const [selectedLesson, setSelectedLesson] = useState<{
     id: number;
     title: string;
